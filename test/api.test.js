@@ -12,6 +12,7 @@ import { createRunManager } from '../lib/core/runs.js'
 import { createRoute } from '../lib/core/api.js'
 import { createEmptyWorkflow } from '../shared/validation.js'
 import { createNode } from '../shared/node-types.js'
+import { LIMITS } from '../shared/constants.js'
 
 function node(type, id, x = 0, config = {}) {
   return createNode(type, { id, position: { x, y: 0 }, config })
@@ -306,6 +307,29 @@ test('path traversal ids are rejected', async () => {
     const result = await json(app.base, '/workflows/..%2F..%2Fetc')
     assert.equal(result.response.status, 400)
     assert.equal(result.body.code, 'BAD_REQUEST')
+  } finally {
+    await app.close()
+  }
+})
+
+test('oversized and malformed JSON bodies are rejected', async () => {
+  const app = await makeServer()
+  try {
+    const oversized = await fetch(`${app.base}/api/dsh/dsh-plugin-cueflow/runs`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-cueflow-request': '1' },
+      body: 'x'.repeat(LIMITS.maxBodyBytes + 1),
+    })
+    assert.equal(oversized.status, 413)
+    assert.equal((await oversized.json()).code, 'BODY_TOO_LARGE')
+
+    const malformed = await fetch(`${app.base}/api/dsh/dsh-plugin-cueflow/runs`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-cueflow-request': '1' },
+      body: '{',
+    })
+    assert.equal(malformed.status, 400)
+    assert.equal((await malformed.json()).code, 'BAD_JSON')
   } finally {
     await app.close()
   }

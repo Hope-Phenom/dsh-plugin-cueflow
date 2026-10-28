@@ -86,7 +86,7 @@
 
 | # | 方式 | 结果 |
 |---|---|---|
-| V1 | `pnpm test`（90 个测试） | 全部通过：graph/validation/template/executor/adapters/API/host apply/templates/approval/CSRF/queue/budget/retry/heartbeat/session-mode |
+| V1 | `pnpm test`（94 个测试） | 全部通过：graph/validation/template/executor/adapters/API/host apply/templates/approval/CSRF/queue/budget/retry/heartbeat/session-mode |
 | V2 | `pnpm build` | `lib/client.js` 生成，约 476 KiB 含 sourcemap |
 | V3 | `pnpm ui:shot` | dark/light/narrow/run 四张截图生成；无运行时异常 |
 | V4 | 本机临时 profile `cueflow-check`（2618） | 插件加载、路由、catalog、保存、确定性图、Shell、File、Agent、UI 运行 |
@@ -100,6 +100,8 @@
 | V12 | 清理 | 临时 profile / 测试文件清理；主 `desktop` 保留插件安装 |
 
 **仍未验证**：真实取消中的子代理、极窄窗口下的拖拽 E2E、受限 sandbox 主动拒绝路径。
+
+
 
 
 

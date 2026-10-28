@@ -173,6 +173,7 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 
 **验收**：
 - [x] Windows CI：install / test / lint / build / ui:build / ui:shot / Playwright / benchmark / pack+install verify（当前手动触发）；
+- [x] 安全测试：CSRF/Origin、路径遍历、超大 body、坏 JSON、恶意 workflow、审批拒绝；
 - [x] ESLint 基线（0 errors / 0 warnings）；
 - [x] 类型检查：用户接受 P1-5 范围，TypeScript checkJs 暂缓；
 - [x] Playwright：窄窗口、复制/多选、对齐、框选、Group、运行/取消（9 tests）；
