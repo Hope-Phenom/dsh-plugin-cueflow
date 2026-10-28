@@ -240,6 +240,33 @@ test('workflow session mode reuses one child session', async () => {
   assert.equal(disposed, 1)
 })
 
+test('parent mode sends a role-bearing user message to the live parent', async () => {
+  const services = baseServices()
+  let sent
+  const parent = {
+    id: 'session-parent',
+    session: {
+      seq: 1,
+      snapshotEvents: () => [{
+        type: 'assistant/message',
+        data: { message: { content: [{ type: 'text', text: 'parent answer' }] } },
+      }],
+    },
+    followup: message => { sent = message },
+    whenIdle: async () => {},
+  }
+  services.agents = {
+    get: id => (id === 'session-parent' ? parent : undefined),
+    list: () => [parent],
+  }
+  const adapters = createAdapters({ getServices: () => services })
+  const run = { inputs: {}, vars: {}, workflowSnapshot: { settings: { sessionMode: 'parent' } } }
+  const result = await adapters.executeNode(node('agent', { prompt: 'hi' }), {}, context({ run }))
+  assert.equal(result.outputs.text, 'parent answer')
+  assert.equal(sent.role, 'user')
+  assert.equal(result.meta.sessionMode, 'parent')
+})
+
 test('workflow mode cold-resumes an absent child with sendMessage', async () => {
   const services = baseServices()
   let resumed = false

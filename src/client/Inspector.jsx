@@ -444,6 +444,7 @@ function WorkflowForm({ workflow, issues, runHistory, onUpdateWorkflow, onDelete
             <option value="isolated">{t('sessionModeIsolated')}</option>
             <option value="inherit">{t('sessionModeInherit')}</option>
             <option value="workflow">{t('sessionModeWorkflow')}</option>
+            <option value="parent">{t('sessionModeParent')}</option>
           </select>
           <div className="cue-field-hint">{t('sessionModeHint')}</div>
         </div>

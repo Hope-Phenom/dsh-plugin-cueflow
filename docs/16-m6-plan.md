@@ -104,7 +104,7 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 
 ### M6-P1-1 · 显式会话模式
 
-**状态**：✅ `isolated` / `inherit` / `workflow` 已开放；`parent` 待实现
+**状态**：✅ `isolated` / `inherit` / `workflow` / `parent` 已开放
 
 **范围**：run 级 `sessionMode: isolated | inherit | workflow | parent`。
 - `isolated`：当前行为，每节点 child（默认）；
@@ -117,7 +117,7 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 - [x] run JSON 记录 `settings.sessionMode`；
 - [x] 从机 `inherit` <run-id> 完成，输出 `INHERIT_OK`；
 - [x] `workflow` 共享 child：`sendMessage` 冷恢复需传 `options.signal`；从机 `<run-id>` 两个节点 childId 一致；
-- [ ] `parent` 写回父会话：实测 `run_niv7vhqe` 返回 `PARENT_EMPTY`；remote-use 截图显示 DSH 模型请求失败 `messages[4]: missing field role`，之后父会话被标记 `stored session ... is corrupt: event at seq 154 lacks an identified message`。该模式已关闭；即使补 `role:'user'` 也不能保证不破坏会话。
+- [x] `parent` 写回父会话：`Agent.followup` 必须传完整 `UserMessage`（含 `role:'user'`）；从机新会话 `<run-id>` 输出 `PARENT_OK`，`childId` 即父会话；仅建议专用/空会话使用。
 
 **前置结论**：`workflow` 用 `ctx.subagents.sendMessage()` + `agents.get()` + `whenIdle()` + session events 实现；`parent` 仍缺向父会话发送 turn/等待结果的公开 seam，暂不开放。
 

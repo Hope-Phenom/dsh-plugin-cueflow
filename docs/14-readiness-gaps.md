@@ -1,7 +1,7 @@
 # 14 · 工作负载差距
 
 > “能跑通”不等于“能作为工作负载”。本文按 **P0（上真实仓库前必须）** / **P1（规模化）** 列出差距、验收标准与当前状态。
-> 当前已验证：94 个测试、从机主 `desktop` profile、面板 + UI run、审批/CSRF/队列/重试/心跳/Shell + Agent 取消。极窄拖拽 E2E 仍未覆盖。
+> 当前已验证：95 个测试、从机主 `desktop` profile、面板 + UI run、审批/CSRF/队列/重试/心跳/Shell + Agent 取消。极窄拖拽 E2E 仍未覆盖。
 
 ## 0. 两种“工作负载”
 
@@ -102,7 +102,7 @@
 | 缺口 | 为什么需要 | 验收 |
 |---|---|---|
 | 循环 / fan-out / map | 对文件、测试用例逐项执行 | ✅ Fan-out：数组逐项/并发（1–8）运行子 workflow，maxItems 100，`onItemError` fail/skip；从机 3 项并发（2）5.1s 完成 |
-| 显式会话模式 | 多步 Agent 保留上下文 | `isolated` / `inherit` / `workflow` 已开放；从机 `<run-id>` 验证 workflow 两节点 childId 一致；`parent` 会触发 DSH 模型消息 `missing field role` 并损坏父会话（seq 154），已关闭 |
+| 显式会话模式 | 多步 Agent 保留上下文 | `isolated` / `inherit` / `workflow` / `parent` 已开放；`<run-id>` 验证 workflow 两节点同 child；新会话 `<run-id>` 验证 parent 输出 `PARENT_OK`（需完整 UserMessage + role）；parent 建议专用会话 |
 | 子工作流 | 复用“审查/实现/测试”子图 | ✅ Subflow 节点（workflowId + input/output 映射，深度上限 5）；从机 parent→child 输出 `nested!` |
 | JSON 变换 | 从 Agent 结构化输出取字段 | 安全 JSONPath/模板，不执行任意代码 |
 | HTTP 节点 | 调内部 API/webhook | URL/方法/头/体；凭据走 DSH credentials；重试/超时 |
@@ -178,6 +178,7 @@
 | 真实性 Skill/Command/Shell/Agent | ✅ 已通过 |
 
 > 这不是“全部都要一次做完”的清单；它是按风险排序的路线图。P0-1 到 P0-4 是投入产出最高的四项。
+
 
 
 

@@ -106,7 +106,7 @@ test('empty workflow is saveable but warns', () => {
 
 test('unsupported session mode is rejected', () => {
   const workflow = createEmptyWorkflow('session mode')
-  workflow.settings.sessionMode = 'parent'
+  workflow.settings.sessionMode = 'bogus'
   const report = validateWorkflow(workflow)
   assert.equal(report.ok, false)
   assert.ok(report.issues.some(issue => issue.code === 'SESSION_MODE'))
