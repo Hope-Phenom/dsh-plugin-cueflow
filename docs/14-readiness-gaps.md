@@ -102,7 +102,7 @@
 | 缺口 | 为什么需要 | 验收 |
 |---|---|---|
 | 循环 / fan-out / map | 对文件、测试用例逐项执行 | ✅ Fan-out：数组逐项/并发（1–8）运行子 workflow，maxItems 100，`onItemError` fail/skip；从机 3 项并发（2）5.1s 完成 |
-| 显式会话模式 | 多步 Agent 保留上下文 | 已开放 `isolated` / `inherit`；`workflow`/`parent` 待结果收集 API |
+| 显式会话模式 | 多步 Agent 保留上下文 | 已开放 `isolated` / `inherit`；`workflow` 因 settle 后取不到 child（4 次从机实测 childId 变化）暂不开放，`parent` 缺父会话 turn API |
 | 子工作流 | 复用“审查/实现/测试”子图 | ✅ Subflow 节点（workflowId + input/output 映射，深度上限 5）；从机 parent→child 输出 `nested!` |
 | JSON 变换 | 从 Agent 结构化输出取字段 | 安全 JSONPath/模板，不执行任意代码 |
 | HTTP 节点 | 调内部 API/webhook | URL/方法/头/体；凭据走 DSH credentials；重试/超时 |
