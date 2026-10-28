@@ -253,7 +253,7 @@ function createMockRun(workflow, inputs, fail) {
       return run
     }
   }
-  nodes.forEach((node, index) => {
+  nodes.forEach(node => {
     timers.push(setTimeout(() => {
       if (run.status !== 'running') return
       const state = run.nodeStates[node.id]
@@ -394,7 +394,7 @@ function summaryRun(run) {
 }
 
 function publicRun(run) {
-  const { __timers, events, ...rest } = run
+  const { __timers: _timers, events: _events, ...rest } = run
   return { ...rest, events: [] }
 }
 
