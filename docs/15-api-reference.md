@@ -83,6 +83,20 @@ Content-Type: application/json
 
 ### `DELETE /workflows/:id` → `{ ok:true }`
 
+### `GET /workflows/:id/versions`
+
+```json
+{ "ok": true, "versions": [
+  { "version": "1793156000000", "savedAt": 1793156000000, "name": "Review a diff", "nodeCount": 3, "edgeCount": 2 }
+] }
+```
+
+### `GET /workflows/:id/versions/:version` → `{ ok, workflow }`
+
+### `POST /workflows/:id/versions/:version/restore` → `{ ok, workflow }`
+
+恢复会先归档当前版本，再写回历史快照；每次保存保留最近 20 版。
+
 ### `POST /validate`
 
 ```json

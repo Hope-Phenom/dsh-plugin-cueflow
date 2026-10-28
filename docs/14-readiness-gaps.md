@@ -1,7 +1,7 @@
 # 14 · 工作负载差距
 
 > “能跑通”不等于“能作为工作负载”。本文按 **P0（上真实仓库前必须）** / **P1（规模化）** 列出差距、验收标准与当前状态。
-> 当前已验证：79 个测试、从机主 `desktop` profile、面板 + UI run、审批/CSRF/队列/重试/心跳/Shell + Agent 取消。极窄拖拽 E2E 仍未覆盖。
+> 当前已验证：80 个测试、从机主 `desktop` profile、面板 + UI run、审批/CSRF/队列/重试/心跳/Shell + Agent 取消。极窄拖拽 E2E 仍未覆盖。
 
 ## 0. 两种“工作负载”
 
@@ -113,7 +113,9 @@
 
 ## 3. P1 持久化、版本与协作
 
-- **Workflow 版本**：保存即覆盖，没有版本/diff/回滚；至少保留最近 N 版。
+**状态**：⚠️ 版本/回滚已实现；自动保存/迁移/workspace 隔离待做
+
+- **Workflow 版本**：✅ 每次保存把旧版归档到 `workflows/.history/<id>/`，保留最近 20 版；API/UI 可列举、读取、恢复。
 - **自动保存/草稿恢复**：刷新/崩溃会丢未保存修改。
 - **Schema 迁移**：只有 `schemaVersion: 1`，没有迁移器。
 - **Workspace 隔离**：workflows 存在全局 `$DSH_HOME`；多项目需要 workspace-scoped 库。
@@ -169,12 +171,13 @@
 | retry/onError/局部重跑 | ✅ 单测；从机 onError=skip 已验证 |
 | active run 重连/heartbeat | ✅ 从机 remount + heartbeat 已验证 |
 | 循环/fan-out/子图 | ❌ 未实现 |
-| workflow 版本/自动保存 | ❌ 未实现 |
-| CI/E2E/类型检查 | ❌ 未实现 |
+| workflow 版本/自动保存 | ⚠️ 版本/恢复已实现；自动保存未做 |
+| CI/E2E/类型检查 | ⚠️ Windows CI 已加；E2E/类型检查未做 |
 | 从机主 profile 实机 | ✅ 已通过 |
 | 真实性 Skill/Command/Shell/Agent | ✅ 已通过 |
 
 > 这不是“全部都要一次做完”的清单；它是按风险排序的路线图。P0-1 到 P0-4 是投入产出最高的四项。
+
 
 
 

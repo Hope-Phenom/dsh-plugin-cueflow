@@ -78,6 +78,16 @@ export function deleteWorkflow(id) {
   return request(`/workflows/${encodeURIComponent(id)}`, { method: 'DELETE' })
 }
 
+export function listWorkflowVersions(id) {
+  return request(`/workflows/${encodeURIComponent(id)}/versions`)
+}
+
+export function restoreWorkflowVersion(id, version) {
+  return request(`/workflows/${encodeURIComponent(id)}/versions/${encodeURIComponent(version)}/restore`, {
+    method: 'POST',
+  })
+}
+
 export function validate(workflow) {
   return request('/validate', {
     method: 'POST',

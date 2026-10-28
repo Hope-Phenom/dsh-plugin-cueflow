@@ -2,7 +2,7 @@ import { React, h } from './react.js'
 import { CSS } from './styles.js'
 import {
   ApiError, cancelRun, decideApproval, deleteWorkflow, getCatalog, getRun, getWorkflow,
-  listRuns, listWorkflows, rerunRun, saveWorkflow, startRun,
+  listRuns, listWorkflowVersions, listWorkflows, rerunRun, restoreWorkflowVersion, saveWorkflow, startRun,
 } from './api.js'
 import { createNode, estimateNodeHeight } from '../../shared/node-types.js'
 import { canConnect } from '../../shared/graph.js'
@@ -520,6 +520,25 @@ export function CueFlowPanel({ t }) {
     notify(tr('imported'))
   }, [dirty, loadWorkflow, notify, tr])
 
+  const loadWorkflowVersions = React.useCallback(async id => {
+    try {
+      return await listWorkflowVersions(id)
+    } catch (cause) {
+      notify(cause instanceof Error ? cause.message : String(cause), 'error')
+      return { versions: [] }
+    }
+  }, [notify])
+
+  const restoreVersion = React.useCallback(async (id, version) => {
+    try {
+      const data = await restoreWorkflowVersion(id, version)
+      if (data.workflow) loadWorkflow(data.workflow)
+      notify(tr('versionRestored'), 'success')
+    } catch (cause) {
+      handleApiError(cause, setIssues, notify, tr)
+    }
+  }, [loadWorkflow, notify, tr])
+
   const exportWorkflow = React.useCallback(() => {
     const current = workflowRef.current
     if (!current) return
@@ -753,6 +772,8 @@ export function CueFlowPanel({ t }) {
           onCancelRun={cancelCurrentRun}
           onRerun={rerunCurrentRun}
           onDeleteWorkflow={removeWorkflow}
+          onListVersions={loadWorkflowVersions}
+          onRestoreVersion={restoreVersion}
           onExport={exportWorkflow}
           onImport={importWorkflow}
           onFit={() => fitToWorkflow()}

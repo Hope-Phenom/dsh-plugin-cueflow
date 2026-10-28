@@ -159,6 +159,11 @@ export const zh = {
   template: '模板',
   blank: '空白',
   generatedAt: '生成于',
+  versions: '版本历史',
+  refresh: '刷新',
+  noVersions: '还没有历史版本（下次保存后产生）。',
+  restore: '恢复',
+  versionRestored: '已恢复历史版本',
 }
 
 export const en = {
@@ -316,6 +321,11 @@ export const en = {
   template: 'Template',
   blank: 'Blank',
   generatedAt: 'Generated',
+  versions: 'Version history',
+  refresh: 'Refresh',
+  noVersions: 'No versions yet (created on the next save).',
+  restore: 'Restore',
+  versionRestored: 'Version restored',
 }
 
 /** Format `{name}` placeholders used by the dictionaries. */

@@ -23,6 +23,7 @@ export const LIMITS = Object.freeze({
   maxSkillChars: 200_000,
   maxLogsPerNode: 80,
   heartbeatMs: 10_000,
+  workflowVersions: 20,
 })
 
 export const DEFAULT_APPROVAL_TIMEOUT_MS = 5 * 60 * 1000

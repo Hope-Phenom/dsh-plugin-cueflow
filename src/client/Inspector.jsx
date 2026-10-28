@@ -26,6 +26,8 @@ export function Inspector({
   onCancelRun,
   onRerun,
   onDeleteWorkflow,
+  onListVersions,
+  onRestoreVersion,
   onExport,
   onImport,
   onFit,
@@ -80,6 +82,8 @@ export function Inspector({
             runHistory={runHistory}
             onUpdateWorkflow={onUpdateWorkflow}
             onDeleteWorkflow={onDeleteWorkflow}
+            onListVersions={onListVersions}
+            onRestoreVersion={onRestoreVersion}
             onExport={onExport}
             onImport={onImport}
             onClearRun={onClearRun}
@@ -389,8 +393,10 @@ function FieldControl({ field, value, node, catalog, onChange, onFormatError, t 
   )
 }
 
-function WorkflowForm({ workflow, issues, runHistory, onUpdateWorkflow, onDeleteWorkflow, onExport, onImport, onClearRun, onOpenRun, onFit, t }) {
+function WorkflowForm({ workflow, issues, runHistory, onUpdateWorkflow, onDeleteWorkflow, onListVersions, onRestoreVersion, onExport, onImport, onClearRun, onOpenRun, onFit, t }) {
   const fileRef = React.useRef(null)
+  const [versions, setVersions] = React.useState([])
+  const [versionsBusy, setVersionsBusy] = React.useState(false)
   const readFile = event => {
     const file = event.target.files?.[0]
     if (!file) return
@@ -471,6 +477,45 @@ function WorkflowForm({ workflow, issues, runHistory, onUpdateWorkflow, onDelete
                   <span className="cue-history-name">{row.workflowName || row.id}</span>
                   <span className="cue-history-meta">{row.status} · {formatTime(row.endedAt || row.createdAt)}</span>
                 </button>
+              ))}
+            </div>}
+      </div>
+
+      <div className="cue-section">
+        <div className="cue-inline" style={{ justifyContent: 'space-between' }}>
+          <div className="cue-section-title">{t('versions')}</div>
+          <button
+            type="button"
+            className="cue-btn ghost sm"
+            disabled={versionsBusy}
+            onClick={async () => {
+              setVersionsBusy(true)
+              try {
+                const data = await onListVersions(workflow.id)
+                setVersions(data.versions ?? [])
+              } finally {
+                setVersionsBusy(false)
+              }
+            }}
+          >
+            {versionsBusy ? t('loading') : t('refresh')}
+          </button>
+        </div>
+        {versions.length === 0
+          ? <div className="cue-empty-note">{t('noVersions')}</div>
+          : <div className="cue-history">
+              {versions.slice(0, 8).map(row => (
+                <div className="cue-history-row" key={row.version}>
+                  <span className="cue-history-name">{formatTime(row.savedAt)}</span>
+                  <span className="cue-history-meta">{row.nodeCount} · {row.edgeCount}</span>
+                  <button
+                    type="button"
+                    className="cue-btn ghost sm"
+                    onClick={() => onRestoreVersion(workflow.id, row.version)}
+                  >
+                    {t('restore')}
+                  </button>
+                </div>
               ))}
             </div>}
       </div>

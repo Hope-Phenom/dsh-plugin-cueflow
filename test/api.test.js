@@ -139,6 +139,32 @@ test('health, catalog and workflow CRUD', async () => {
   }
 })
 
+test('workflow saves create versions and restore round-trips', async () => {
+  const app = await makeServer()
+  try {
+    const workflow = simpleWorkflow()
+    await json(app.base, '/workflows', { method: 'POST', body: JSON.stringify({ workflow }) })
+    workflow.name = 'renamed flow'
+    workflow.updatedAt = Date.now() + 1000
+    await json(app.base, '/workflows', { method: 'POST', body: JSON.stringify({ workflow }) })
+
+    const versions = await json(app.base, `/workflows/${workflow.id}/versions`)
+    assert.equal(versions.response.status, 200)
+    assert.equal(versions.body.versions.length, 1)
+    const version = versions.body.versions[0].version
+    const snapshot = await json(app.base, `/workflows/${workflow.id}/versions/${version}`)
+    assert.equal(snapshot.body.workflow.name, 'test flow')
+
+    const restored = await json(app.base, `/workflows/${workflow.id}/versions/${version}/restore`, { method: 'POST' })
+    assert.equal(restored.response.status, 200)
+    assert.equal(restored.body.workflow.name, 'test flow')
+    const current = await json(app.base, `/workflows/${workflow.id}`)
+    assert.equal(current.body.workflow.name, 'test flow')
+  } finally {
+    await app.close()
+  }
+})
+
 test('validation returns structured issues', async () => {
   const app = await makeServer()
   try {

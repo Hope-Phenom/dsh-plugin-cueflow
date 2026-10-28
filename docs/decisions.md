@@ -62,6 +62,7 @@
 | D-054 | 2026-10-28 | 会话模式先开放 `isolated` / `inherit`，`workflow` / `parent` 不伪装可用 | `sendMessage` 只返回 inbox id，没有等待 child turn 结果的宿主 API；parent 没有向自身发 turn 的 seam | 暴露不可用选项；用轮询 session 事件猜结果 | `shared/constants.js`、`validation.js`、`adapters.js`、Inspector | accepted（P1-1a） |
 | D-055 | 2026-10-28 | `settings.cancelPolicy` 支持 `abort-all` / `drain`，默认 abort-all | abort-all 适合危险操作/清场；drain 适合让当前节点完成再退出；由 workflow 显式选择 | 全局固定 abort-all；取消后静默继续 | `executor.js`、`Inspector`、validation | accepted（P0-6） |
 | D-056 | 2026-10-28 | 增加 Windows GitHub Actions CI：install/test/build/ui:build/ui:shot/pack dry-run | 没有 CI 时构建产物和截图回归只能靠本地手工；Windows runner 覆盖平台差异 | 只做 Linux CI；只跑 test | `.github/workflows/ci.yml` | accepted（P1-5a） |
+| D-057 | 2026-10-28 | Workflow 保存前归档旧版到 `workflows/.history`，保留 20 版，提供 list/read/restore API | 保存即覆盖会让误改不可回滚；文件级归档比数据库轻，适合当前 local-json store | 只保留一个备份；引入 SQLite | `store.js`、`api.js`、Inspector | accepted（P1-3a） |
 
 ---
 
