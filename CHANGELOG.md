@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.2 — 2026-10-28
+
+### Security
+
+- 公开仓库清理：移除真实主机名、用户名、SSH key 路径、内网地址、session/run ID。
+- 移除真实 DSH 截图；公开文档只保留脱敏/Mock 截图。
+- Git 历史重写：作者/提交者统一为 `Hope.Phenom <hope.phenom@foxmail.com>`。
+- 重新生成 npm 包，避免 0.1.1 的 README 内网地址继续进入新包。
+
 ## 0.1.1 — 2026-10-28
 
 ### Fixed
