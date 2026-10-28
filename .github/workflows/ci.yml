@@ -57,6 +57,9 @@ jobs:
       - name: Pack verification
         run: pnpm verify:pack
 
+      - name: Clean install verification
+        run: pnpm verify:install
+
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4

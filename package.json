@@ -49,7 +49,8 @@
     "lint": "eslint .",
     "bench": "node scripts/bench.mjs",
     "bench:runs": "node scripts/bench-runs.mjs",
-    "verify:pack": "node scripts/verify-pack.mjs"
+    "verify:pack": "node scripts/verify-pack.mjs",
+    "verify:install": "node scripts/verify-install.mjs"
   },
   "dsh": {
     "bundle": {

@@ -14,6 +14,7 @@
 
 - 当前 `private: true`，未发布 npm；
 - `pnpm verify:pack` 已验证包含 `lib/shared/assets/locale/cordis.patch.yml/README/LICENSE/CHANGELOG`，且没有打包 `test/src/docs`；
+- `pnpm verify:install` 已把 tarball 安装到干净临时目录，校验 `package.json`/`lib`/`shared` 可解析；
 - 发布前需要：
   1. 补 `repository/homepage/bugs`；
   2. 决定是否把 `private` 改为 false；
