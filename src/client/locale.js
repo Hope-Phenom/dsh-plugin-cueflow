@@ -164,6 +164,7 @@ export const zh = {
   noVersions: '还没有历史版本（下次保存后产生）。',
   restore: '恢复',
   versionRestored: '已恢复历史版本',
+  draftRestored: '已恢复未保存的草稿（请确认后保存）',
 }
 
 export const en = {
@@ -326,6 +327,7 @@ export const en = {
   noVersions: 'No versions yet (created on the next save).',
   restore: 'Restore',
   versionRestored: 'Version restored',
+  draftRestored: 'Recovered an unsaved draft; review and save.',
 }
 
 /** Format `{name}` placeholders used by the dictionaries. */

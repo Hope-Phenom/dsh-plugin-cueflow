@@ -193,6 +193,7 @@ Input ─value──▶ Condition ─true──▶ Agent(fix)
 - **导入 JSON**：同一区域导入；导入前会做 normalize + validate。
 - **运行记录**：`runs/<id>.json`，默认保留最近 50 条；run 内含 workflow 快照，workflow 后续编辑不影响历史 run 的复现。
 - **历史版本**：每次保存前把旧版归档到 `workflows/.history/<id>/`，保留最近 20 版；工作流面板 → 版本历史可恢复。恢复前会先归档当前版本。
+- **草稿恢复**：编辑 700ms 后写入浏览器 localStorage；刷新/重开面板时若无 active run 会自动恢复并标记未保存。保存成功会清除草稿。
 
 ## 8. 排错
 

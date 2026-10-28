@@ -16,6 +16,7 @@ import { ApprovalDialog } from './ApprovalDialog.jsx'
 import { CueFlowIcon, Alert, Check, Chevron, Close, Copy, Download, Fit, LayoutIcon, Play, Plus, Redo, Save, Stop, Trash, Undo } from './Icons.jsx'
 
 const EMPTY_SETTINGS = { ...DEFAULT_WORKFLOW_SETTINGS }
+const DRAFT_PREFIX = 'cueflow:draft:'
 
 export function CueFlowPanel({ t }) {
   const tr = React.useCallback((key, values) => (typeof t === 'function' ? t(key, values) : key), [t])
@@ -168,13 +169,19 @@ export function CueFlowPanel({ t }) {
           setDockOpen(true)
           setInspectorTab('run')
         }
+      } else {
+        const draft = readDraft(initial.id)
+        if (draft && draft.workflow) {
+          setCurrent(normalizeWorkflow(clone(draft.workflow)), { dirty: true })
+          notify(tr('draftRestored'), 'warn')
+        }
       }
     } catch (cause) {
       setError(cause)
     } finally {
       setLoading(false)
     }
-  }, [loadWorkflow, refreshHistory])
+  }, [loadWorkflow, refreshHistory, notify, setCurrent, tr])
 
   React.useEffect(() => {
     void bootstrap()
@@ -236,6 +243,12 @@ export function CueFlowPanel({ t }) {
     window.addEventListener('beforeunload', handler)
     return () => window.removeEventListener('beforeunload', handler)
   }, [dirty])
+
+  React.useEffect(() => {
+    if (!workflow || !dirty || saving) return
+    const timer = setTimeout(() => writeDraft(workflow), 700)
+    return () => clearTimeout(timer)
+  }, [workflow, dirty, saving])
 
   const applyChange = React.useCallback((mutator, { record = true, validate: shouldValidate = true } = {}) => {
     const previous = workflowRef.current
@@ -386,6 +399,7 @@ export function CueFlowPanel({ t }) {
     setSaving(true)
     try {
       const data = await saveWorkflow(current)
+      clearDraft(data.workflow.id)
       setCurrent(data.workflow, { dirty: false })
       setWorkflows(previous => {
         const summary = {
@@ -936,6 +950,36 @@ function safeFileName(name) {
 
 function clone(value) {
   return value === undefined ? undefined : JSON.parse(JSON.stringify(value))
+}
+
+function readDraft(id) {
+  try {
+    const raw = localStorage.getItem(`${DRAFT_PREFIX}${id}`)
+    if (!raw) return null
+    const draft = JSON.parse(raw)
+    return draft && draft.workflow ? draft : null
+  } catch {
+    return null
+  }
+}
+
+function writeDraft(workflow) {
+  try {
+    localStorage.setItem(`${DRAFT_PREFIX}${workflow.id}`, JSON.stringify({
+      workflow,
+      savedAt: Date.now(),
+    }))
+  } catch {
+    /* storage may be unavailable */
+  }
+}
+
+function clearDraft(id) {
+  try {
+    localStorage.removeItem(`${DRAFT_PREFIX}${id}`)
+  } catch {
+    /* ignore */
+  }
 }
 
 function ensureWorkflowSummary(previous, workflow) {

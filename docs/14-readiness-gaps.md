@@ -113,10 +113,10 @@
 
 ## 3. P1 持久化、版本与协作
 
-**状态**：⚠️ 版本/回滚已实现；自动保存/迁移/workspace 隔离待做
+**状态**：⚠️ 版本/回滚、浏览器草稿恢复已实现；schema 迁移/workspace 隔离待做
 
 - **Workflow 版本**：✅ 每次保存把旧版归档到 `workflows/.history/<id>/`，保留最近 20 版；API/UI 可列举、读取、恢复（从机 `wf_versions_smoke` 已验证）。
-- **自动保存/草稿恢复**：刷新/崩溃会丢未保存修改。
+- **自动保存/草稿恢复**：✅ 编辑 700ms 后写入 localStorage 草稿；刷新/重开面板时若无 active run 自动恢复并标记 dirty；保存成功后清除。跨设备/清缓存仍会丢。
 - **Schema 迁移**：只有 `schemaVersion: 1`，没有迁移器。
 - **Workspace 隔离**：workflows 存在全局 `$DSH_HOME`；多项目需要 workspace-scoped 库。
 - **审计身份**：run 记录有 sessionId/cwd，但没有“谁触发”的身份；多用户需要。
