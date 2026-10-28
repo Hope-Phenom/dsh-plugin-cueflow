@@ -80,6 +80,7 @@
 | D-072 | 2026-10-28 | 框选用 Shift+拖拽画布空白，矩形与节点包围盒相交即选中 | 不引入新工具模式，复用 Shift 修饰键；框选用屏幕坐标换算 world | 增加选择工具按钮；只做全选 | `Canvas.jsx`、App、e2e | accepted（P1-4f） |
 | D-073 | 2026-10-28 | Group 是视觉框（无端口/不执行），选中 2+ 节点后按钮生成包围框；拖动 Group 时按 members 同步移动成员 | 先满足大图可读性；members 是显式 id 数组，不做父子坐标/自动重排 | 做真正容器分组；自动布局 | `node-types.js`、`Canvas.jsx`、App、e2e | accepted（P1-4g） |
 | D-074 | 2026-10-28 | run 增加 `triggeredBy`（body/header/UI），作为审计来源标记，不作为认证 | 多用户认证仍归 DSH；但 run 记录至少能区分 UI/API/自动化触发 | 伪造可信用户身份；无审计字段 | `executor.js`、`runs.js`、`api.js` | accepted（P1-3e） |
+| D-075 | 2026-10-28 | Workspace 物理隔离：新 workflow 写入 `workspaces/<sha256(cwd)>/workflows`，读取优先 workspace 再回退 global legacy | 不破坏旧数据，同时阻止新项目跨 workspace 写入；legacy 仍可见是迁移策略 | 立即迁移所有旧文件；只做逻辑过滤 | `store.js`、`api.js`、`App.jsx` | accepted（P1-3f） |
 
 ---
 

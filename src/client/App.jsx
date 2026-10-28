@@ -154,7 +154,7 @@ export function CueFlowPanel({ t }) {
       setWorkflows(list.workflows ?? [])
       let initial = null
       if (list.workflows?.length) {
-        const first = await getWorkflow(list.workflows[0].id)
+        const first = await getWorkflow(list.workflows[0].id, cat.cwd || '')
         initial = first.workflow
       } else {
         const blank = cat.templates?.find(template => template.id === 'blank') ?? cat.templates?.[0]
@@ -620,7 +620,7 @@ export function CueFlowPanel({ t }) {
     if (!id || id === workflowRef.current?.id) return
     if (dirty && !window.confirm(tr('confirmDiscard'))) return
     try {
-      const data = await getWorkflow(id)
+      const data = await getWorkflow(id, catalog?.cwd || '')
       loadWorkflow(data.workflow)
     } catch (cause) {
       notify(cause instanceof Error ? cause.message : String(cause), 'error')
@@ -637,7 +637,7 @@ export function CueFlowPanel({ t }) {
 
   const loadWorkflowVersions = React.useCallback(async id => {
     try {
-      return await listWorkflowVersions(id)
+      return await listWorkflowVersions(id, catalog?.cwd || '')
     } catch (cause) {
       notify(cause instanceof Error ? cause.message : String(cause), 'error')
       return { versions: [] }
@@ -646,7 +646,7 @@ export function CueFlowPanel({ t }) {
 
   const restoreVersion = React.useCallback(async (id, version) => {
     try {
-      const data = await restoreWorkflowVersion(id, version)
+      const data = await restoreWorkflowVersion(id, version, catalog?.cwd || '')
       if (data.workflow) loadWorkflow(data.workflow)
       notify(tr('versionRestored'), 'success')
     } catch (cause) {
@@ -684,7 +684,7 @@ export function CueFlowPanel({ t }) {
     if (!current) return
     if (!window.confirm(tr('confirmDeleteWorkflow'))) return
     try {
-      await deleteWorkflow(current.id)
+      await deleteWorkflow(current.id, catalog?.cwd || '')
       setWorkflows(previous => previous.filter(row => row.id !== current.id))
       const blank = catalog?.templates?.find(template => template.id === 'blank') ?? catalog?.templates?.[0]
       loadWorkflow(blank?.workflow ?? emptyWorkflow(), { dirty: true })

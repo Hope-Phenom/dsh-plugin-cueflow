@@ -64,8 +64,9 @@ export function listWorkflows(workspace = '') {
   return request(`/workflows${query}`)
 }
 
-export function getWorkflow(id) {
-  return request(`/workflows/${encodeURIComponent(id)}`)
+export function getWorkflow(id, workspace = '') {
+  const query = workspace ? `?workspace=${encodeURIComponent(workspace)}` : ''
+  return request(`/workflows/${encodeURIComponent(id)}${query}`)
 }
 
 export function saveWorkflow(workflow, cwd = '') {
@@ -75,16 +76,19 @@ export function saveWorkflow(workflow, cwd = '') {
   })
 }
 
-export function deleteWorkflow(id) {
-  return request(`/workflows/${encodeURIComponent(id)}`, { method: 'DELETE' })
+export function deleteWorkflow(id, workspace = '') {
+  const query = workspace ? `?workspace=${encodeURIComponent(workspace)}` : ''
+  return request(`/workflows/${encodeURIComponent(id)}${query}`, { method: 'DELETE' })
 }
 
-export function listWorkflowVersions(id) {
-  return request(`/workflows/${encodeURIComponent(id)}/versions`)
+export function listWorkflowVersions(id, workspace = '') {
+  const query = workspace ? `?workspace=${encodeURIComponent(workspace)}` : ''
+  return request(`/workflows/${encodeURIComponent(id)}/versions${query}`)
 }
 
-export function restoreWorkflowVersion(id, version) {
-  return request(`/workflows/${encodeURIComponent(id)}/versions/${encodeURIComponent(version)}/restore`, {
+export function restoreWorkflowVersion(id, version, workspace = '') {
+  const query = workspace ? `?workspace=${encodeURIComponent(workspace)}` : ''
+  return request(`/workflows/${encodeURIComponent(id)}/versions/${encodeURIComponent(version)}/restore${query}`, {
     method: 'POST',
   })
 }

@@ -67,7 +67,7 @@ Content-Type: application/json
 { "ok": true, "workflows": [ { "id": "wf_...", "name": "...", "updatedAt": 0, "nodeCount": 3, "edgeCount": 2 } ], "errors": [] }
 ```
 
-`workspace` 可选；匹配 `settings.workspace`，没有 workspace 的 legacy workflow 仍会出现在所有列表。`POST /workflows` 可带 `cwd`，Host 会把它写入 `settings.workspace`。
+`workspace` 可选；新 workflow 会写到 `workspaces/<hash>/workflows`，没有 workspace 的 legacy workflow 仍会出现在所有列表。`POST /workflows` 可带 `cwd`，Host 会把它写入 `settings.workspace`。读取/版本/删除路由也可带 `workspace`，优先 workspace 目录、回退全局。
 
 ### `GET /workflows/:id` → `{ ok, workflow }`
 

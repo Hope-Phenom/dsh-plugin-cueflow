@@ -136,7 +136,7 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 
 ### M6-P1-3 · 持久化与版本
 
-**状态**：⚠️ 版本/回滚、浏览器草稿恢复已实现；迁移/workspace 隔离待做
+**状态**：⚠️ 版本/草稿/schema/物理 workspace/triggeredBy 已实现；认证身份/保留策略待做
 
 **范围**：workflow 版本/回滚；自动保存/草稿；schema 迁移；workspace 级存储；保留策略配置；审计身份。
 
@@ -144,9 +144,9 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 - [x] 保存产生版本；API/UI 可列举/读取/恢复；从机 `wf_versions_smoke` 验证两次保存 → 1 个版本 → 恢复 V1；
 - [x] 刷新/重开面板恢复 localStorage 草稿（跨设备不保证）；
 - [x] 旧 schema 自动迁移（缺失/0 → v1，启动时执行）；
-- [x] 逻辑 workspace 过滤（`settings.workspace` + list 过滤；legacy 全局可见）；
+- [x] 逻辑 workspace 过滤 + 物理 workspace 存储（`workspaces/<hash>/workflows`，legacy 回退）；
 - [x] run `triggeredBy` 审计标记（UI/API；非认证身份）；
-- [ ] 物理 workspace 存储/保留策略。
+- [ ] 认证身份/保留策略。
 
 ### M6-P1-4 · 编辑体验
 

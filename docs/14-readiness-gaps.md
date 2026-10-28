@@ -118,7 +118,7 @@
 - **Workflow 版本**：✅ 每次保存把旧版归档到 `workflows/.history/<id>/`，保留最近 20 版；API/UI 可列举、读取、恢复（从机 `wf_versions_smoke` 已验证）。
 - **自动保存/草稿恢复**：✅ 编辑 700ms 后写入 localStorage 草稿；刷新/重开面板时若无 active run 自动恢复并标记 dirty；保存成功后清除。跨设备/清缓存仍会丢。
 - **Schema 迁移**：✅ 启动时把缺失/0 版本 workflow 规范化为 v1；未来 `schemaVersion > 1` 保持不动。
-- **Workspace 隔离**：⚠️ 逻辑过滤已实现（`settings.workspace` + 列表过滤；legacy 全局可见）；文件仍存全局 `$DSH_HOME`。
+- **Workspace 隔离**：✅ 新 workflow 按 `settings.workspace` 写入 `workspaces/<hash>/workflows`；读取优先 workspace、再回退 legacy 全局；旧 workflow 仍全局可见。
 - **审计身份**：run 记录现有 `triggeredBy`（body/header/UI 标记）与 sessionId/cwd；这不是认证身份，多用户仍需 DSH 身份。
 - **保留策略配置**：run 固定 50 条；需要按项目/时间/大小配置。
 - **多实例并发写**：store 原子写但没有跨进程锁；多个 DSH 实例共享 `$DSH_HOME` 时有覆盖风险。

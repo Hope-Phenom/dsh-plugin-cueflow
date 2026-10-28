@@ -23,6 +23,7 @@
 
 ## 3. 升级/回滚
 
+- 新 workflow 存在 `workflows/`（无 workspace）或 `workspaces/<hash>/workflows/`；旧 workflow 保持全局并仍可见；
 - 升级前：workflow 每次保存会自动归档旧版（最近 20 版）；
 - 旧 schema（缺失/0）在 Host 启动时规范化为 v1；
 - 回滚：通过工作流面板“版本历史 → 恢复”，或把 `.history/<id>/<version>.json` 复制回 `workflows/<id>.json`；
