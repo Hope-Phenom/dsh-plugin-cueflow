@@ -116,7 +116,7 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 - [x] UI 可选 `isolated` / `inherit`；非法值被 validation 拒绝；
 - [x] run JSON 记录 `settings.sessionMode`；
 - [x] 从机 `inherit` <run-id> 完成，输出 `INHERIT_OK`；
-- [ ] `workflow` 共享 child（需要 child turn 结果收集 API）；
+- [ ] `workflow` 共享 child（2026-10-28 实测：startActivation 的 receipt 不暴露 handle；settle 后 `agents.get` 取不到子 Agent，`sendMessage` 冷恢复后第二个节点仍生成新 childId；已回退为未开放）；
 - [ ] `parent` 写回父会话（需要父会话 turn API）。
 
 **前置结论**：DSH 有 `ctx.subagents.sendMessage()`，但只返回 inbox id，不提供等待该 turn 结果的宿主 API；`parent` 也没有向自身发送 turn 的公开 seam。不能把两种模式伪装成可用。

@@ -203,6 +203,43 @@ test('fanout can skip a failed item', async () => {
   assert.equal(result.outputs.errors[0].code, 'BAD_ITEM')
 })
 
+test('workflow session mode reuses one child session', async () => {
+  const services = baseServices()
+  let disposed = 0
+  let followups = 0
+  const child = {
+    id: 'session-child',
+    session: {
+      seq: 10,
+      snapshotEvents: () => [{
+        type: 'assistant/message',
+        data: { message: { content: [{ type: 'text', text: 'follow-up answer' }] } },
+      }],
+    },
+    followup: () => { followups += 1 },
+    whenIdle: async () => {},
+  }
+  services.agents = {
+    get: id => (id === 'session-child' ? child : (id === 'session-parent' ? { id: 'session-parent' } : undefined)),
+    list: () => [{ id: 'session-parent' }],
+  }
+  services.subagents.startActivation = async () => ({
+    childId: 'session-child',
+    result: Promise.resolve({ output: [{ type: 'text', text: 'first answer' }], stopReason: 'completed' }),
+    dispose: async () => { disposed += 1 },
+  })
+  const adapters = createAdapters({ getServices: () => services })
+  const run = { inputs: {}, vars: {}, workflowSnapshot: { settings: { sessionMode: 'workflow' } } }
+  const ctx = context({ run })
+  const first = await adapters.executeNode(node('agent', { prompt: 'first' }), {}, ctx)
+  assert.equal(first.outputs.text, 'first answer')
+  const second = await adapters.executeNode(node('agent', { prompt: 'second' }), {}, ctx)
+  assert.equal(second.outputs.text, 'follow-up answer')
+  assert.equal(followups, 1)
+  await adapters.disposeRunSessions(run)
+  assert.equal(disposed, 1)
+})
+
 test('aborting an agent disposes its activation immediately', async () => {
   const services = baseServices()
   let disposed = 0
