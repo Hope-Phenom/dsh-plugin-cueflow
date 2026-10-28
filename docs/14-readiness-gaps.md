@@ -125,8 +125,8 @@
 
 ## 4. P1 编辑体验
 
-- 多选/框选、节点分组/Reroute/对齐：未实现；
-- 复制/粘贴选中节点：✅ `Ctrl/Cmd+C/V`，Playwright 覆盖；
+- 多选（Shift/Ctrl 点击）、复制/粘贴多个节点：✅ Playwright 覆盖；
+- 框选、节点分组/Reroute/对齐：未实现；
 - 拖端口到空白处弹出候选节点；
 - 大 catalog 下 Skill/Command 可搜索选择器（现在是下拉）；
 - 运行历史列表、run 详情、从历史 run 恢复；

@@ -12,6 +12,7 @@ export function Canvas({
   workflow,
   catalog,
   selectedNodeId,
+  selectedNodeIds = [],
   selectedEdgeId,
   viewport,
   setViewport,
@@ -381,7 +382,7 @@ export function Canvas({
               outputs={outputs}
               connectedIn={connectedIn}
               connectedOut={connectedOut}
-              selected={node.id === selectedNodeId}
+              selected={selectedNodeIds.length ? selectedNodeIds.includes(node.id) : node.id === selectedNodeId}
               status={state?.status ?? 'idle'}
               preview={state?.preview ?? ''}
               error={state?.error ?? null}
@@ -394,7 +395,7 @@ export function Canvas({
               onPointerDown={event => onNodePointerDown(event, node)}
               onPortPointerDown={onPortPointerDown}
               onContextMenu={event => onNodeContextMenu(event, node)}
-              onSelect={() => onSelectNode(node.id)}
+              onSelect={event => onSelectNode(node.id, { additive: event.shiftKey || event.ctrlKey || event.metaKey })}
               t={t}
             />
           )
@@ -489,7 +490,7 @@ function NodeCard({
       onPointerDown={event => {
         if (event.target.closest?.('.cue-dot, .cue-node-head-btn')) return
         event.stopPropagation()
-        onSelect()
+        onSelect(event)
       }}
       onContextMenu={onContextMenu}
     >

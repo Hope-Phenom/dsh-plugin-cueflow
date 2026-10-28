@@ -29,6 +29,7 @@ export function CueFlowPanel({ t }) {
   const [error, setError] = React.useState(null)
   const [issues, setIssues] = React.useState([])
   const [selectedNodeId, setSelectedNodeId] = React.useState(null)
+  const [selectedNodeIds, setSelectedNodeIds] = React.useState([])
   const [selectedEdgeId, setSelectedEdgeId] = React.useState(null)
   const [inspectorTab, setInspectorTab] = React.useState('node')
   const [panelWidth, setPanelWidth] = React.useState(1200)
@@ -120,6 +121,7 @@ export function CueFlowPanel({ t }) {
     setWorkflows(previous => ensureWorkflowSummary(previous, normalized))
     setCurrent(normalized, { dirty: nextDirty })
     setSelectedNodeId(normalized.nodes?.[0]?.id ?? null)
+    setSelectedNodeIds(normalized.nodes?.[0]?.id ? [normalized.nodes[0].id] : [])
     setSelectedEdgeId(null)
     setRun(null)
     setEvents([])
@@ -267,6 +269,7 @@ export function CueFlowPanel({ t }) {
     history.current.future.push(clone(workflowRef.current))
     setCurrent(entry, { dirty: true })
     setSelectedNodeId(null)
+    setSelectedNodeIds([])
     setSelectedEdgeId(null)
     setHistoryVersion(value => value + 1)
   }, [setCurrent])
@@ -277,12 +280,22 @@ export function CueFlowPanel({ t }) {
     history.current.past.push(clone(workflowRef.current))
     setCurrent(entry, { dirty: true })
     setSelectedNodeId(null)
+    setSelectedNodeIds([])
     setSelectedEdgeId(null)
     setHistoryVersion(value => value + 1)
   }, [setCurrent])
 
-  const selectNode = React.useCallback((nodeId, { center = false } = {}) => {
-    setSelectedNodeId(nodeId)
+  const selectNode = React.useCallback((nodeId, { center = false, additive = false } = {}) => {
+    if (additive) {
+      setSelectedNodeIds(previous => {
+        const next = previous.includes(nodeId) ? previous.filter(id => id !== nodeId) : [...previous, nodeId]
+        setSelectedNodeId(next.length ? nodeId : null)
+        return next
+      })
+    } else {
+      setSelectedNodeIds([nodeId])
+      setSelectedNodeId(nodeId)
+    }
     setSelectedEdgeId(null)
     setInspectorTab('node')
     if (center) centerOnNode(nodeId)
@@ -307,6 +320,7 @@ export function CueFlowPanel({ t }) {
     }
     applyChange(current => ({ ...current, nodes: [...current.nodes, node] }))
     setSelectedNodeId(node.id)
+    setSelectedNodeIds([node.id])
     setSelectedEdgeId(null)
     setInspectorTab('node')
   }, [applyChange, notify, viewport])
@@ -345,6 +359,7 @@ export function CueFlowPanel({ t }) {
       edges: current.edges.filter(edge => edge.from.node !== nodeId && edge.to.node !== nodeId),
     }))
     setSelectedNodeId(value => (value === nodeId ? null : value))
+    setSelectedNodeIds(previous => previous.filter(id => id !== nodeId))
     setSelectedEdgeId(null)
   }, [applyChange])
 
@@ -358,28 +373,44 @@ export function CueFlowPanel({ t }) {
     })
     applyChange(current => ({ ...current, nodes: [...current.nodes, copy] }))
     setSelectedNodeId(copy.id)
+    setSelectedNodeIds([copy.id])
     setInspectorTab('node')
   }, [applyChange])
 
   const copySelectedNode = React.useCallback(() => {
-    const source = workflowRef.current?.nodes?.find(node => node.id === selectedNodeId)
-    if (source) clipboardRef.current = clone(source)
-  }, [selectedNodeId])
+    const ids = selectedNodeIds.length ? selectedNodeIds : (selectedNodeId ? [selectedNodeId] : [])
+    const nodes = (workflowRef.current?.nodes ?? []).filter(node => ids.includes(node.id))
+    if (nodes.length) clipboardRef.current = clone(nodes)
+  }, [selectedNodeId, selectedNodeIds])
 
   const pasteCopiedNode = React.useCallback(() => {
-    const source = clipboardRef.current
-    if (!source) return
-    const copy = createNode(source.type, {
+    const sources = clipboardRef.current
+    if (!Array.isArray(sources) || sources.length === 0) return
+    const copies = sources.map(source => createNode(source.type, {
       title: `${source.title} copy`,
       position: { x: source.position.x + 40, y: source.position.y + 40 },
       config: clone(source.config),
-    })
-    applyChange(current => ({ ...current, nodes: [...current.nodes, copy] }))
-    clipboardRef.current = clone(copy)
-    setSelectedNodeId(copy.id)
+    }))
+    applyChange(current => ({ ...current, nodes: [...current.nodes, ...copies] }))
+    clipboardRef.current = clone(copies)
+    setSelectedNodeId(copies[0].id)
+    setSelectedNodeIds(copies.map(copy => copy.id))
     setSelectedEdgeId(null)
     setInspectorTab('node')
   }, [applyChange])
+
+  const deleteSelectedNodes = React.useCallback(() => {
+    const ids = new Set(selectedNodeIds)
+    if (!ids.size) return
+    applyChange(current => ({
+      ...current,
+      nodes: current.nodes.filter(node => !ids.has(node.id)),
+      edges: current.edges.filter(edge => !ids.has(edge.from.node) && !ids.has(edge.to.node)),
+    }))
+    setSelectedNodeId(null)
+    setSelectedNodeIds([])
+    setSelectedEdgeId(null)
+  }, [applyChange, selectedNodeIds])
 
   const deleteEdge = React.useCallback(edgeId => {
     applyChange(current => ({ ...current, edges: current.edges.filter(edge => edge.id !== edgeId) }))
@@ -668,7 +699,10 @@ export function CueFlowPanel({ t }) {
         return
       }
       if (event.key === 'Delete' || event.key === 'Backspace') {
-        if (selectedNodeId) {
+        if (selectedNodeIds.length > 1) {
+          event.preventDefault()
+          deleteSelectedNodes()
+        } else if (selectedNodeId) {
           event.preventDefault()
           deleteNode(selectedNodeId)
         } else if (selectedEdgeId) {
@@ -679,7 +713,7 @@ export function CueFlowPanel({ t }) {
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [beginRun, copySelectedNode, deleteEdge, deleteNode, pasteCopiedNode, redo, runDialogOpen, save, selectedEdgeId, selectedNodeId, templateOpen, undo])
+  }, [beginRun, copySelectedNode, deleteEdge, deleteNode, deleteSelectedNodes, pasteCopiedNode, redo, runDialogOpen, save, selectedEdgeId, selectedNodeId, selectedNodeIds, templateOpen, undo])
 
   if (loading) {
     return (
@@ -775,13 +809,14 @@ export function CueFlowPanel({ t }) {
             workflow={current}
             catalog={catalog}
             selectedNodeId={selectedNodeId}
+            selectedNodeIds={selectedNodeIds}
             selectedEdgeId={selectedEdgeId}
             viewport={viewport}
             setViewport={setViewport}
             run={run}
             onSelectNode={selectNode}
-            onSelectEdge={id => { setSelectedEdgeId(id); setSelectedNodeId(null); setInspectorTab('node') }}
-            onClearSelection={() => { setSelectedNodeId(null); setSelectedEdgeId(null) }}
+            onSelectEdge={id => { setSelectedEdgeId(id); setSelectedNodeId(null); setSelectedNodeIds([]); setInspectorTab('node') }}
+            onClearSelection={() => { setSelectedNodeId(null); setSelectedNodeIds([]); setSelectedEdgeId(null) }}
             onAddNode={addNode}
             onConnect={connect}
             onDeleteEdge={deleteEdge}
