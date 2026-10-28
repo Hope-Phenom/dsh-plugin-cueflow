@@ -79,6 +79,7 @@
 | D-071 | 2026-10-28 | 加 `pnpm bench`（200 节点/500 边 merge DAG），CI 执行；暂不发布 npm | 用数量级基线防回退；发布还缺干净环境/CI 安装验证，先不把 `private` 改掉 | 直接 npm publish；先做并发 run 压测 | `scripts/bench.mjs`、CI、CHANGELOG | accepted（P1-5d） |
 | D-072 | 2026-10-28 | 框选用 Shift+拖拽画布空白，矩形与节点包围盒相交即选中 | 不引入新工具模式，复用 Shift 修饰键；框选用屏幕坐标换算 world | 增加选择工具按钮；只做全选 | `Canvas.jsx`、App、e2e | accepted（P1-4f） |
 | D-073 | 2026-10-28 | Group 是视觉框（无端口/不执行），选中 2+ 节点后按钮生成包围框；拖动 Group 时按 members 同步移动成员 | 先满足大图可读性；members 是显式 id 数组，不做父子坐标/自动重排 | 做真正容器分组；自动布局 | `node-types.js`、`Canvas.jsx`、App、e2e | accepted（P1-4g） |
+| D-074 | 2026-10-28 | run 增加 `triggeredBy`（body/header/UI），作为审计来源标记，不作为认证 | 多用户认证仍归 DSH；但 run 记录至少能区分 UI/API/自动化触发 | 伪造可信用户身份；无审计字段 | `executor.js`、`runs.js`、`api.js` | accepted（P1-3e） |
 
 ---
 

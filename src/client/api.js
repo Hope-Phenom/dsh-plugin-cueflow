@@ -99,7 +99,7 @@ export function validate(workflow) {
 export function startRun({ workflow, inputs, sessionId, cwd, concurrency }) {
   return request('/runs', {
     method: 'POST',
-    body: JSON.stringify({ workflow, inputs, sessionId, cwd, concurrency }),
+    body: JSON.stringify({ workflow, inputs, sessionId, cwd, concurrency, triggeredBy: 'cueflow-ui' }),
   })
 }
 

@@ -237,7 +237,7 @@ Content-Type: application/json
 
 ### RunRecord
 
-字段：`id/workflowId/workflowName/workflowSnapshot/status/inputs/sessionId/cwd/createdAt/startedAt/endedAt/nodeStates/approvals/budget/outputs/error/events`。`queuePosition` 仅在 `queued` 时存在。
+字段：`id/workflowId/workflowName/workflowSnapshot/status/inputs/sessionId/cwd/triggeredBy/createdAt/startedAt/endedAt/nodeStates/approvals/budget/outputs/error/events`。`queuePosition` 仅在 `queued` 时存在。`triggeredBy` 由 `body.triggeredBy`、`X-CueFlow-Actor` 或默认 `local` 填充；UI 发送 `cueflow-ui`。
 
 `budget`：
 

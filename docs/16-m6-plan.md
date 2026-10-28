@@ -145,7 +145,8 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 - [x] 刷新/重开面板恢复 localStorage 草稿（跨设备不保证）；
 - [x] 旧 schema 自动迁移（缺失/0 → v1，启动时执行）；
 - [x] 逻辑 workspace 过滤（`settings.workspace` + list 过滤；legacy 全局可见）；
-- [ ] 物理 workspace 存储/保留策略/审计身份。
+- [x] run `triggeredBy` 审计标记（UI/API；非认证身份）；
+- [ ] 物理 workspace 存储/保留策略。
 
 ### M6-P1-4 · 编辑体验
 

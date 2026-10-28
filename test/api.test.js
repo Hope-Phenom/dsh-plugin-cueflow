@@ -247,6 +247,7 @@ test('a deterministic run completes and exposes output', async () => {
     assert.equal(result.response.status, 201, JSON.stringify(result.body))
     const settled = await waitFor(app.base, result.body.run.id)
     assert.equal(settled.run.status, 'completed')
+    assert.equal(settled.run.triggeredBy, 'local')
     assert.equal(settled.run.outputs.n3.value, 'hi')
     assert.ok(settled.events.some(event => event.type === 'run/start'))
   } finally {
