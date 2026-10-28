@@ -1,6 +1,7 @@
 # 12 · 使用文档
 
-> 面向第一次使用 CueFlow 的人：安装、打开、搭第一条流程、运行、排错。
+> 面向第一次使用 CueFlow 的人：安装、打开、搭第一条流程、运行、排错。  
+> 带截图的逐步手册见 [20 · 用户手册](20-user-manual.md)。
 > 设计原因见 [13 · 设计阐明](13-design-rationale.md)；能力缺口见 [14 · 工作负载差距](14-readiness-gaps.md)；API 见 [15 · API 参考](15-api-reference.md)。
 
 ## 1. 安装

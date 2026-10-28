@@ -64,6 +64,7 @@ The independent UI test page imports the same `src/client` code used in DSH; onl
 | [API reference](docs/15-api-reference.md) | Host routes, data model, errors, limits |
 | [M6 plan](docs/16-m6-plan.md) | P0/P1 workload-readiness TODO and acceptance |
 | [Compatibility](docs/17-compatibility.md) | DSH/Node/OS matrix, release checks, benchmark |
+| [User manual](docs/20-user-manual.md) | Screenshot walkthrough for first-time users |
 | [Changelog](CHANGELOG.md) | Version history |
 | [Testing](docs/09-testing-strategy.md) | Four-layer strategy |
 | [Decisions](docs/decisions.md) | Autonomous design decisions |

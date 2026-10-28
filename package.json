@@ -50,6 +50,7 @@
     "ui": "vite --config vite.config.js",
     "ui:build": "vite build --config vite.config.js",
     "ui:shot": "node scripts/screenshot-ui.mjs",
+    "manual:shots": "node scripts/manual-shots.mjs",
     "e2e": "playwright test",
     "lint": "eslint .",
     "bench": "node scripts/bench.mjs",

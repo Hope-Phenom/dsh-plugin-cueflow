@@ -64,6 +64,7 @@ pnpm verify:install # tarball 安装校验
 | [API 参考](docs/15-api-reference.md) | Host 路由、数据模型、错误码、限制 |
 | [M6 计划](docs/16-m6-plan.md) | P0/P1 工作负载 TODO 与验收 |
 | [兼容性与发布](docs/17-compatibility.md) | DSH/Node/OS 矩阵、发布检查、性能基线 |
+| [用户手册（带截图）](docs/20-user-manual.md) | 第一次使用：界面地图、Hello World、审批、排错 |
 | [变更日志](CHANGELOG.md) | 版本记录 |
 | [测试策略](docs/09-testing-strategy.md) | 四层测试 |
 | [决策记录](docs/decisions.md) | 自主决策与待验证项 |
