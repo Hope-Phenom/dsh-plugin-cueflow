@@ -1,7 +1,7 @@
 import { createCueflowClient } from './plugin.js'
 
 window.__ModuleLoader__.load({
-  id: 'dsh-plugin-cueflow',
+  id: '@hope_phenom/dsh-plugin-cueflow',
   factory(require) {
     return createCueflowClient(require)
   },
