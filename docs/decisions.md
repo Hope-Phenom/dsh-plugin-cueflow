@@ -58,6 +58,7 @@
 | D-050 | 2026-10-28 | 节点 `retry` 默认 0，最多 5 次；`onError: fail \| skip` 先落地，暂不引入 branch | Shell/Command 非幂等，默认重试会放大副作用；skip 足以让可选步骤失败后继续；branch 需要新的错误端口契约 | 默认重试 3 次；只做 fail-fast；把 onError 做成任意 JS | `executor.js`、`shared/node-types.js` | accepted（P0-4a） |
 | D-051 | 2026-10-28 | 长节点每 10s 发 `node/heartbeat`；`GET /runs` 合并内存 active/queued；UI bootstrap 自动接回 | 轮询只有 start/end 会让长 Agent 看起来卡死；落盘 queued 状态滞后会让运行中 run 从列表消失 | SSE；只靠 run id 查询；每次心跳落盘 | `executor.js`、`runs.js`、`App.jsx` | accepted（P0-5a） |
 | D-052 | 2026-10-28 | 局部重跑用 `seedValues` + `fromNodeId` 上游闭包，新 run 不重跑成功祖先 | 保留上游输出、避免重复副作用；新 run 仍有独立审计记录 | 原地恢复同一 run；重跑整图 | `executor.js`、`api.js`、`App.jsx` | accepted（P0-4b） |
+| D-053 | 2026-10-28 | Agent 取消时显式 `activation.dispose()` 并让它与 `activation.result` 竞速 | 真实测试发现只传 abort signal 不足以终止子代理；run 会一直 running | 等模型自然结束；只标记 cancelled 但后台继续 | `adapters.js` | accepted（P0-6） |
 
 ---
 

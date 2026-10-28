@@ -91,13 +91,13 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 
 ### M6-P0-6 · 真实取消
 
-**状态**：⚠️ Shell 取消从机已验证；Agent child dispose 待补
+**状态**：✅ Shell + Agent 取消从机已验证；取消策略配置待补
 
 **范围**：真实 Agent + Shell 运行中取消；child session dispose、shell 子进程终止；失败 vs 取消策略可配置。
 
 **验收**：
 - [x] 真实 Shell 运行中取消，2s 内 `cancelled`（<run-id>）；
-- [ ] 真实 Agent child session dispose；
+- [x] 真实 Agent 运行中取消，5s 内 `cancelled`（<run-id>）；
 - [ ] 失败 vs 取消策略可配置（drain / abort-all）。
 
 ## 3. P1（规模化与体验）

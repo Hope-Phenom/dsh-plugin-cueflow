@@ -50,6 +50,14 @@
 
 节点实例**不保存**尺寸、选中状态、运行状态；这些是 UI / run 的职责。
 
+可失败节点（Agent / Skill / Command / Shell / Read File）还支持通用恢复字段：
+
+| 字段 | 类型 | 默认 | 说明 |
+|---|---|---|---|
+| `retry` | number | `0` | 首次失败后的额外尝试次数，0–5 |
+| `retryDelayMs` | number | `500` | 重试前等待，0–60000ms |
+| `onError` | `fail` / `skip` | `fail` | `skip` 标记该节点 skipped 并继续；`fail` 终止 run |
+
 ## 3. 逐节点规格
 
 ### 3.1 Input

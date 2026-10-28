@@ -59,6 +59,7 @@ ComfyUI 把扩散模型的一整条推理链拆成有类型端口的节点，让
 | [实现自审](reviews/2026-10-27-implementation-review.md) | 实现阶段发现的问题、修复与真实 DSH 联调记录。 |
 | [从机实机验证](reviews/2026-10-28-remote-verification.md) | 从机 <test-host> 的安装、Shell/Skill/Command/UI 实测与修复。 |
 | [M6 P0-1/P0-2 实测](reviews/2026-10-28-m6-p0-1-p0-2.md) | 真实 DSH 面板的审批门与 CSRF 防护结果。 |
+| [M6 P0-3–P0-6 实测](reviews/2026-10-28-m6-p0-3-p0-6.md) | 队列、重试/跳过、局部重跑、心跳/接回、Shell/Agent 取消。 |
 
 ## 4. 一页架构
 

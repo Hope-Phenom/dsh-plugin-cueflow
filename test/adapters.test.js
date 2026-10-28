@@ -107,6 +107,27 @@ test('agent node uses caller delivery and returns text/json', async () => {
   assert.equal(captured.request.prompt[0].type, 'text')
 })
 
+test('aborting an agent disposes its activation immediately', async () => {
+  const services = baseServices()
+  let disposed = 0
+  services.subagents.startActivation = async () => ({
+    childId: 'session-child',
+    result: new Promise(() => {}),
+    dispose: async () => { disposed += 1 },
+  })
+  const adapters = createAdapters({ getServices: () => services })
+  const controller = new AbortController()
+  const promise = adapters.executeNode(
+    node('agent', { prompt: 'never returns' }),
+    {},
+    context({ signal: controller.signal }),
+  )
+  await new Promise(resolve => setTimeout(resolve, 10))
+  controller.abort()
+  await assert.rejects(promise, error => error?.name === 'AbortError')
+  assert.equal(disposed, 1)
+})
+
 test('skill node loads a user-only skill and audits invocation', async () => {
   const services = baseServices()
   let captured

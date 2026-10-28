@@ -1,7 +1,7 @@
 # 14 · 工作负载差距
 
 > “能跑通”不等于“能作为工作负载”。本文按 **P0（上真实仓库前必须）** / **P1（规模化）** 列出差距、验收标准与当前状态。
-> 当前已验证：74 个测试、从机主 `desktop` profile、面板 + UI run、审批/CSRF/队列/重试/心跳。真实 Agent 取消与极窄拖拽 E2E 仍未覆盖。
+> 当前已验证：75 个测试、从机主 `desktop` profile、面板 + UI run、审批/CSRF/队列/重试/心跳/Shell + Agent 取消。极窄拖拽 E2E 仍未覆盖。
 
 ## 0. 两种“工作负载”
 
@@ -88,13 +88,13 @@
 
 ### P0-6 取消语义
 
-**状态**：⚠️ Shell 取消已在从机验证；真实 Agent child dispose 待补
+**状态**：✅ Shell + Agent 取消已在从机验证；取消策略配置待补
 
 **实现**：run cancel abort 所有 running 节点；Shell 子进程/Agent signal 传入 adapter；queued run 取消从队列移除并落盘。真实从机 Shell 长任务取消已验证（run `<run-id>`，2s 内 cancelled）。
 
 **验收**：
 - [x] 真实 Shell 运行中取消，2s 内 `cancelled`；
-- [ ] 真实 Agent child session dispose；
+- [x] 真实 Agent 运行中取消，5s 内 `cancelled`（<run-id>）；
 - [ ] 失败 vs 取消策略可配置（drain / abort-all）。
 
 ## 2. P1 工作流表达力
@@ -161,7 +161,7 @@
 
 | 项 | 状态 |
 |---|---|
-| 真实 Agent 取消 | ⚠️ Shell 取消已验证；Agent child dispose 未跑 |
+| 真实 Agent 取消 | ✅ Shell + Agent 取消已验证（<run-id>） |
 | 极窄窗口拖拽 E2E | ❌ 未跑 |
 | Shell/Command 审批 | ✅ 从机面板已验证 |
 | 全局 run 队列/预算 | ✅ 从机队列已验证；墙钟/Token 单测 |
@@ -174,4 +174,5 @@
 | 真实性 Skill/Command/Shell/Agent | ✅ 已通过 |
 
 > 这不是“全部都要一次做完”的清单；它是按风险排序的路线图。P0-1 到 P0-4 是投入产出最高的四项。
+
 
