@@ -59,18 +59,19 @@ export function getCatalog({ cwd, sessionId } = {}) {
   return request(`/catalog${suffix}`)
 }
 
-export function listWorkflows() {
-  return request('/workflows')
+export function listWorkflows(workspace = '') {
+  const query = workspace ? `?workspace=${encodeURIComponent(workspace)}` : ''
+  return request(`/workflows${query}`)
 }
 
 export function getWorkflow(id) {
   return request(`/workflows/${encodeURIComponent(id)}`)
 }
 
-export function saveWorkflow(workflow) {
+export function saveWorkflow(workflow, cwd = '') {
   return request('/workflows', {
     method: 'POST',
-    body: JSON.stringify({ workflow }),
+    body: JSON.stringify({ workflow, ...(cwd ? { cwd } : {}) }),
   })
 }
 

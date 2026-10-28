@@ -105,6 +105,7 @@ export const DEFAULT_WORKFLOW_SETTINGS = Object.freeze({
   defaultModel: '',
   sessionMode: 'isolated',
   cancelPolicy: 'abort-all',
+  workspace: '',
 })
 
 /** Whether a run status is terminal. */

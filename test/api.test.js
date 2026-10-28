@@ -140,6 +140,32 @@ test('health, catalog and workflow CRUD', async () => {
   }
 })
 
+test('workflow listing filters by workspace while keeping legacy items', async () => {
+  const app = await makeServer()
+  try {
+    const a = simpleWorkflow()
+    a.id = 'wf_ws_a'
+    a.name = 'Workspace A'
+    await json(app.base, '/workflows', { method: 'POST', body: JSON.stringify({ workflow: a, cwd: 'F:\\A' }) })
+    const b = simpleWorkflow()
+    b.id = 'wf_ws_b'
+    b.name = 'Workspace B'
+    await json(app.base, '/workflows', { method: 'POST', body: JSON.stringify({ workflow: b, cwd: 'F:\\B' }) })
+    const legacy = simpleWorkflow()
+    legacy.id = 'wf_ws_legacy'
+    legacy.name = 'Legacy'
+    await json(app.base, '/workflows', { method: 'POST', body: JSON.stringify({ workflow: legacy }) })
+
+    const scoped = await json(app.base, `/workflows?workspace=${encodeURIComponent('F:\\A')}`)
+    const ids = scoped.body.workflows.map(row => row.id)
+    assert.ok(ids.includes('wf_ws_a'))
+    assert.ok(!ids.includes('wf_ws_b'))
+    assert.ok(ids.includes('wf_ws_legacy'))
+  } finally {
+    await app.close()
+  }
+})
+
 test('workflow saves create versions and restore round-trips', async () => {
   const app = await makeServer()
   try {

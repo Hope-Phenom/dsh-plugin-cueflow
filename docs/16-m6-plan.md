@@ -144,7 +144,8 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 - [x] 保存产生版本；API/UI 可列举/读取/恢复；从机 `wf_versions_smoke` 验证两次保存 → 1 个版本 → 恢复 V1；
 - [x] 刷新/重开面板恢复 localStorage 草稿（跨设备不保证）；
 - [ ] 旧 schema 自动迁移；
-- [ ] workspace 级存储/保留策略/审计身份。
+- [x] 逻辑 workspace 过滤（`settings.workspace` + list 过滤；legacy 全局可见）；
+- [ ] 物理 workspace 存储/保留策略/审计身份。
 
 ### M6-P1-4 · 编辑体验
 

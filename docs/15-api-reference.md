@@ -61,11 +61,13 @@ Content-Type: application/json
 
 ## 2. Workflow
 
-### `GET /workflows`
+### `GET /workflows?workspace=<cwd>`
 
 ```json
 { "ok": true, "workflows": [ { "id": "wf_...", "name": "...", "updatedAt": 0, "nodeCount": 3, "edgeCount": 2 } ], "errors": [] }
 ```
+
+`workspace` 可选；匹配 `settings.workspace`，没有 workspace 的 legacy workflow 仍会出现在所有列表。`POST /workflows` 可带 `cwd`，Host 会把它写入 `settings.workspace`。
 
 ### `GET /workflows/:id` → `{ ok, workflow }`
 

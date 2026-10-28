@@ -146,7 +146,8 @@ export function CueFlowPanel({ t }) {
     setLoading(true)
     setError(null)
     try {
-      const [cat, list] = await Promise.all([getCatalog(), listWorkflows()])
+      const cat = await getCatalog()
+      const list = await listWorkflows(cat.cwd || '')
       setCatalog(cat)
       setWorkflows(list.workflows ?? [])
       let initial = null
@@ -419,7 +420,7 @@ export function CueFlowPanel({ t }) {
     }
     setSaving(true)
     try {
-      const data = await saveWorkflow(current)
+      const data = await saveWorkflow(current, catalog?.cwd || current.settings?.cwd || '')
       clearDraft(data.workflow.id)
       setCurrent(data.workflow, { dirty: false })
       setWorkflows(previous => {
@@ -439,7 +440,7 @@ export function CueFlowPanel({ t }) {
     } finally {
       setSaving(false)
     }
-  }, [notify, saving, setCurrent, tr])
+  }, [catalog, notify, saving, setCurrent, tr])
 
   const beginRun = React.useCallback(() => {
     if (!workflowRef.current) return

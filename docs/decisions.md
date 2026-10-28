@@ -71,6 +71,7 @@
 | D-063 | 2026-10-28 | 复制/粘贴只针对当前选中节点，用内部 clipboard ref，不接系统剪贴板 | 不引入权限/格式兼容；`Ctrl+C/V` 在输入框内保留原生命令 | 接系统 clipboard API；多选 | `App.jsx`、`e2e/` | accepted（P1-4b） |
 | D-064 | 2026-10-28 | 给运行取消按钮加 `data-cue-action="cancel-run"`，并用 Playwright 覆盖运行/取消 | E2E 需要稳定选择器；真实用户仍点同一按钮，不影响语义 | 依赖文案选择器；只测 API 取消 | `Inspector.jsx`、`App.jsx`、`e2e/` | accepted（P1-5b） |
 | D-065 | 2026-10-28 | ESLint flat config 只启 syntax/safety 规则，忽略 `h/Fragment/_*`；CI 跑 `pnpm lint` | 现有 JSDoc 无类型系统，强 lint 会制造噪音；先建立 0 warning 基线 | 立即迁移 TS；全量严格规则 | `eslint.config.js`、CI | accepted（P1-5c） |
+| D-066 | 2026-10-28 | Workspace 隔离先做逻辑过滤：保存记录 `settings.workspace`，列表按 cwd 过滤，legacy 全局可见 | 不迁移现有文件布局，先阻止跨项目列表污染；物理隔离另做 | 直接迁移目录；不做隔离 | `store.js`、`api.js`、`App.jsx` | accepted（P1-3c） |
 
 ---
 

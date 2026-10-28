@@ -263,7 +263,7 @@ pnpm ui:shot       # Edge headless 截图（若可用）
 
 | 层 | 命令/方式 | 结果 |
 |---|---|---|
-| L1 | `node --test test/*.test.js` | 86 个测试全部通过（graph/validation/template/executor/adapters/API/host apply/templates/approval/CSRF/queue/budget/retry/heartbeat/session-mode/versions） |
+| L1 | `node --test test/*.test.js` | 87 个测试全部通过（graph/validation/template/executor/adapters/API/host apply/templates/approval/CSRF/queue/budget/retry/heartbeat/session-mode/versions） |
 | L2 | 同上的 `test/api.test.js` + `test/index.test.js` | 路由、CRUD、422、404、400、取消、Host apply、BOM 请求均通过 |
 | L0 | `pnpm lint` | ESLint flat config，0 error / 0 warning |
 | L3 | `pnpm ui:shot` | dark/light/narrow/run/approval 五张截图，无运行时异常 |
@@ -274,6 +274,7 @@ pnpm ui:shot       # Edge headless 截图（若可用）
 | L4 限制 | 未跑 | 真实 Agent child dispose 后的审计日志完全关闭 |
 
 截图位置：`.screenshots/`。从机主桌面截图：`remote-cueflow-panel-window.png`、`remote-cueflow-run-window.png`。
+
 
 
 
