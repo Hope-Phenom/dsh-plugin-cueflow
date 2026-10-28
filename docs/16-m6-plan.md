@@ -129,7 +129,7 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 
 **验收**：
 - [x] Subflow 节点引用已保存 workflow，输入/输出映射，嵌套深度 5；从机 parent→child 输出 `nested!`；
-- [x] 循环 / fan-out / 数组逐项执行（Fan-out，顺序）；
+- [x] 循环 / fan-out / 数组逐项执行（Fan-out，顺序；从机 3 项输出 `a!/b!/c!`）；
 - [x] 子图 maxItems 上限；失败项以节点 error 定位；
 - [ ] 并发 fan-out / 单项失败继续策略。
 
