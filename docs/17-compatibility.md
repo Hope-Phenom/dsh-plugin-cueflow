@@ -13,7 +13,7 @@
 ## 2. 发布状态
 
 - 当前 `private: true`，未发布 npm；
-- `pnpm pack --dry-run` 已验证包含 `lib/shared/assets/locale/cordis.patch.yml/README/LICENSE/CHANGELOG`；
+- `pnpm verify:pack` 已验证包含 `lib/shared/assets/locale/cordis.patch.yml/README/LICENSE/CHANGELOG`，且没有打包 `test/src/docs`；
 - 发布前需要：
   1. 补 `repository/homepage/bugs`；
   2. 决定是否把 `private` 改为 false；

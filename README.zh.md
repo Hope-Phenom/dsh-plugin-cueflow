@@ -42,6 +42,7 @@ pnpm e2e        # Playwright 窄窗口画布 E2E（Edge）
 pnpm lint       # ESLint 基线
 pnpm bench      # 200 节点 / 500 边图基准
 pnpm bench:runs # 并发 run 队列基准
+pnpm verify:pack # 包内容校验
 ```
 
 独立 UI 测试页复用 `src/client` 的真实组件，只替换 Host 与 slot 容器。

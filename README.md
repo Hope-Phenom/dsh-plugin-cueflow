@@ -42,6 +42,7 @@ pnpm e2e        # Playwright narrow-canvas E2E (Edge)
 pnpm lint       # ESLint baseline
 pnpm bench      # 200-node / 500-edge graph benchmark
 pnpm bench:runs # concurrent run queue benchmark
+pnpm verify:pack # package content check
 ```
 
 The independent UI test page imports the same `src/client` code used in DSH; only the Host and slot container are mocked.

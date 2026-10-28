@@ -11,7 +11,13 @@
   "bugs": {
     "url": "https://github.com/Hope-Phenom/dsh-plugin-cueflow/issues"
   },
-  "keywords": ["dsh", "deepseek-harness", "workflow", "comfyui", "agent"],
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "workflow",
+    "comfyui",
+    "agent"
+  ],
   "type": "module",
   "main": "lib/index.js",
   "icon": "./assets/icon.svg",
@@ -42,7 +48,8 @@
     "e2e": "playwright test",
     "lint": "eslint .",
     "bench": "node scripts/bench.mjs",
-    "bench:runs": "node scripts/bench-runs.mjs"
+    "bench:runs": "node scripts/bench-runs.mjs",
+    "verify:pack": "node scripts/verify-pack.mjs"
   },
   "dsh": {
     "bundle": {

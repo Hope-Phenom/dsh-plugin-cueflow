@@ -54,8 +54,8 @@ jobs:
       - name: Concurrent run benchmark
         run: pnpm bench:runs
 
-      - name: Pack dry run
-        run: pnpm pack --dry-run
+      - name: Pack verification
+        run: pnpm verify:pack
 
       - name: Upload screenshots
         if: always()

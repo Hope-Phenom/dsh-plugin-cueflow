@@ -177,6 +177,7 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 - [ ] 类型检查（TypeScript checkJs 暂缓，现有 JSDoc 噪音过大）；
 - [x] Playwright 窄窗口添加/拖拽、复制/粘贴、运行/取消 E2E（5 tests）；
 - [x] CHANGELOG + 兼容矩阵（`docs/17-compatibility.md`）；
+- [x] `pnpm verify:pack` 包内容校验（CI）；
 - [ ] npm 发布/干净环境安装验证；
 - [x] 200 节点/500 边 graph benchmark（`pnpm bench`）；
 - [x] 并发 run 压测基线（`pnpm bench:runs`：10 runs、peakActive=2、peakQueue=8）。
