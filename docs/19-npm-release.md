@@ -85,7 +85,8 @@ shared/values.js
 - npm 包名：`@hope_phenom/dsh-plugin-cueflow`；
 - `cordis.patch.yml` 的 `id` 仍是 `dsh-plugin-cueflow`；
 - Host API 路径和存储目录仍是 `dsh-plugin-cueflow`，不改，避免破坏已安装用户的数据与路由；
-- `cordis.patch.yml` 的 `name` 使用 scoped 包名。
+- `cordis.patch.yml` 的 `name` 使用 scoped 包名；
+- `lib/client.js` 的 `__ModuleLoader__.load({ id })` **必须与 npm 包名一致**（scoped），否则插件管理器会报 `duplicate factory registration`。
 
 ## 5. DSH 识别方式
 
