@@ -4,7 +4,7 @@
 
 ```text
 name:    @hope_phenom/dsh-plugin-cueflow
-version: 0.1.1
+version: 0.1.2
 type:    module
 main:    lib/index.js
 ```
