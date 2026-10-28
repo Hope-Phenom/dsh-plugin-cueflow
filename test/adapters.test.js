@@ -165,6 +165,44 @@ test('fanout runs the child workflow once per item', async () => {
   assert.equal(result.outputs.results[1].value, 'b')
 })
 
+test('fanout honors item concurrency', async () => {
+  const services = baseServices()
+  let active = 0
+  let maxActive = 0
+  const adapters = createAdapters({ getServices: () => services })
+  adapters.setRunWorkflow(async value => {
+    active += 1
+    maxActive = Math.max(maxActive, active)
+    await new Promise(resolve => setTimeout(resolve, 10))
+    active -= 1
+    return { runId: 'r', outputs: { value: value.inputs.task } }
+  })
+  const result = await adapters.executeNode(
+    node('fanout', { workflowId: 'wf_child', itemKey: 'task', concurrency: 2 }),
+    { items: ['a', 'b', 'c', 'd'] },
+    context(),
+  )
+  assert.equal(result.outputs.count, 4)
+  assert.equal(maxActive, 2)
+})
+
+test('fanout can skip a failed item', async () => {
+  const services = baseServices()
+  const adapters = createAdapters({ getServices: () => services })
+  adapters.setRunWorkflow(async value => {
+    if (value.inputs.task === 'b') throw Object.assign(new Error('bad item'), { code: 'BAD_ITEM' })
+    return { runId: 'r', outputs: { value: value.inputs.task } }
+  })
+  const result = await adapters.executeNode(
+    node('fanout', { workflowId: 'wf_child', itemKey: 'task', onItemError: 'skip' }),
+    { items: ['a', 'b', 'c'] },
+    context(),
+  )
+  assert.equal(result.outputs.count, 3)
+  assert.equal(result.outputs.errors.length, 1)
+  assert.equal(result.outputs.errors[0].code, 'BAD_ITEM')
+})
+
 test('aborting an agent disposes its activation immediately', async () => {
   const services = baseServices()
   let disposed = 0

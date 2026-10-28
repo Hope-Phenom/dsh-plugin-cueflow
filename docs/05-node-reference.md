@@ -326,11 +326,12 @@
 | 方向 | id | 类型 | 必填 | 说明 |
 |---|---|---|---|---|
 | in | `items` | json | 是 | JSON 数组 |
-| out | `results` | json | — | 每个子 run 的 outputs 数组 |
+| out | `results` | json | — | 每个子 run 的 outputs 数组；skip 的项为 `{error}` |
+| out | `errors` | json | — | 失败项 `{index,item,code,message}` |
 | out | `count` | number | — | 实际执行数量 |
 | out | `text` | text | — | `results` 的字符串形式 |
 
-**配置**：`workflowId`、`itemKey`（默认 `task`，子 workflow 接收每项的 Input 节点 id）、`maxItems`（默认 20，最大 100），以及通用 retry/onError。
+**配置**：`workflowId`、`itemKey`（默认 `task`）、`maxItems`（默认 20，最大 100）、`concurrency`（1–8，默认 1）、`onItemError: fail | skip`，以及通用 retry/onError。
 
 ### 3.7 Read File
 

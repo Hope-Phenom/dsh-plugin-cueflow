@@ -251,6 +251,7 @@ export const NODE_TYPES = Object.freeze({
     inputs: [{ id: 'items', label: 'items', type: 'json', required: true }],
     outputs: [
       { id: 'results', label: 'results', type: 'json' },
+      { id: 'errors', label: 'errors', type: 'json' },
       { id: 'count', label: 'count', type: 'number' },
       { id: 'text', label: 'text', type: 'text' },
     ],
@@ -258,12 +259,19 @@ export const NODE_TYPES = Object.freeze({
       field('workflowId', 'Workflow ID', 'text', { placeholder: 'wf_...' }),
       field('itemKey', 'Item input key', 'text', { placeholder: 'task', hint: 'The child Input node id that receives each item.' }),
       field('maxItems', 'Max items', 'number', { min: 1, max: 100, step: 1 }),
+      field('concurrency', 'Item concurrency', 'number', { min: 1, max: 8, step: 1 }),
+      field('onItemError', 'On item error', 'select', {
+        options: ['fail', 'skip'],
+        hint: 'skip records the item error and continues.',
+      }),
       ...RETRY_FIELDS,
     ],
     defaults: {
       workflowId: '',
       itemKey: 'task',
       maxItems: 20,
+      concurrency: 1,
+      onItemError: 'fail',
       ...RETRY_DEFAULTS,
     },
   },

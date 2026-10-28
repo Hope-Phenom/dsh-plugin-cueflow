@@ -67,6 +67,7 @@
 | D-059 | 2026-10-28 | 用 Playwright `channel: msedge` 跑独立 UI harness 的窄窗口 E2E | 不下载 Chromium，CI Windows 与本地 Edge 一致；只测 UI，不依赖 DSH | 只用截图脚本；用 Jest+jsdom | `playwright.config.js`、`e2e/`、CI | accepted（P1-4a） |
 | D-060 | 2026-10-28 | Subflow 节点用 `runNested` 直接执行已保存 workflow，绕过全局队列，深度上限 5 | 父 run 占着 active 槽，子 run 若排队会死锁；嵌套 run 仍写入 runs/ 可审计 | 子 run 入队；不支持子图 | `adapters.js`、`runs.js`、`node-types.js` | accepted（P1-2a） |
 | D-061 | 2026-10-28 | Fan-out 顺序执行子 workflow，默认最多 20、上限 100 | 避免一次 fan-out 启动过多子 run；顺序实现先验证映射/结果聚合，并发可后续加 | 一次 Promise.all 100 个；不做上限 | `adapters.js`、`node-types.js` | accepted（P1-2b）并已从机验证 |
+| D-062 | 2026-10-28 | Fan-out 增加 `concurrency`（1–8）与 `onItemError=fail|skip`；skip 结果记 `{error}`，汇总到 errors | 真实批处理既要并行，也要能跳过坏项并保留失败证据 | 全有或全无；并发固定 8 | `adapters.js`、`node-types.js` | accepted（P1-2c） |
 
 ---
 
