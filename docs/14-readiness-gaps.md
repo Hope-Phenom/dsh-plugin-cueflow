@@ -173,7 +173,7 @@
 | active run 重连/heartbeat | ✅ 从机 remount + heartbeat 已验证 |
 | 循环/fan-out/子图 | ❌ 未实现 |
 | workflow 版本/自动保存 | ⚠️ 版本/恢复已实现；自动保存未做 |
-| CI/E2E/类型检查 | ⚠️ Windows CI 已加；E2E/类型检查未做 |
+| CI/E2E/类型检查 | ⚠️ Windows CI + 5 个 Playwright E2E；类型检查/发布未做 |
 | 从机主 profile 实机 | ✅ 已通过 |
 | 真实性 Skill/Command/Shell/Agent | ✅ 已通过 |
 

@@ -168,7 +168,7 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 **验收**：
 - [x] Windows CI：install / test / build / ui:build / ui:shot / Playwright / pack dry-run；
 - [ ] 类型检查/lint；
-- [x] Playwright 窄窗口添加/拖拽 E2E；运行/取消 E2E 待补；
+- [x] Playwright 窄窗口添加/拖拽、复制/粘贴、运行/取消 E2E（5 tests）；
 - [ ] npm 发布/CHANGELOG/兼容矩阵；
 - [ ] 200 节点与并发 run 压测基线。
 

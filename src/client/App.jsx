@@ -840,7 +840,7 @@ export function CueFlowPanel({ t }) {
             <button type="button" className={`cue-tab ${dockTab === 'log' ? 'active' : ''}`} onClick={() => { setDockTab('log'); setDockOpen(true) }}>{tr('tabLog')}</button>
             <button type="button" className={`cue-tab ${dockTab === 'output' ? 'active' : ''}`} onClick={() => { setDockTab('output'); setDockOpen(true) }}>{tr('tabOutput')}</button>
           </div>
-          {running && <button type="button" className="cue-btn danger sm" style={{ marginLeft: 'auto' }} onClick={event => { event.stopPropagation(); void cancelCurrentRun() }}>{tr('cancel')}</button>}
+          {running && <button type="button" className="cue-btn danger sm" data-cue-action="cancel-run" style={{ marginLeft: 'auto' }} onClick={event => { event.stopPropagation(); void cancelCurrentRun() }}>{tr('cancel')}</button>}
         </div>
         {dockOpen && (
           <div className="cue-dock-body">

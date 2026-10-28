@@ -33,6 +33,18 @@ test('copy and paste duplicates the selected node', async ({ page }) => {
   await expect(nodes).toHaveCount(before + 2)
 })
 
+test('run reaches a terminal state from the toolbar', async ({ page }) => {
+  await page.goto('/?clean=1&run=1')
+  await expect(page.locator('.cue-dock')).toContainText(/completed|已完成/i, { timeout: 10_000 })
+})
+
+test('a running workflow can be cancelled', async ({ page }) => {
+  await page.goto('/?clean=1&run=1')
+  await page.waitForTimeout(1200)
+  await page.evaluate(() => window.__CUE_TEST__.cancel())
+  await expect(page.locator('.cue-dock')).toContainText(/cancelled|已取消/i, { timeout: 10_000 })
+})
+
 test('narrow layout keeps the inspector toggle usable', async ({ page }) => {
   await page.goto('/?clean=1&lang=en')
   const toggle = page.locator('.cue-inspector-toggle')
