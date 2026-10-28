@@ -32,7 +32,8 @@
     "ui:shot": "node scripts/screenshot-ui.mjs",
     "e2e": "playwright test",
     "lint": "eslint .",
-    "bench": "node scripts/bench.mjs"
+    "bench": "node scripts/bench.mjs",
+    "bench:runs": "node scripts/bench-runs.mjs"
   },
   "dsh": {
     "bundle": {

@@ -146,7 +146,7 @@
 | 存储迁移测试 | 旧 schema → 新 schema 自动迁移，失败可回滚 |
 | 遥测/错误关联 | runId → node → child session → command 的可追踪链路 |
 | 安全测试 | CSRF/Origin、路径遍历、超大 body、恶意 workflow、审批拒绝 |
-| 性能测试 | 200/500 graph benchmark 已加；并发 run 压测待做 |
+| 性能测试 | ✅ 200/500 graph benchmark + 并发 run benchmark |
 
 ## 6. 最小生产门槛（建议）
 

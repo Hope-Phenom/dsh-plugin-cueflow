@@ -50,3 +50,13 @@ indexMs: ~0.15
 ```
 
 阈值：脚本在 validate 失败或总耗时 > 2000ms 时退出非零。该基线用于发现数量级回退，不作为绝对 SLA。
+
+并发 run 基线：
+
+```text
+pnpm bench:runs
+10 runs, maxActiveRuns=2
+peakActive=2, peakQueue=8
+~370ms (25ms fake node each)
+all completed
+```

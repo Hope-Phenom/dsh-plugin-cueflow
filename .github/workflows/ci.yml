@@ -51,6 +51,9 @@ jobs:
       - name: Graph benchmark
         run: pnpm bench
 
+      - name: Concurrent run benchmark
+        run: pnpm bench:runs
+
       - name: Pack dry run
         run: pnpm pack --dry-run
 

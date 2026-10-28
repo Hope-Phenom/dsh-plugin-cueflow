@@ -177,7 +177,7 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 - [x] CHANGELOG + 兼容矩阵（`docs/17-compatibility.md`）；
 - [ ] npm 发布/干净环境安装验证；
 - [x] 200 节点/500 边 graph benchmark（`pnpm bench`）；
-- [ ] 并发 run 压测基线。
+- [x] 并发 run 压测基线（`pnpm bench:runs`：10 runs、peakActive=2、peakQueue=8）。
 
 ## 4. 实施顺序
 
