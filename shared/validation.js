@@ -253,6 +253,11 @@ export function validateWorkflow(workflow) {
     error('SESSION_MODE', 'settings.sessionMode must be "isolated" or "inherit" in this build.')
   }
 
+  const cancelPolicy = workflow.settings?.cancelPolicy
+  if (cancelPolicy !== undefined && cancelPolicy !== 'abort-all' && cancelPolicy !== 'drain') {
+    error('CANCEL_POLICY', 'settings.cancelPolicy must be "abort-all" or "drain".')
+  }
+
   const concurrency = workflow.settings?.concurrency
   if (concurrency !== undefined) {
     const n = Number(concurrency)

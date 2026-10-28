@@ -115,6 +115,7 @@ Content-Type: application/json
 - `sessionId` 是 Agent/Skill/Command 的父 Agent；省略时 Host 选最后一个 live agent。
 - `cwd` 是 Shell/File/子代理目录；省略时用 workflow `settings.cwd`，再退到进程 cwd。
 - `settings.sessionMode`：`isolated`（默认）或 `inherit`（fork 继承父快照）。`workflow` / `parent` 当前会被 validation 拒绝。
+- `settings.cancelPolicy`：`abort-all`（默认）或 `drain`（停止启动新节点，等待 running 完成）。
 - 运行前校验：结构/端口/环/必填 Input；含 LLM 节点但无 live agent → 422 `LIVE_AGENT_REQUIRED`。
 - 成功返回 201，`run.status` 初始 `running`。
 
@@ -214,7 +215,7 @@ Content-Type: application/json
   "edges": [
     { "id": "e1", "from": { "node": "n1", "port": "value" }, "to": { "node": "n2", "port": "value" } }
   ],
-  "settings": { "concurrency": 2, "cwd": "", "defaultProvider": "", "defaultModel": "", "sessionMode": "isolated" }
+  "settings": { "concurrency": 2, "cwd": "", "defaultProvider": "", "defaultModel": "", "sessionMode": "isolated", "cancelPolicy": "abort-all" }
 }
 ```
 

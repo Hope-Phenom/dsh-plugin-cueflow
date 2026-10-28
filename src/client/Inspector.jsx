@@ -440,6 +440,19 @@ function WorkflowForm({ workflow, issues, runHistory, onUpdateWorkflow, onDelete
           </select>
           <div className="cue-field-hint">{t('sessionModeHint')}</div>
         </div>
+        <div className="cue-field">
+          <label className="cue-field-label" htmlFor="cue-wf-cancel">{t('cancelPolicy')}</label>
+          <select
+            id="cue-wf-cancel"
+            className="cue-select"
+            value={workflow.settings?.cancelPolicy ?? 'abort-all'}
+            onChange={event => onUpdateWorkflow({ settings: { ...(workflow.settings ?? {}), cancelPolicy: event.target.value } })}
+          >
+            <option value="abort-all">{t('cancelPolicyAbortAll')}</option>
+            <option value="drain">{t('cancelPolicyDrain')}</option>
+          </select>
+          <div className="cue-field-hint">{t('cancelPolicyHint')}</div>
+        </div>
       </div>
 
       <div className="cue-section">

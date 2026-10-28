@@ -1,7 +1,7 @@
 # 14 · 工作负载差距
 
 > “能跑通”不等于“能作为工作负载”。本文按 **P0（上真实仓库前必须）** / **P1（规模化）** 列出差距、验收标准与当前状态。
-> 当前已验证：77 个测试、从机主 `desktop` profile、面板 + UI run、审批/CSRF/队列/重试/心跳/Shell + Agent 取消。极窄拖拽 E2E 仍未覆盖。
+> 当前已验证：79 个测试、从机主 `desktop` profile、面板 + UI run、审批/CSRF/队列/重试/心跳/Shell + Agent 取消。极窄拖拽 E2E 仍未覆盖。
 
 ## 0. 两种“工作负载”
 
@@ -88,14 +88,14 @@
 
 ### P0-6 取消语义
 
-**状态**：✅ Shell + Agent 取消已在从机验证；取消策略配置待补
+**状态**：✅ 已完成（Shell + Agent 取消从机验证；abort-all/drain 可选）
 
-**实现**：run cancel abort 所有 running 节点；Shell 子进程/Agent signal 传入 adapter；queued run 取消从队列移除并落盘。真实从机 Shell 长任务取消已验证（run `<run-id>`，2s 内 cancelled）。
+**实现**：`settings.cancelPolicy` 支持 `abort-all`（默认）与 `drain`；drain 停止启动新节点但让 running 节点自然完成。Shell/Agent signal 传入 adapter，Agent abort 时显式 dispose。queued run 取消从队列移除并落盘。
 
 **验收**：
 - [x] 真实 Shell 运行中取消，2s 内 `cancelled`；
 - [x] 真实 Agent 运行中取消，5s 内 `cancelled`（<run-id>）；
-- [ ] 失败 vs 取消策略可配置（drain / abort-all）。
+- [x] 失败 vs 取消策略可配置（drain / abort-all，单测覆盖）。
 
 ## 2. P1 工作流表达力
 
@@ -136,7 +136,7 @@
 
 | 缺口 | 验收 |
 |---|---|
-| CI（Windows runner） | `pnpm test` + build + UI 截图 + E2E 全绿 |
+| CI（Windows runner） | ✅ test/build/ui:build/ui:shot/pack dry-run；E2E 待加 |
 | 类型检查 / lint | 至少 `tsc --checkJs` 或迁移 TS；ESLint/格式检查 |
 | 浏览器 E2E | Playwright 覆盖拖拽、连线、运行、取消；可截图对比 |
 | 发布 | npm 包（当前 `private: true`）、版本号、CHANGELOG、兼容矩阵 |
@@ -162,7 +162,7 @@
 
 | 项 | 状态 |
 |---|---|
-| 真实 Agent 取消 | ✅ Shell + Agent 取消已验证（<run-id>） |
+| 真实 Agent 取消 | ✅ Shell + Agent 取消已验证；drain/abort-all 可选 |
 | 极窄窗口拖拽 E2E | ❌ 未跑 |
 | Shell/Command 审批 | ✅ 从机面板已验证 |
 | 全局 run 队列/预算 | ✅ 从机队列已验证；墙钟/Token 单测 |
@@ -175,6 +175,7 @@
 | 真实性 Skill/Command/Shell/Agent | ✅ 已通过 |
 
 > 这不是“全部都要一次做完”的清单；它是按风险排序的路线图。P0-1 到 P0-4 是投入产出最高的四项。
+
 
 
 

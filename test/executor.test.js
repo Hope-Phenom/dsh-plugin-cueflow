@@ -176,6 +176,23 @@ test('cancellation marks running and pending nodes cancelled', async () => {
   assert.equal(run.nodeStates.o.status, 'cancelled')
 })
 
+test('drain cancel policy lets running nodes finish', async () => {
+  const workflow = wf([
+    node('agent', 'a', 0, { prompt: 'a', sleep: 60 }),
+    node('agent', 'b', 100, { prompt: 'b', sleep: 60 }),
+  ], [], { concurrency: 2, cancelPolicy: 'drain' })
+  const run = createRunRecord({ workflow })
+  const { executeNode } = makeExecutor()
+  const controller = new AbortController()
+  const promise = executeRun(run, { executeNode, signal: controller.signal, concurrency: 2 })
+  await delay(15)
+  controller.abort()
+  await promise
+  assert.equal(run.status, 'cancelled')
+  assert.equal(run.nodeStates.a.status, 'success')
+  assert.equal(run.nodeStates.b.status, 'success')
+})
+
 test('events are monotonic and filterable', async () => {
   const workflow = wf([node('agent', 'a', 0, { prompt: 'a' })])
   const run = createRunRecord({ workflow })

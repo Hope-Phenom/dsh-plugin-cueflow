@@ -171,6 +171,8 @@ Input ─value──▶ Condition ─true──▶ Agent(fix)
 
 `workflow`（一次 run 复用 child）和 `parent`（写回当前对话）当前**未开放**，因为 DSH 还没有提供“等待已有 child turn 结果/向父会话发 turn”的宿主 API；不会用假实现冒充。
 
+工作流设置还有 **取消策略**：`abort-all`（立即中止）或 `drain`（停止启动新节点，等待当前节点完成）。
+
 ### 运行会在“同一个会话”里吗？
 
 **不是所有节点都在同一个 DSH 会话里。** 准确地说：

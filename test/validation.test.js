@@ -112,6 +112,14 @@ test('unsupported session mode is rejected', () => {
   assert.ok(report.issues.some(issue => issue.code === 'SESSION_MODE'))
 })
 
+test('invalid cancel policy is rejected', () => {
+  const workflow = createEmptyWorkflow('cancel policy')
+  workflow.settings.cancelPolicy = 'later'
+  const report = validateWorkflow(workflow)
+  assert.equal(report.ok, false)
+  assert.ok(report.issues.some(issue => issue.code === 'CANCEL_POLICY'))
+})
+
 test('unsupported schemaVersion is rejected', () => {
   const workflow = createEmptyWorkflow()
   workflow.schemaVersion = 99

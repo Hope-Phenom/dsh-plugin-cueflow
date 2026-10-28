@@ -91,14 +91,14 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 
 ### M6-P0-6 · 真实取消
 
-**状态**：✅ Shell + Agent 取消从机已验证；取消策略配置待补
+**状态**：✅ 已完成（Shell + Agent 取消从机验证；abort-all/drain 可选）
 
 **范围**：真实 Agent + Shell 运行中取消；child session dispose、shell 子进程终止；失败 vs 取消策略可配置。
 
 **验收**：
 - [x] 真实 Shell 运行中取消，2s 内 `cancelled`（<run-id>）；
 - [x] 真实 Agent 运行中取消，5s 内 `cancelled`（<run-id>）；
-- [ ] 失败 vs 取消策略可配置（drain / abort-all）。
+- [x] `abort-all` / `drain` 可选（单测覆盖；从机 drain smoke 待补）。
 
 ## 3. P1（规模化与体验）
 
@@ -140,9 +140,16 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 
 ### M6-P1-5 · 工程化与发布
 
+**状态**：⚠️ Windows CI 已加入；类型检查/Playwright/发布/压测待做
+
 **范围**：Windows CI（test/build/shot/E2E）；类型检查/lint；Playwright；npm 发布/CHANGELOG/兼容矩阵；安全测试/性能测试。
 
-**验收**：PR 必须全绿；发布包可安装；200 节点图与并发 run 压测有基线。
+**验收**：
+- [x] Windows CI：install / test / build / ui:build / ui:shot / pack dry-run；
+- [ ] 类型检查/lint；
+- [ ] Playwright 拖拽/运行/取消 E2E；
+- [ ] npm 发布/CHANGELOG/兼容矩阵；
+- [ ] 200 节点与并发 run 压测基线。
 
 ## 4. 实施顺序
 

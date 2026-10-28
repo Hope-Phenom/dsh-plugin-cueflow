@@ -103,6 +103,7 @@ export const DEFAULT_WORKFLOW_SETTINGS = Object.freeze({
   defaultProvider: '',
   defaultModel: '',
   sessionMode: 'isolated',
+  cancelPolicy: 'abort-all',
 })
 
 /** Whether a run status is terminal. */
