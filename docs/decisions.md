@@ -82,7 +82,8 @@
 | D-074 | 2026-10-28 | run 增加 `triggeredBy`（body/header/UI），作为审计来源标记，不作为认证 | 多用户认证仍归 DSH；但 run 记录至少能区分 UI/API/自动化触发 | 伪造可信用户身份；无审计字段 | `executor.js`、`runs.js`、`api.js` | accepted（P1-3e） |
 | D-075 | 2026-10-28 | Workspace 物理隔离：新 workflow 写入 `workspaces/<sha256(cwd)>/workflows`，读取优先 workspace 再回退 global legacy | 不破坏旧数据，同时阻止新项目跨 workspace 写入；legacy 仍可见是迁移策略 | 立即迁移所有旧文件；只做逻辑过滤 | `store.js`、`api.js`、`App.jsx` | accepted（P1-3f） |
 | D-076 | 2026-10-28 | run 保留条数用 `CUEFLOW_RUN_RETENTION` 环境变量；包增加 repository/homepage/bugs/keywords/engines | 不给 UI 增加配置面；发布元数据先补齐，实际 npm publish 仍需账号/干净环境 | 固定 50；不做发布元数据 | `store.js`、`index.js`、`package.json` | accepted（P1-3g） |
-| D-077 | 2026-10-28 | `workflow` 模式暂不开放：DSH receipt 不暴露 child handle，settle 后 `agents.get` 取不到；4 次从机实测 childId 均变化 | 宁可显式不开放，也不虚假通过；等 Host 提供稳定 child-turn/结果接口 | 强行用每次新 child 假装复用 | `adapters.js`、validation、docs/reviews | blocked（P1-1） |
+| D-077 | 2026-10-28 | `workflow` 模式暂不开放：DSH receipt 不暴露 child handle，settle 后 `agents.get` 取不到；4 次从机实测 childId 均变化 | 当时宁可显式不开放，也不虚假通过 | 强行用每次新 child 假装复用 | `adapters.js`、validation、docs/reviews | superseded by D-078 |
+| D-078 | 2026-10-28 | `workflow` 改走 `subagents.sendMessage(parent, childId, content, { signal })` 冷恢复，再等 child idle 并取 session events；从机 `<run-id>` 两节点 childId 一致 | 官方文档要求 `options.signal`；之前漏传导致冷恢复失败。保留 caller 结果语义，不向父会话注入消息 | 依赖 `agents.get` 在 settle 后返回；每次新 child | `adapters.js`、validation、docs/reviews | accepted（P1-1） |
 
 ---
 

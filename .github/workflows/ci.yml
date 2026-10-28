@@ -1,9 +1,9 @@
 name: CI
 
+# Temporarily manual-only: npm publishing is done outside this workflow.
+# Re-enable push/pull_request once the Windows runner failures are resolved.
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read

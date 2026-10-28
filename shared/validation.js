@@ -249,8 +249,8 @@ export function validateWorkflow(workflow) {
   }
 
   const sessionMode = workflow.settings?.sessionMode
-  if (sessionMode !== undefined && sessionMode !== 'isolated' && sessionMode !== 'inherit') {
-    error('SESSION_MODE', 'settings.sessionMode must be "isolated" or "inherit" in this build.')
+  if (sessionMode !== undefined && sessionMode !== 'isolated' && sessionMode !== 'inherit' && sessionMode !== 'workflow') {
+    error('SESSION_MODE', 'settings.sessionMode must be "isolated", "inherit" or "workflow" in this build.')
   }
 
   const cancelPolicy = workflow.settings?.cancelPolicy

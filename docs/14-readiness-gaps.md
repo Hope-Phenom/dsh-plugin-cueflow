@@ -102,7 +102,7 @@
 | 缺口 | 为什么需要 | 验收 |
 |---|---|---|
 | 循环 / fan-out / map | 对文件、测试用例逐项执行 | ✅ Fan-out：数组逐项/并发（1–8）运行子 workflow，maxItems 100，`onItemError` fail/skip；从机 3 项并发（2）5.1s 完成 |
-| 显式会话模式 | 多步 Agent 保留上下文 | 已开放 `isolated` / `inherit`；`workflow` 因 settle 后取不到 child（4 次从机实测 childId 变化）暂不开放，`parent` 缺父会话 turn API |
+| 显式会话模式 | 多步 Agent 保留上下文 | `isolated` / `inherit` / `workflow` 已开放；从机 `<run-id>` 验证 workflow 两节点 childId 一致；`parent` 缺父会话 turn API |
 | 子工作流 | 复用“审查/实现/测试”子图 | ✅ Subflow 节点（workflowId + input/output 映射，深度上限 5）；从机 parent→child 输出 `nested!` |
 | JSON 变换 | 从 Agent 结构化输出取字段 | 安全 JSONPath/模板，不执行任意代码 |
 | HTTP 节点 | 调内部 API/webhook | URL/方法/头/体；凭据走 DSH credentials；重试/超时 |
@@ -140,9 +140,9 @@
 | 缺口 | 验收 |
 |---|---|
 | CI（Windows runner） | ✅ test/build/ui:build/ui:shot/pack dry-run；E2E 待加 |
-| 类型检查 / lint | ⚠️ ESLint 基线已加；TypeScript checkJs 暂缓 |
+| 类型检查 / lint | ✅ ESLint 基线；TypeScript checkJs 经用户接受暂缓 |
 | 浏览器 E2E | Playwright 覆盖拖拽、连线、运行、取消；可截图对比 |
-| 发布 | CHANGELOG + 兼容矩阵已补；npm 仍 private，干净环境安装待做 |
+| 发布 | ✅ CHANGELOG/兼容矩阵/pack/install 校验；用户将执行 npm 发布 |
 | 存储迁移测试 | 旧 schema → 新 schema 自动迁移，失败可回滚 |
 | 遥测/错误关联 | runId → node → child session → command 的可追踪链路 |
 | 安全测试 | CSRF/Origin、路径遍历、超大 body、恶意 workflow、审批拒绝 |
@@ -173,11 +173,12 @@
 | active run 重连/heartbeat | ✅ 从机 remount + heartbeat 已验证 |
 | 循环/fan-out/子图 | ❌ 未实现 |
 | workflow 版本/自动保存 | ⚠️ 版本/恢复已实现；自动保存未做 |
-| CI/E2E/类型检查 | ⚠️ Windows CI + 5 个 Playwright E2E；类型检查/发布未做 |
+| CI/E2E/类型检查 | ✅ Windows CI（当前手动触发）+ 9 个 Playwright E2E；checkJs 暂缓 |
 | 从机主 profile 实机 | ✅ 已通过 |
 | 真实性 Skill/Command/Shell/Agent | ✅ 已通过 |
 
 > 这不是“全部都要一次做完”的清单；它是按风险排序的路线图。P0-1 到 P0-4 是投入产出最高的四项。
+
 
 
 

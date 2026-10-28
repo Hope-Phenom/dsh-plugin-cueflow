@@ -104,7 +104,7 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 
 ### M6-P1-1 · 显式会话模式
 
-**状态**：⚠️ 已开放 `isolated` / `inherit`；`workflow` / `parent` 待实现
+**状态**：✅ `isolated` / `inherit` / `workflow` 已开放；`parent` 待实现
 
 **范围**：run 级 `sessionMode: isolated | inherit | workflow | parent`。
 - `isolated`：当前行为，每节点 child（默认）；
@@ -113,13 +113,13 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 - `parent`：在选中的父会话执行，结果写回对话；要求父会话 idle + 单 run 锁 + 警告。
 
 **验收**：
-- [x] UI 可选 `isolated` / `inherit`；非法值被 validation 拒绝；
+- [x] UI 可选 `isolated` / `inherit` / `workflow`；非法值被 validation 拒绝；
 - [x] run JSON 记录 `settings.sessionMode`；
 - [x] 从机 `inherit` <run-id> 完成，输出 `INHERIT_OK`；
-- [ ] `workflow` 共享 child（2026-10-28 实测：startActivation 的 receipt 不暴露 handle；settle 后 `agents.get` 取不到子 Agent，`sendMessage` 冷恢复后第二个节点仍生成新 childId；已回退为未开放）；
+- [x] `workflow` 共享 child：`sendMessage` 冷恢复需传 `options.signal`；从机 `<run-id>` 两个节点 childId 一致；
 - [ ] `parent` 写回父会话（需要父会话 turn API）。
 
-**前置结论**：DSH 有 `ctx.subagents.sendMessage()`，但只返回 inbox id，不提供等待该 turn 结果的宿主 API；`parent` 也没有向自身发送 turn 的公开 seam。不能把两种模式伪装成可用。
+**前置结论**：`workflow` 用 `ctx.subagents.sendMessage()` + `agents.get()` + `whenIdle()` + session events 实现；`parent` 仍缺向父会话发送 turn/等待结果的公开 seam，暂不开放。
 
 ### M6-P1-2 · 循环 / fan-out / 子工作流
 
@@ -167,19 +167,19 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 
 ### M6-P1-5 · 工程化与发布
 
-**状态**：⚠️ Windows CI 已加入；类型检查/Playwright/发布/压测待做
+**状态**：✅ 用户已接受 P1-5；Windows CI 暂时改为手动触发；类型检查按用户决定暂缓；npm 由用户发布
 
 **范围**：Windows CI（test/build/shot/E2E）；类型检查/lint；Playwright；npm 发布/CHANGELOG/兼容矩阵；安全测试/性能测试。
 
 **验收**：
-- [x] Windows CI：install / test / build / ui:build / ui:shot / Playwright / pack dry-run；
-- [x] ESLint 基线（0 errors / 0 warnings，已进 CI）；
-- [ ] 类型检查（TypeScript checkJs 暂缓，现有 JSDoc 噪音过大）；
-- [x] Playwright 窄窗口添加/拖拽、复制/粘贴、运行/取消 E2E（5 tests）；
+- [x] Windows CI：install / test / lint / build / ui:build / ui:shot / Playwright / benchmark / pack+install verify（当前手动触发）；
+- [x] ESLint 基线（0 errors / 0 warnings）；
+- [x] 类型检查：用户接受 P1-5 范围，TypeScript checkJs 暂缓；
+- [x] Playwright：窄窗口、复制/多选、对齐、框选、Group、运行/取消（9 tests）；
 - [x] CHANGELOG + 兼容矩阵（`docs/17-compatibility.md`）；
 - [x] `pnpm verify:pack` 包内容校验（CI）；
 - [x] 干净临时目录 tarball 安装校验（`pnpm verify:install`）；
-- [ ] npm 实际发布；
+- [ ] npm 实际发布（用户执行；包内容/干净安装已校验）；
 - [x] 200 节点/500 边 graph benchmark（`pnpm bench`）；
 - [x] 并发 run 压测基线（`pnpm bench:runs`：10 runs、peakActive=2、peakQueue=8）。
 

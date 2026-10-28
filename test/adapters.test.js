@@ -240,6 +240,54 @@ test('workflow session mode reuses one child session', async () => {
   assert.equal(disposed, 1)
 })
 
+test('workflow mode cold-resumes an absent child with sendMessage', async () => {
+  const services = baseServices()
+  let resumed = false
+  let sent = 0
+  let disposed = 0
+  const child = {
+    id: 'session-cold',
+    session: {
+      seq: 4,
+      snapshotEvents: () => [{
+        type: 'assistant/message',
+        data: { message: { content: [{ type: 'text', text: 'cold answer' }] } },
+      }],
+    },
+    followup: () => { throw new Error('already sent') },
+    whenIdle: async () => {},
+  }
+  services.agents = {
+    get: id => {
+      if (id === 'session-parent') return { id: 'session-parent' }
+      if (id === 'session-cold' && resumed) return child
+      return undefined
+    },
+    list: () => [{ id: 'session-parent' }],
+  }
+  services.subagents.startActivation = async () => ({
+    childId: 'session-cold',
+    result: Promise.resolve({ output: [{ type: 'text', text: 'first' }], stopReason: 'completed' }),
+    dispose: async () => { disposed += 1 },
+  })
+  services.subagents.sendMessage = async (sender, targetId, content, options) => {
+    assert.equal(targetId, 'session-cold')
+    assert.ok(options.signal)
+    sent += 1
+    resumed = true
+    return 'msg_1'
+  }
+  const adapters = createAdapters({ getServices: () => services })
+  const run = { inputs: {}, vars: {}, workflowSnapshot: { settings: { sessionMode: 'workflow' } } }
+  const ctx = context({ run })
+  await adapters.executeNode(node('agent', { prompt: 'first' }), {}, ctx)
+  const second = await adapters.executeNode(node('agent', { prompt: 'second' }), {}, ctx)
+  assert.equal(second.outputs.text, 'cold answer')
+  assert.equal(sent, 1)
+  await adapters.disposeRunSessions(run)
+  assert.equal(disposed, 1)
+})
+
 test('aborting an agent disposes its activation immediately', async () => {
   const services = baseServices()
   let disposed = 0
