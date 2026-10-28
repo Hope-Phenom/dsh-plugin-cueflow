@@ -102,7 +102,7 @@
 | 缺口 | 为什么需要 | 验收 |
 |---|---|---|
 | 循环 / fan-out / map | 对文件、测试用例逐项执行 | ✅ Fan-out：数组逐项/并发（1–8）运行子 workflow，maxItems 100，`onItemError` fail/skip；从机 3 项并发（2）5.1s 完成 |
-| 显式会话模式 | 多步 Agent 保留上下文 | `isolated` / `inherit` / `workflow` 已开放；从机 `<run-id>` 验证 workflow 两节点 childId 一致；`parent` 写回父会话触发 DSH 模型消息 `missing field role`，已关闭 |
+| 显式会话模式 | 多步 Agent 保留上下文 | `isolated` / `inherit` / `workflow` 已开放；从机 `<run-id>` 验证 workflow 两节点 childId 一致；`parent` 会触发 DSH 模型消息 `missing field role` 并损坏父会话（seq 154），已关闭 |
 | 子工作流 | 复用“审查/实现/测试”子图 | ✅ Subflow 节点（workflowId + input/output 映射，深度上限 5）；从机 parent→child 输出 `nested!` |
 | JSON 变换 | 从 Agent 结构化输出取字段 | 安全 JSONPath/模板，不执行任意代码 |
 | HTTP 节点 | 调内部 API/webhook | URL/方法/头/体；凭据走 DSH credentials；重试/超时 |

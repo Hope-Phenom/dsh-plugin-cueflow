@@ -85,6 +85,7 @@
 | D-077 | 2026-10-28 | `workflow` 模式暂不开放：DSH receipt 不暴露 child handle，settle 后 `agents.get` 取不到；4 次从机实测 childId 均变化 | 当时宁可显式不开放，也不虚假通过 | 强行用每次新 child 假装复用 | `adapters.js`、validation、docs/reviews | superseded by D-078 |
 | D-078 | 2026-10-28 | `workflow` 改走 `subagents.sendMessage(parent, childId, content, { signal })` 冷恢复，再等 child idle 并取 session events；从机 `<run-id>` 两节点 childId 一致 | 官方文档要求 `options.signal`；之前漏传导致冷恢复失败。保留 caller 结果语义，不向父会话注入消息 | 依赖 `agents.get` 在 settle 后返回；每次新 child | `adapters.js`、validation、docs/reviews | accepted（P1-1） |
 | D-079 | 2026-10-28 | `parent` 模式暂不开放：向父 Agent `followup` 后，DSH 模型请求报 `messages[4]: missing field role`，CueFlow 自身拿不到 assistant 文本（`PARENT_EMPTY`） | 该错误发生在 DSH 模型请求序列化，不是 CueFlow API body；继续开放会污染父会话并让整轮失败 | 接受“写回但不等结果”的弱化语义；伪造 user 消息 | `adapters.js`、validation、docs/reviews | blocked（P1-1 parent） |
+| D-080 | 2026-10-28 | 即使给 `Agent.followup` 补 `role:'user'`，也不再开放 parent：真实测试后父会话被判 corrupt（seq 154 lacks identified message），无法安全回滚 | 父会话是用户的主对话，破坏代价高于收益；等 DSH 提供专用 parent turn API | 继续在用户会话试错 | `adapters.js`、validation、docs/reviews | blocked |
 
 ---
 
