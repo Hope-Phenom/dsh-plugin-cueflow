@@ -263,7 +263,7 @@ pnpm ui:shot       # Edge headless 截图（若可用）
 
 | 层 | 命令/方式 | 结果 |
 |---|---|---|
-| L1 | `node --test test/*.test.js` | 64 个测试全部通过（graph/validation/template/executor/adapters/API/host apply/templates/approval/CSRF） |
+| L1 | `node --test test/*.test.js` | 69 个测试全部通过（graph/validation/template/executor/adapters/API/host apply/templates/approval/CSRF/queue/budget） |
 | L2 | 同上的 `test/api.test.js` + `test/index.test.js` | 路由、CRUD、422、404、400、取消、Host apply、BOM 请求均通过 |
 | L3 | `pnpm ui:shot` | dark/light/narrow/run/approval 五张截图，无运行时异常 |
 | L3 交互 | CDP 合成 pointer/keyboard 事件 | 节点拖拽、删除连线、重连、自连拒绝、保存、打开运行对话框均通过 |

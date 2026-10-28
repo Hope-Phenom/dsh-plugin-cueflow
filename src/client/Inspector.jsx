@@ -498,6 +498,11 @@ function RunPanel({ workflow, run, events, runHistory, onSelectNode, onOpenRun, 
         <div className="cue-field-hint" style={{ marginTop: 6 }}>
           {t('startedAt')}: {formatTime(run.startedAt)} · {t('endedAt')}: {formatTime(run.endedAt)}
         </div>
+        {run.status === 'queued' && (
+          <div className="cue-field-hint" style={{ marginTop: 6 }}>
+            {t('queuePosition')}: {run.queuePosition ?? '—'} · {run.budget?.maxWallClockMs ? `${Math.round(run.budget.maxWallClockMs / 1000)}s budget` : ''}
+          </div>
+        )}
         {run.error && <div className="cue-warning" style={{ marginTop: 8 }}><Alert size={13} /><span className="cue-warning-text">{run.error.message}</span></div>}
         <div className="cue-inline" style={{ marginTop: 8 }}>
           {running && <button type="button" className="cue-btn danger sm" onClick={onCancelRun}><Stop size={12} /> {t('cancel')}</button>}

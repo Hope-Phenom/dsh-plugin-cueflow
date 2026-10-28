@@ -1,7 +1,7 @@
 # 14 · 工作负载差距
 
 > “能跑通”不等于“能作为工作负载”。本文按 **P0（上真实仓库前必须）** / **P1（规模化）** 列出差距、验收标准与当前状态。
-> 当前已验证：64 个测试、从机主 `desktop` profile、面板 + UI run、Agent/Skill/Command/Shell/File。真实取消与极窄拖拽 E2E 仍未覆盖，但它们是本文 P1 的一小部分。
+> 当前已验证：69 个测试、从机主 `desktop` profile、面板 + UI run、Agent/Skill/Command/Shell/File。真实取消与极窄拖拽 E2E 仍未覆盖，但它们是本文 P1 的一小部分。
 
 ## 0. 两种“工作负载”
 
@@ -48,13 +48,16 @@
 
 ### P0-3 全局运行队列与预算
 
-**现状**：每个 run 有节点并发，但没有全局 active run 上限；连续启动多个长 Agent/Shell 会耗尽资源。
+**状态**：✅ 已实现（M6-P0-3）；真实从机 smoke 待做
+
+**实现**：RunManager 全局 `maxActiveRuns`（默认 2）队列；queued run 有 `queuePosition`，UI 运行面板显示。每 run 记录 `budget`：墙钟上限（默认 30 分钟）、Agent 调用上限（默认 50）、Token 上限（默认 0/不限制，adapter 返回 usage 时统计）。超墙钟/Agent/Token 预算以 `RUN_BUDGET_EXCEEDED` 结束；取消 queued run 会移除队列并落盘。
 
 **验收**：
-- 每 profile `maxActiveRuns`（建议 1–4）与每会话上限；
-- 每 run `maxWallClockMs`、`maxAgentCalls`、`maxTokenBudget`、`maxOutputChars`；
-- 超限时排队或 429/409，并在 UI 显示队列位置；
-- 取消时清理子代理、shell 子进程、定时器。
+- [x] 每 profile `maxActiveRuns`，超出的 run 排队；
+- [x] `maxWallClockMs` / `maxAgentCalls` / `maxTokens` 字段与错误码；
+- [x] UI 显示队列位置；
+- [x] 取消 queued/active run 清理定时器与队列；
+- [ ] 从机真实并发 smoke。
 
 ### P0-4 失败恢复与重试
 

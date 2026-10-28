@@ -271,6 +271,34 @@ test('cancelling while approval is pending cancels the node', async () => {
   assert.equal(run.nodeStates.s.status, 'cancelled')
 })
 
+test('agent-call budget stops further agent nodes', async () => {
+  const workflow = wf([
+    node('agent', 'a', 0, { prompt: 'a' }),
+    node('agent', 'b', 100, { prompt: 'b' }),
+  ])
+  const run = createRunRecord({ workflow })
+  run.budget.maxAgentCalls = 1
+  const { executeNode } = makeExecutor()
+  await executeRun(run, { executeNode, concurrency: 2 })
+  assert.equal(run.status, 'error')
+  assert.equal(run.budget.agentCalls, 1)
+  assert.ok(run.events.some(event => event.nodeId === 'b' && event.type === 'node/error'))
+  assert.equal(run.events.find(event => event.nodeId === 'b' && event.type === 'node/error').data.code, 'RUN_BUDGET_EXCEEDED')
+})
+
+test('token budget is enforced when an adapter reports usage', async () => {
+  const workflow = wf([node('agent', 'a', 0, { prompt: 'a' })])
+  const run = createRunRecord({ workflow })
+  run.budget.maxTokens = 5
+  const { executeNode } = makeExecutor({
+    agent: async () => ({ outputs: { text: 'done', json: null }, meta: { usage: { totalTokens: 10 } } }),
+  })
+  await executeRun(run, { executeNode })
+  assert.equal(run.status, 'error')
+  assert.equal(run.budget.tokens, 10)
+  assert.equal(run.nodeStates.a.error.code, 'RUN_BUDGET_EXCEEDED')
+})
+
 test('disabled nodes are skipped', async () => {
   const workflow = wf([node('agent', 'a', 0, { prompt: 'a' })])
   workflow.nodes[0].disabled = true

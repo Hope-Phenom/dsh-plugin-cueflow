@@ -69,8 +69,12 @@ MVP 没有独立设置页；可配置项都在工作流文档里：
 | `settings.defaultProvider/model` | workflow | 节点未填时的默认路由（预留） |
 | 节点超时 | 节点 config | 缺省值见节点参考 |
 | 输出截断 | Host 常量 | 单节点 20000 字符，事件 2000 条 |
+| 全局运行上限 | `CUEFLOW_MAX_ACTIVE_RUNS` | 默认 2；超出的 run 排队 |
+| 单 run 墙钟预算 | `CUEFLOW_MAX_RUN_MS` | 默认 30 分钟；超时 `RUN_BUDGET_EXCEEDED` |
+| 单 run Agent 调用上限 | `CUEFLOW_MAX_AGENT_CALLS` | 默认 50 |
+| 单 run Token 上限 | `CUEFLOW_MAX_TOKENS` | 默认 0（不限制）；仅在 adapter 返回 usage 时统计 |
 
-后续如果需要全局设置，会增加 `settings.section`；MVP 不增加配置面。
+环境变量在 DSH 启动前设置。后续如果需要全局设置，会增加 `settings.section`；MVP 先用环境变量。
 
 ## 5. 安全边界
 

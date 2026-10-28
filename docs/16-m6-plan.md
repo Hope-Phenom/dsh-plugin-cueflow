@@ -52,9 +52,15 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 
 ### M6-P0-3 · 全局运行队列与预算
 
-**范围**：`maxActiveRuns`（默认 2）；每 run 的 wall-clock / Agent 调用数 / token 预算 / 输出上限；超额排队或 429；取消清理子代理与 shell 进程。
+**状态**：✅ 已实现（单测通过）；真实从机并发 smoke 待做
 
-**验收**：并发启动 10 个 run 不压垮 Host；队列位置可见；超预算 run 以稳定错误码结束。
+**范围**：`maxActiveRuns`（默认 2）；每 run 的 wall-clock / Agent 调用数 / token 预算 / 输出上限；超额排队；取消清理子代理与 shell 进程。
+
+**验收**：
+- [x] 并发启动多个 run 时只运行 `maxActiveRuns` 个；
+- [x] 队列位置可见；取消 queued run 生效；
+- [x] 墙钟/Agent/Token 预算以 `RUN_BUDGET_EXCEEDED` 结束；
+- [ ] 从机真实并发 smoke。
 
 ### M6-P0-4 · 重试 / onError / 局部重跑
 

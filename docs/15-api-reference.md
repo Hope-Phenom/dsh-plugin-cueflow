@@ -206,7 +206,24 @@ Content-Type: application/json
 
 ### RunRecord
 
-字段：`id/workflowId/workflowName/workflowSnapshot/status/inputs/sessionId/cwd/createdAt/startedAt/endedAt/nodeStates/approvals/outputs/error/events`。
+字段：`id/workflowId/workflowName/workflowSnapshot/status/inputs/sessionId/cwd/createdAt/startedAt/endedAt/nodeStates/approvals/budget/outputs/error/events`。`queuePosition` 仅在 `queued` 时存在。
+
+`budget`：
+
+```json
+{
+  "maxWallClockMs": 1800000,
+  "maxAgentCalls": 50,
+  "maxTokens": 0,
+  "agentCalls": 0,
+  "tokens": 0,
+  "startedAt": 0
+}
+```
+
+- 全局同时运行的 run 数默认 2（`CUEFLOW_MAX_ACTIVE_RUNS`）；
+- 超出 `maxWallClockMs` / `maxAgentCalls` / `maxTokens` 时 run 以 `RUN_BUDGET_EXCEEDED` 结束；
+- `maxTokens: 0` 表示不限制；只有 adapter 返回 usage 时才累计 token。
 
 `approvals[id]`：
 
@@ -252,6 +269,7 @@ Content-Type: application/json
 | 409 | `RUN_CONFLICT` | run 已结束，不能重复取消 |
 | 409 | `APPROVAL_CONFLICT` | approval 已决定 |
 | 409 | `APPROVAL_NOT_LIVE` | approval 不属于当前 live run |
+| 500 | `RUN_BUDGET_EXCEEDED` | 墙钟/Agent/Token 预算超限（run.error.code） |
 | 404 | `APPROVAL_NOT_FOUND` | approval 不存在 |
 | 400 | `APPROVAL_INVALID` | 决定不是 allow/reject |
 | 409 | `CAPABILITY_MISSING` | 缺少 DSH 服务（部分路径） |
