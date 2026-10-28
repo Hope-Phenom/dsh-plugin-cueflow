@@ -21,7 +21,8 @@
     "cordis.patch.yml",
     "README.md",
     "README.zh.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "node scripts/build-client.mjs",
@@ -30,7 +31,8 @@
     "ui:build": "vite build --config vite.config.js",
     "ui:shot": "node scripts/screenshot-ui.mjs",
     "e2e": "playwright test",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "bench": "node scripts/bench.mjs"
   },
   "dsh": {
     "bundle": {

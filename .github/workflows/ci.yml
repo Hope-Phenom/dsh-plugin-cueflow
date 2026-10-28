@@ -48,6 +48,9 @@ jobs:
       - name: Playwright canvas E2E
         run: pnpm e2e
 
+      - name: Graph benchmark
+        run: pnpm bench
+
       - name: Pack dry run
         run: pnpm pack --dry-run
 

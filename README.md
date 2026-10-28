@@ -40,6 +40,7 @@ pnpm ui         # Vite + Mock Host at http://127.0.0.1:5199
 pnpm ui:shot    # headless screenshots, if Edge/Chrome is available
 pnpm e2e        # Playwright narrow-canvas E2E (Edge)
 pnpm lint       # ESLint baseline
+pnpm bench      # 200-node / 500-edge graph benchmark
 ```
 
 The independent UI test page imports the same `src/client` code used in DSH; only the Host and slot container are mocked.
@@ -57,6 +58,8 @@ The independent UI test page imports the same `src/client` code used in DSH; onl
 | [Readiness gaps](docs/14-readiness-gaps.md) | What is still missing for production workloads |
 | [API reference](docs/15-api-reference.md) | Host routes, data model, errors, limits |
 | [M6 plan](docs/16-m6-plan.md) | P0/P1 workload-readiness TODO and acceptance |
+| [Compatibility](docs/17-compatibility.md) | DSH/Node/OS matrix, release checks, benchmark |
+| [Changelog](CHANGELOG.md) | Version history |
 | [Testing](docs/09-testing-strategy.md) | Four-layer strategy |
 | [Decisions](docs/decisions.md) | Autonomous design decisions |
 

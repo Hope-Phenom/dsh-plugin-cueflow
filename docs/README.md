@@ -54,6 +54,7 @@ ComfyUI 把扩散模型的一整条推理链拆成有类型端口的节点，让
 | [14 · 工作负载差距](14-readiness-gaps.md) | 从“能跑”到“可承载工作负载”还差什么：审批、队列、预算、重试、恢复、表达力、工程化。 |
 | [15 · API 参考](15-api-reference.md) | Host 路由、请求/响应、Workflow/Run 数据模型、错误码、限制、会话语义与 curl 示例。 |
 | [16 · M6 计划](16-m6-plan.md) | 从可运行到可承载工作负载的 P0/P1 TODO、验收标准与实施顺序。 |
+| [17 · 兼容性与发布](17-compatibility.md) | DSH/Node/OS 矩阵、发布检查、升级回滚、性能基线。 |
 | [决策记录表](decisions.md) | 所有自主决策的编号、理由、替代方案与影响；后续调整以此表为入口。 |
 | [设计自审](reviews/2026-10-27-design-review.md) | 文档自审清单、发现的问题与修正。 |
 | [实现自审](reviews/2026-10-27-implementation-review.md) | 实现阶段发现的问题、修复与真实 DSH 联调记录。 |

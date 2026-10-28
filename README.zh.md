@@ -40,6 +40,7 @@ pnpm ui         # Vite + Mock Host，http://127.0.0.1:5199
 pnpm ui:shot    # 无头截图（需要 Edge/Chrome）
 pnpm e2e        # Playwright 窄窗口画布 E2E（Edge）
 pnpm lint       # ESLint 基线
+pnpm bench      # 200 节点 / 500 边图基准
 ```
 
 独立 UI 测试页复用 `src/client` 的真实组件，只替换 Host 与 slot 容器。
@@ -57,6 +58,8 @@ pnpm lint       # ESLint 基线
 | [工作负载差距](docs/14-readiness-gaps.md) | 生产使用还缺什么 |
 | [API 参考](docs/15-api-reference.md) | Host 路由、数据模型、错误码、限制 |
 | [M6 计划](docs/16-m6-plan.md) | P0/P1 工作负载 TODO 与验收 |
+| [兼容性与发布](docs/17-compatibility.md) | DSH/Node/OS 矩阵、发布检查、性能基线 |
+| [变更日志](CHANGELOG.md) | 版本记录 |
 | [测试策略](docs/09-testing-strategy.md) | 四层测试 |
 | [决策记录](docs/decisions.md) | 自主决策与待验证项 |
 

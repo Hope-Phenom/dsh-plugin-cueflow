@@ -142,11 +142,11 @@
 | CI（Windows runner） | ✅ test/build/ui:build/ui:shot/pack dry-run；E2E 待加 |
 | 类型检查 / lint | ⚠️ ESLint 基线已加；TypeScript checkJs 暂缓 |
 | 浏览器 E2E | Playwright 覆盖拖拽、连线、运行、取消；可截图对比 |
-| 发布 | npm 包（当前 `private: true`）、版本号、CHANGELOG、兼容矩阵 |
+| 发布 | CHANGELOG + 兼容矩阵已补；npm 仍 private，干净环境安装待做 |
 | 存储迁移测试 | 旧 schema → 新 schema 自动迁移，失败可回滚 |
 | 遥测/错误关联 | runId → node → child session → command 的可追踪链路 |
 | 安全测试 | CSRF/Origin、路径遍历、超大 body、恶意 workflow、审批拒绝 |
-| 性能测试 | 200 节点图加载/保存/执行；并发 run 压测 |
+| 性能测试 | 200/500 graph benchmark 已加；并发 run 压测待做 |
 
 ## 6. 最小生产门槛（建议）
 
