@@ -117,7 +117,7 @@ DSH 父会话（用户选中的 live Agent）
 
 ### 5.1 显式会话模式（M6-P1-1）
 
-当前默认是 `isolated`：每个 Agent/Skill 节点一个 child。对多步编码任务，这会丢失“审查→修改→测试”的上下文连续性。因此 M6 计划引入 run 级 `sessionMode`：
+当前默认是 `isolated`：每个 Agent/Skill 节点一个 child。对多步编码任务，这会丢失“审查→修改→测试”的上下文连续性。因此 M6 计划引入 run 级 `sessionMode`。**当前构建只开放 `isolated` / `inherit`**；`workflow` 与 `parent` 仍待实现（见下）：
 
 | 模式 | 语义 | 用途 |
 |---|---|---|
@@ -127,7 +127,7 @@ DSH 父会话（用户选中的 live Agent）
 
 `workflow` 是投入产出最高的模式：它保留上下文但不写入父会话；代价是该 session 内节点串行、上下文会增长。`parent` 适合“助手在当前任务里继续做”，但不适合作为默认：会污染 transcript、无法并行、取消语义复杂。
 
-实现前必须确认 DSH 是否支持向已有 child session 追加 turn；不支持就退回 `fork` + 摘要，不假装支持。该模式排在 P0-1..P0-6 之后，见 [16 · M6 计划](16-m6-plan.md)。
+实现前必须确认 DSH 是否支持向已有 child session 追加 turn。已确认 `ctx.subagents.sendMessage()` 存在，但它只返回 inbox id，不提供“等待该 turn 结果”的宿主 API；因此 `workflow` 模式还需要一个结果收集设计，`parent` 模式则需要向父会话发送 turn 的 API。当前先开放 `isolated` / `inherit`（`inherit` 选 `fork`，仍为 child），不把未验证的模式伪装成可用。该模式排在 P0-1..P0-6 之后，见 [16 · M6 计划](16-m6-plan.md)。
 
 ## 6. 为什么选 `main` + `sidebar.panellist`
 

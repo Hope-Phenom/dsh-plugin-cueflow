@@ -427,6 +427,19 @@ function WorkflowForm({ workflow, issues, runHistory, onUpdateWorkflow, onDelete
           <label className="cue-field-label" htmlFor="cue-wf-cwd">{t('cwd')}</label>
           <input id="cue-wf-cwd" className="cue-input" value={workflow.settings?.cwd ?? ''} placeholder="F:\\WorkSpace\\project" onChange={event => onUpdateWorkflow({ settings: { ...(workflow.settings ?? {}), cwd: event.target.value } })} />
         </div>
+        <div className="cue-field">
+          <label className="cue-field-label" htmlFor="cue-wf-session">{t('sessionMode')}</label>
+          <select
+            id="cue-wf-session"
+            className="cue-select"
+            value={workflow.settings?.sessionMode ?? 'isolated'}
+            onChange={event => onUpdateWorkflow({ settings: { ...(workflow.settings ?? {}), sessionMode: event.target.value } })}
+          >
+            <option value="isolated">{t('sessionModeIsolated')}</option>
+            <option value="inherit">{t('sessionModeInherit')}</option>
+          </select>
+          <div className="cue-field-hint">{t('sessionModeHint')}</div>
+        </div>
       </div>
 
       <div className="cue-section">

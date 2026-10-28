@@ -162,6 +162,15 @@ Input ─value──▶ Condition ─true──▶ Agent(fix)
 - **工作目录**：Shell/File 及子代理的 cwd；建议填项目目录。
 - **Input 字段**：只作用于本次 run，不写回 workflow；必填为空时 Start 被禁用，Host 也会二次校验。
 
+### 会话模式
+
+工作流设置里可选：
+
+- **隔离（默认）**：每个 Agent/Skill 节点一个 child session，适合并行与可复现；
+- **继承父会话快照（fork）**：child 仍独立，但继承父会话上下文；适合需要当前任务背景的节点。
+
+`workflow`（一次 run 复用 child）和 `parent`（写回当前对话）当前**未开放**，因为 DSH 还没有提供“等待已有 child turn 结果/向父会话发 turn”的宿主 API；不会用假实现冒充。
+
 ### 运行会在“同一个会话”里吗？
 
 **不是所有节点都在同一个 DSH 会话里。** 准确地说：

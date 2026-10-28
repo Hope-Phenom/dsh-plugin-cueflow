@@ -248,6 +248,11 @@ export function validateWorkflow(workflow) {
     warn('EMPTY_WORKFLOW', 'Workflow has no executable nodes yet.')
   }
 
+  const sessionMode = workflow.settings?.sessionMode
+  if (sessionMode !== undefined && sessionMode !== 'isolated' && sessionMode !== 'inherit') {
+    error('SESSION_MODE', 'settings.sessionMode must be "isolated" or "inherit" in this build.')
+  }
+
   const concurrency = workflow.settings?.concurrency
   if (concurrency !== undefined) {
     const n = Number(concurrency)

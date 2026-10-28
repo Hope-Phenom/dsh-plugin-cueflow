@@ -104,6 +104,14 @@ test('empty workflow is saveable but warns', () => {
   assert.ok(report.issues.some(issue => issue.code === 'EMPTY_WORKFLOW'))
 })
 
+test('unsupported session mode is rejected', () => {
+  const workflow = createEmptyWorkflow('session mode')
+  workflow.settings.sessionMode = 'parent'
+  const report = validateWorkflow(workflow)
+  assert.equal(report.ok, false)
+  assert.ok(report.issues.some(issue => issue.code === 'SESSION_MODE'))
+})
+
 test('unsupported schemaVersion is rejected', () => {
   const workflow = createEmptyWorkflow()
   workflow.schemaVersion = 99

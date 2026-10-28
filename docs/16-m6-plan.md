@@ -104,14 +104,21 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 
 ### M6-P1-1 · 显式会话模式
 
-**范围**：run 级 `sessionMode: isolated | workflow | parent`。
-- `isolated`：当前行为，每节点 child；
+**状态**：⚠️ 已开放 `isolated` / `inherit`；`workflow` / `parent` 待实现
+
+**范围**：run 级 `sessionMode: isolated | inherit | workflow | parent`。
+- `isolated`：当前行为，每节点 child（默认）；
+- `inherit`：选择 `fork` provider，child 继承父会话快照，仍不写回父会话；
 - `workflow`：一次 run 复用一个 child，保留多步上下文，不污染父会话；
 - `parent`：在选中的父会话执行，结果写回对话；要求父会话 idle + 单 run 锁 + 警告。
 
-**验收**：三种模式在 UI 可选；`workflow` 的“审查→修改→测试”能引用前一步上下文；`parent` 结果出现在父会话且不会并发冲突；run JSON 记录 mode/childId。
+**验收**：
+- [x] UI 可选 `isolated` / `inherit`；非法值被 validation 拒绝；
+- [x] run JSON 记录 `settings.sessionMode`；
+- [ ] `workflow` 共享 child（需要 child turn 结果收集 API）；
+- [ ] `parent` 写回父会话（需要父会话 turn API）。
 
-**前置**：确认 DSH 是否支持向已有 child session 追加 turn；不支持则先实现 fork + 摘要，不假装支持。
+**前置结论**：DSH 有 `ctx.subagents.sendMessage()`，但只返回 inbox id，不提供等待该 turn 结果的宿主 API；`parent` 也没有向自身发送 turn 的公开 seam。不能把两种模式伪装成可用。
 
 ### M6-P1-2 · 循环 / fan-out / 子工作流
 

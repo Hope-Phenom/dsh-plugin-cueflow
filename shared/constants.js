@@ -102,6 +102,7 @@ export const DEFAULT_WORKFLOW_SETTINGS = Object.freeze({
   cwd: '',
   defaultProvider: '',
   defaultModel: '',
+  sessionMode: 'isolated',
 })
 
 /** Whether a run status is terminal. */

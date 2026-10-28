@@ -107,6 +107,26 @@ test('agent node uses caller delivery and returns text/json', async () => {
   assert.equal(captured.request.prompt[0].type, 'text')
 })
 
+test('inherit session mode selects the fork provider', async () => {
+  const services = baseServices()
+  let captured
+  services.subagents.startActivation = async spec => {
+    captured = spec
+    return {
+      childId: 'session-child',
+      result: Promise.resolve({ output: [{ type: 'text', text: 'ok' }], stopReason: 'completed' }),
+      dispose: async () => {},
+    }
+  }
+  const adapters = createAdapters({ getServices: () => services })
+  await adapters.executeNode(
+    node('agent', { prompt: 'x' }),
+    {},
+    context({ run: { inputs: {}, vars: {}, workflowSnapshot: { settings: { sessionMode: 'inherit' } } } }),
+  )
+  assert.equal(captured.provider, 'fork')
+})
+
 test('aborting an agent disposes its activation immediately', async () => {
   const services = baseServices()
   let disposed = 0
