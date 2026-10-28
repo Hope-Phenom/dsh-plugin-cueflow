@@ -46,7 +46,10 @@
 | D-038 | 2026-10-27 | `agentPreset` 只在 provider `capabilities.agentPreset` 为真时传入，否则明确报错 | DSH 会在 start 前校验请求能力，静默丢弃会让用户误解 | 不传、静默忽略 | `adapters.js` | accepted |
 | D-039 | 2026-10-27 | `POST /runs` 在调度前校验必填 Input 的运行值 | 运行前失败比节点内 `INPUT_REQUIRED` 更便宜、更清晰 | 只靠 UI 校验；让 adapter 报错 | `shared/validation.js`、`api.js` | accepted |
 | D-040 | 2026-10-27 | 轮询接口 `after` 省略时默认 -1，保证首屏包含 `run/start`（seq 0） | 事件序号从 0 开始；默认 0 会丢掉首条事件 | seq 从 1 开始；首屏单独请求 | `runs.js`、`api.js` | accepted |
-| D-041 | 2026-10-27 | 真实 DSH 联调用临时 profile `cueflow-check`，不改当前 `desktop` profile | 避免重启/污染用户正在使用的 DSH；仍能验证真实模块加载与 API | 直接安装到 desktop 并重启 | 临时 profile（已删除） | accepted |
+| D-041 | 2026-10-27 | 真实 DSH 联调用临时 profile `cueflow-check`，不改当前 `desktop` profile | 避免重启/污染用户正在使用的 DSH；仍能验证真实模块加载与 API | 直接安装到 desktop 并重启 | 临时 profile（已删除） | accepted（后被 D-044 扩展） |
+| D-042 | 2026-10-28 | Shell 节点必须显式传 `sandboxPolicy`：live session 用 session cwd/mode，无 session 用 workflow cwd 作 workspace root | 从机实测 `workspace-write` 默认 root 为 `C:\Users\<user>`，`%TEMP%` 在其内部导致 Windows ACL 拒绝 | 只依赖 shell executor 默认 policy；强制 danger-full-access | `adapters.js`、`index.js` | accepted（从机已验证） |
+| D-043 | 2026-10-28 | HTTP body 解析容忍 UTF-8 BOM | PowerShell 5.1 `Set-Content -Encoding UTF8` 产生 BOM；真实测试出现 `BAD_JSON` | 要求客户端去 BOM；拒绝 BOM | `api.js` + API 测试 | accepted |
+| D-044 | 2026-10-28 | 从机主 `desktop` profile 用 `dsh plugin add` 安装，临时 profile 只做无干扰冒烟；安装/重启由用户手动完成 | 保持用户日常 DSH 可控；仍获得真实桌面验证 | 自动结束/重启 DSH；只测临时 profile | 从机安装流程 | accepted |
 
 ---
 
@@ -104,12 +107,12 @@ DSH 的 client bundle 是单文件 CJS 工厂，不能可靠地加载相对 ESM 
 
 | 决策 | 需要验证 | 验证方式 | 状态 |
 |---|---|---|---|
-| D-007 | 真实 user-only Skill 的 `ctx.skills.get()` + 子代理执行 | L4：Skill 节点选择 `diagnose-windows-sandbox-acl` 或用户 skill | ⏳ 未跑（有 mock 单测） |
-| D-008 | `ctx.commands.execute` 的返回形状与可用性 | L4：跑 `/simplify` 或安全命令 | ⏳ 未跑（有 mock 单测） |
-| D-009 | `spawn`/`fork` 的 `childId` 规则、能力标志 | L4：Agent 节点 `Reply with exactly OK` | ✅ 已验证：completed，childId 创建/释放 |
-| D-006 | 轮询在真实 DSH 的延迟与资源 | L4：面板内运行确定性图 | ✅ 已验证：16 条事件、completed |
-| D-003 | `sidebar.panellist` 点击是否自动选 main key | L4：打开面板 | ✅ 已验证：点击 CueFlow 打开 main panel |
-| D-013 | esbuild 产物能否被 module loader 接受 | L4：加载面板 | ✅ 已验证：真实 DSH 面板渲染 |
+| D-007 | 真实 user-only Skill 的 `ctx.skills.get()` + 子代理执行 | 从机 `code-review` | ✅ 已验证：返回 `OK`，childId 创建/释放 |
+| D-008 | `ctx.commands.execute` 的返回形状与可用性 | 从机 `/remote-use status` | ✅ 已验证：返回状态文本 |
+| D-009 | `spawn`/`fork` 的 `childId` 规则、能力标志 | 本机/从机 Agent/Skill | ✅ 已验证：completed，childId 创建/释放 |
+| D-006 | 轮询在真实 DSH 的延迟与资源 | 本机/从机面板内运行 | ✅ 已验证：事件轮询、completed |
+| D-003 | `sidebar.panellist` 点击是否自动选 main key | 从机主 DSH | ✅ 已验证：点击 CueFlow 打开 main panel |
+| D-013 | esbuild 产物能否被 module loader 接受 | 从机主 DSH | ✅ 已验证：面板渲染 |
 | D-038 | provider 能力不匹配时的错误是否可读 | 用不支持 preset 的 provider 触发 | ⏳ 未跑（逻辑有单测） |
 
 ---
@@ -120,3 +123,4 @@ DSH 的 client bundle 是单文件 CJS 工厂，不能可靠地加载相对 ESM 
 |---|---|
 | 2026-10-27 | 初版：D-001 ~ D-035 |
 | 2026-10-27 | 实现后修订：D-003/D-006/D-009/D-013 经真实 DSH 验证；新增 D-036 ~ D-041；D-007/D-008 仍待真实执行 |
+| 2026-10-28 | 从机 <test-host> 实机验证：D-007/D-008 已通过；新增 D-042（sandboxPolicy）、D-043（BOM）、D-044（从机安装流程） |

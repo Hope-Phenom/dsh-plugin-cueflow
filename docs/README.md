@@ -3,8 +3,8 @@
 > DSH 的 ComfyUI 式工作流编排插件。用节点图把 **输入 → Skill / Command / Agent / Shell → 输出** 串成可复用、可检查、可分享的编码与通用工作流。
 >
 > 插件名与仓库目录名一致：`dsh-plugin-cueflow`。
-> 当前状态：**M1 设计完成，M2–M4 已实现，M5 未开始**（2026-10-27）。
-> 已在临时 DSH profile 中完成真实联调：Host 路由、catalog、workflow 保存、确定性图、Shell、Read File、Agent 节点与面板内运行均通过；临时 profile 与测试数据已清理，未改动当前 `desktop` profile。
+> 当前状态：**M1 设计完成，M2–M4 已实现并在从机 <test-host> 实机验证，M5 未开始**（2026-10-28）。
+> 从机临时 profile 与 `desktop` profile 均已完成真实联调：Host 路由、catalog、workflow 保存、确定性图、Read File、Shell、Agent、user-only Skill、Command 与面板内运行均通过。主 `desktop` profile 已安装插件；临时 profile / 测试数据已清理。
 
 ---
 
@@ -25,9 +25,9 @@ ComfyUI 把扩散模型的一整条推理链拆成有类型端口的节点，让
 |---|---|---|
 | 在 DSH 左侧栏打开全屏 CueFlow 面板 | ✅ 真实 DSH 已验证 | 注册 `sidebar.panellist` + `main` keyed slot；面板可打开 |
 | 画布：拖拽、缩放、平移、新建节点、连线、删除、撤销/重做 | ✅ 已实现 | 独立 UI 页 + 真实 DSH；拖拽/删除/重连已用 CDP 操作验证 |
-| 节点：Input / Template / Agent / Skill / Command / Shell / File Read / Condition / Merge / Output / Note | ✅ 已实现 | Agent/Shell/File/确定性节点真实 DSH 已验证；Skill/Command 适配器有单测，真实执行未跑 |
-| Skill 节点支持模型可见与仅用户可见两类 Skill | ✅ 实现 + 单测 | trusted `ctx.skills.get()`，不检查 `modelInvocable`；真实 Skill 执行未跑 |
-| Command 节点调用 DSH 斜杠命令 | ✅ 实现 + 单测 | `ctx.commands.execute` 优先、`find+handler` 回退；真实命令执行未跑 |
+| 节点：Input / Template / Agent / Skill / Command / Shell / File Read / Condition / Merge / Output / Note | ✅ 从机实机已验证 | 确定性 / Shell / File / Agent / user-only Skill / Command / UI 运行均通过 |
+| Skill 节点支持模型可见与仅用户可见两类 Skill | ✅ 从机实机已验证 | trusted `ctx.skills.get()`；`code-review`（user-only）返回 `OK` |
+| Command 节点调用 DSH 斜杠命令 | ✅ 从机实机已验证 | `ctx.commands.execute` 执行 `/remote-use status` 并返回文本 |
 | 运行引擎：DAG 调度、并发、超时、取消、条件跳过、事件日志 | ✅ 已实现 + 测试 | 见 [执行引擎](07-execution-engine.md) |
 | 工作流与运行记录持久化 | ✅ 真实 DSH 已验证 | `$DSH_HOME/storages/dsh-plugin-cueflow/`；真实保存/读取成功 |
 | 独立 UI 测试页 + Mock Host | ✅ 已实现 | `pnpm ui` / `pnpm ui:shot`；不需要重启 DSH |
@@ -51,6 +51,7 @@ ComfyUI 把扩散模型的一整条推理链拆成有类型端口的节点，让
 | [决策记录表](decisions.md) | 所有自主决策的编号、理由、替代方案与影响；后续调整以此表为入口。 |
 | [设计自审](reviews/2026-10-27-design-review.md) | 文档自审清单、发现的问题与修正。 |
 | [实现自审](reviews/2026-10-27-implementation-review.md) | 实现阶段发现的问题、修复与真实 DSH 联调记录。 |
+| [从机实机验证](reviews/2026-10-28-remote-verification.md) | 从机 <test-host> 的安装、Shell/Skill/Command/UI 实测与修复。 |
 
 ## 4. 一页架构
 
@@ -99,16 +100,15 @@ ComfyUI 把扩散模型的一整条推理链拆成有类型端口的节点，让
 5. 改 DSH 集成方式 → 先改 [08 DSH 集成](08-dsh-integration.md)，并在决策表新增/修订条目。
 6. 每个里程碑结束更新 [10 实施计划](10-implementation-plan.md) 的进度与验收证据。
 
-## 7. 已验证的事实（2026-10-27）
+## 7. 已验证的事实（2026-10-28，从机 <test-host>）
 
-- 临时 profile `cueflow-check`（从 `web` 模板创建）安装本插件后，`/api/dsh/dsh-plugin-cueflow/health` 返回 `ok:true`，`/catalog` 能列出 node types、skills、commands、live agents。
-- 真实 DSH 中保存 workflow 成功；`storages/dsh-plugin-cueflow/workflows/` 出现 JSON。
-- 真实 DSH 中执行确定性图（Input → Template → Output）得到 `hello!`。
-- 真实 DSH 中执行 Shell 节点（`echo cueflow-shell`）得到 stdout。
-- 真实 DSH 中执行 Read File 节点得到文件内容。
-- 真实 DSH 中执行 Agent 节点（`Reply with exactly OK`）得到 `OK`，`meta.childId` 已创建并在结束后 dispose。
-- 真实 DSH 面板可打开；从面板运行确定性图，状态 `completed`，输出 `hello!`，轮询到 16 条事件。
-- 临时 profile 与测试数据已删除；没有改动用户当前正在使用的 `desktop` profile。
+- 临时 profile `cueflow-check`：`/health` → `ok:true`，`/catalog` 能列出 node types、skills、commands、live agents。
+- 临时 profile：确定性图 → `hello!`；Read File → `remote-file-ok`；Shell `echo cueflow-remote-shell` → stdout（需给临时 profile 补 sandbox shim）。
+- 临时 profile 发现并修复：Shell 必须按 session / workflow cwd 解析 `sandboxPolicy`；API 必须容忍 PowerShell 5.1 的 UTF-8 BOM。
+- 主 `desktop` profile：插件安装成功；面板打开，3 节点 / 2 连线正常渲染；UI 运行 → `completed`，输出 `hello!`。
+- 主 `desktop` profile：Command 节点执行 `/remote-use status` 返回文本；user-only Skill `code-review` 返回 `OK`；Shell `echo` 返回 stdout。
+- 临时 profile 与测试数据已清理；主 `desktop` profile 保留插件安装。
+- 从机实机截图：`remote-cueflow-panel-window.png`、`remote-cueflow-run-window.png`（`.screenshots/`）。
 
 ## 8. 外部参考
 

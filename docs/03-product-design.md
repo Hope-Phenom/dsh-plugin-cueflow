@@ -97,9 +97,9 @@ MVP：任一节点失败 → 整个 run 标记 `error`，停止调度后续节�
 | A2 | 能从空白画布创建 Input → Agent → Output 并保存 | 独立 UI 测试页 + 真实 DSH（Input→Template→Output 已跑；Agent API 已跑） |
 | A3 | 能拖线连接兼容端口，拒绝不兼容端口与成环 | 单元测试 + UI/CDP 交互测试 |
 | A4 | 能运行纯确定性图（Input → Template → Output）并看到输出 | Mock Host + 单元测试 + 真实 DSH |
-| A5 | 能运行 Skill 节点，且 `modelInvocable:false` 的 Skill 也可用 | Mock/单测已过；真实 DSH 执行待跑 |
-| A6 | 能运行 Command 节点并看到成功/错误文本 | Mock/单测已过；真实 DSH 执行待跑 |
-| A7 | 运行中可取消；节点状态与日志实时更新 | 单元测试 + 真实 DSH 运行轮询；真实取消待跑 |
+| A5 | 能运行 Skill 节点，且 `modelInvocable:false` 的 Skill 也可用 | 从机 `code-review` 实机返回 `OK` |
+| A6 | 能运行 Command 节点并看到成功/错误文本 | 从机 `/remote-use status` 返回状态文本 |
+| A7 | 运行中可取消；节点状态与日志实时更新 | 单元测试 + 从机 UI 运行轮询；真实取消待跑 |
 | A8 | 刷新页面/重启 DSH 后 workflow 仍在 | API 保存/读取 + 真实 DSH 文件落盘；重启未做 |
 | A9 | 类型不兼容、必填未连接、未知节点在运行前被指出 | 单元测试 + UI |
 | A10 | 不重启 DSH 即可跑完单元测试、构建 UI、截图验证 | `pnpm test` / `pnpm build` / `pnpm ui:shot` |

@@ -2,7 +2,7 @@
 
 > 调研日期：2026-10-27。依据 DSH 官方文档站点、本机 DSH `0.2.1-rc.3` 的插件实现与 profile 结构。本文记录 **CueFlow 会依赖的公开契约**，以及明确不能依赖的实现细节。
 >
-> **实现后更新**：`ctx.shell`、`ctx.fs`、`ctx.subagents`（Agent 节点）、`ctx.webServer`、`ctx.skills` catalog 已在临时 DSH profile 中实测；`ctx.commands.execute` 与真实 Skill 执行仍未实测，见 [08 · DSH 集成](08-dsh-integration.md#47-真实-dsh-实测结果)。
+> **实现后更新**：`ctx.shell`、`ctx.fs`、`ctx.subagents`、`ctx.webServer`、`ctx.skills`、`ctx.commands.execute` 与 `ctx.sandboxPolicy` 均已在从机 <test-host> 的主 `desktop` profile 实测。Shell 必须显式传 `sandboxPolicy`，见 [08 · DSH 集成](08-dsh-integration.md#47-真实-dsh-实测结果)。
 
 ## 1. 插件的最小形态
 

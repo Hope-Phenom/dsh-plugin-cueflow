@@ -294,12 +294,16 @@ return { text: result.text ?? '' }
 ### 4.5 Shell
 
 ```js
+// Shell must carry the per-call policy; otherwise workspace-write defaults to
+// the DSH process home and Windows ACL may refuse the temp root.
+const sandboxPolicy = resolveShellSandboxPolicy(services, context)
 const spec = shell.resolve({
   command,
   workdir: workdir || cwd,
   timeoutMs,
   signal,
   ...(stdin ? { stdin } : {}),
+  ...(sandboxPolicy ? { sandboxPolicy } : {}),
   stdoutMaxBytes: 256 * 1024,
 })
 const execution = await shell.execute(spec)
@@ -309,6 +313,7 @@ const result = await (execution.result ?? execution.done ?? execution)
 - 兼容 `execution.result` 为 Promise 或值。
 - 非零退出默认失败；错误消息包含 stderr 尾部 2000 字符。
 - `stdout`/`stderr` 取 `CollectedOutput.text`；若实际是字符串，直接使用。
+- **必须**解析 `ctx.sandboxPolicy`：优先使用 live session 的 cwd/mode；没有 session 时保留部署默认 mode，并用 workflow cwd 作为 workspace root。否则 Windows ACL 会把 `%TEMP%` 判为 workspace 内部而拒绝运行。
 
 ### 4.6 Read File
 
@@ -324,19 +329,21 @@ let text = await fs.readText(target, signal)
 
 ### 4.7 真实 DSH 实测结果
 
-2026-10-27 使用临时 profile `cueflow-check`（从 `web` 模板创建，端口 2618）验证：
+2026-10-28 使用从机 <test-host> 验证：
 
 | 能力 | 实测结果 |
 |---|---|
-| Host 加载 + 路由注册 | `GET /health` → `ok:true`，全部 capability 为 true |
-| Catalog | 11 个 node types；skills/commands 列表可用；创建会话后 agents=1 |
-| Agent | 节点返回 `OK`，842ms，`childId` 创建并在 finally dispose；父会话无额外通知 |
-| Shell | `echo cueflow-shell` → stdout `cueflow-shell`，exitCode 0 |
-| Read File | 读取 `.tmp-fixture.txt` → `file-read-ok` |
-| 确定性图 | Input → Template → Output → `hello!` |
-| 面板 UI | 真实 DSH 打开 CueFlow，面板内运行确定性图 → `completed`，16 条事件 |
+| 临时 profile | `cueflow-check`（2619）：health/catalog、确定性图 `hello!`、Read File `remote-file-ok` |
+| 临时 profile Shell | 初测 `SANDBOX_UNAVAILABLE`；补 `runnerCommand` shim + `sandboxPolicy` 后成功 |
+| 主 desktop 安装 | 依赖与 bundles 写入；端口 60167 的 CueFlow route 正常 |
+| 面板 UI | 真实主 DSH 打开 CueFlow，3 节点 / 2 连线正常渲染 |
+| UI 运行 | 从面板运行 `Remote UI deterministic` → `completed`，输出 `hello!` |
+| Command | `/remote-use status` → 返回 “remote-use is off for this session…” |
+| user-only Skill | `code-review` → `OK`，childId 创建/释放 |
+| Shell | `echo cueflow-remote-shell` → stdout，exitCode 0 |
+| BOM | 发现 PowerShell 5.1 的 UTF-8 BOM 导致 `BAD_JSON`；API 已修复并加测试 |
 
-**未实测**：真实 user-only Skill、真实 Command（避免模型/命令副作用）；它们有 mock 单测与 API 测试覆盖。
+**仍未实测**：真实取消中的子代理、极窄窗口拖拽 E2E。其余 MVP 能力已从机实机覆盖。
 
 ## 5. 客户端注册
 
@@ -434,9 +441,9 @@ dsh plugin --profile desktop add "F:\WorkSpace\dsh-plugin-cueflow"
 - [x] catalog 能列出当前用户 skills / commands / agents。
 - [x] 纯确定性图能运行并输出。
 - [x] Agent 节点能创建子会话并返回文本；父会话没有多余通知。
-- [ ] Skill 节点能加载 `modelInvocable:false` 的 skill（mock 单测已过，真实未跑）。
-- [ ] Command 节点能执行 `/simplify` 之类的命令（mock 单测已过，真实未跑）。
-- [x] Shell 节点在真实 DSH 中执行 `echo` 并返回 stdout。
-- [x] 面板内运行、轮询状态、输出展示。
+- [x] Skill 节点能加载 `modelInvocable:false` 的 skill：从机 `code-review` → `OK`。
+- [x] Command 节点能执行斜杠命令：从机 `/remote-use status` → 文本。
+- [x] Shell 节点在真实 DSH 中执行 `echo` 并返回 stdout（含 sandboxPolicy 解析）。
+- [x] 面板内运行、轮询状态、输出展示（从机 UI 运行 `completed`，输出 `hello!`）。
 - [ ] 取消运行后，子代理被 dispose（单元测试覆盖；真实未跑）。
 - [x] 保存后 workflow 仍在；真实 DSH 文件落盘。

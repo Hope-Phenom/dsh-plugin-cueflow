@@ -10,7 +10,7 @@
 | **M1 · 设计** | 产品/架构/节点/UI/执行/集成/测试文档 + 决策表 | `03`–`09`、`decisions.md`、`reviews/` | 文档自审通过；关键决策有记录 | 已完成 |
 | **M2 · 核心** | 共享图模型、校验、插值、执行器、存储 | `shared/*`、`lib/core/*`、L1 测试 | `pnpm test` 全绿（不依赖 DSH） | ✅ 已完成 |
 | **M3 · Host** | REST API、catalog、适配器、持久化 | `lib/index.js`、`lib/core/api.js`、`catalog.js`、`adapters.js`、L2 测试 | Mock 服务下 API 全流程通过 | ✅ 已完成 |
-| **M4 · Client** | DSH 面板、画布、检查器、运行 UI | `src/client/*`、`lib/client.js`、`ui/*` | 独立 UI 页可编辑/运行/截图；真实 DSH smoke | ✅ 已完成（Skill/Command 真实执行未跑） |
+| **M4 · Client** | DSH 面板、画布、检查器、运行 UI | `src/client/*`、`lib/client.js`、`ui/*` | 独立 UI 页可编辑/运行/截图；真实 DSH smoke | ✅ 已完成（从机实机验证） |
 | **M5 · 打磨** | 局部重跑、子图、分组、Bypass、SSE、E2E | 后续迭代 | 按新文档验收 | 未开始 |
 
 ## 2. M2 详细任务
@@ -54,9 +54,9 @@
 | A2 | Input → Agent → Output 可编辑保存 | L3 截图 + L4 |
 | A3 | 兼容端口可连，不兼容/成环被拒 | L1 测试 + L3 |
 | A4 | 纯确定性图可运行并输出 | L1/L2 测试 |
-| A5 | user-only Skill 可运行 | L1 mock（真实执行未跑） |
-| A6 | Command 节点可运行 | L1 mock（真实执行未跑） |
-| A7 | 运行中可取消，状态/日志更新 | L1/L3；真实 UI 运行完成轮询 |
+| A5 | user-only Skill 可运行 | 从机 `code-review` 实机返回 `OK` |
+| A6 | Command 节点可运行 | 从机 `/remote-use status` 返回文本 |
+| A7 | 运行中可取消，状态/日志更新 | L1/L3；从机 UI 运行完成并轮询 |
 | A8 | 刷新/重启后 workflow 仍在 | L2 + L4（真实保存/读取） |
 | A9 | 运行前校验 | L1/L2 |
 | A10 | 不重启 DSH 完成 L1–L3 | `pnpm test` / `pnpm build` / `pnpm ui:shot` |
@@ -74,29 +74,29 @@
 
 ## 7. 本轮完成定义（Definition of Done）
 
-本轮（2026-10-27）结束时：
+本轮（2026-10-28）结束时：
 
-- 文档：`docs/` 主文档 + 11 篇次级文档 + 决策表 + 设计/实现自审记录。
+- 文档：`docs/` 主文档 + 11 篇次级文档 + 决策表 + 设计/实现/从机验证自审记录。
 - 代码：插件骨架、共享核心、Host API、Client 画布/检查器、构建产物。
-- 测试：L1 全绿；L2 关键路径通过；L3 dark/light/narrow/run 四张截图；L4 真实 DSH 通过。
-- 未完成：真实 Skill / Command 节点执行（避免额外模型/命令副作用），以及 M5 功能。
+- 测试：L1 55 全绿；L2 关键路径通过；L3 截图与 CDP 交互通过；L4 从机临时 profile + 主 `desktop` profile 实机通过。
+- 未完成：真实取消中的子代理、极窄窗口拖拽 E2E，以及 M5 功能。
 - 文档状态表如实标注，不把“未验证”写成“已完成”。
 
-## 8. 实际验证记录（2026-10-27）
+## 8. 实际验证记录（2026-10-28）
 
 | # | 方式 | 结果 |
 |---|---|---|
-| V1 | `pnpm test`（52 个测试） | 全部通过：graph/validation/template/executor/adapters/API/host apply/templates |
+| V1 | `pnpm test`（55 个测试） | 全部通过：graph/validation/template/executor/adapters/API/host apply/templates |
 | V2 | `pnpm build` | `lib/client.js` 生成，约 476 KiB 含 sourcemap |
 | V3 | `pnpm ui:shot` | dark/light/narrow/run 四张截图生成；无运行时异常 |
-| V4 | 临时 profile `cueflow-check` + `dsh --profile cueflow-check --no-open --port 2618` | DSH 正常启动，CueFlow 路由注册 |
-| V5 | `GET /health` / `GET /catalog` | `ok:true`；11 node types、skills、commands、1 live agent |
-| V6 | `POST /workflows` + 真实 DSH UI 保存 | workflow JSON 落盘；toast “已保存” |
-| V7 | 确定性图（Input → Template → Output） | `completed`，输出 `hello!` |
-| V8 | Shell 节点（`echo cueflow-shell`） | `completed`，stdout `cueflow-shell` |
-| V9 | Read File 节点 | `completed`，输出文件内容 |
-| V10 | Agent 节点（“Reply with exactly OK”） | `completed`，输出 `OK`，`childId` 已创建/释放 |
-| V11 | 真实 DSH 面板内运行确定性图 | `completed`，输出 `hello!`，16 条事件轮询 |
-| V12 | 清理 | 删除临时 profile、测试 workflow/run；未改动 `desktop` profile |
+| V4 | 本机临时 profile `cueflow-check`（2618） | 插件加载、路由、catalog、保存、确定性图、Shell、File、Agent、UI 运行 |
+| V5 | 从机临时 profile `cueflow-check`（2619） | 确定性图 `hello!`；Read File `remote-file-ok`；Shell（补 sandbox shim 后）成功 |
+| V6 | 从机主 `desktop` profile（端口 60167） | 插件安装、面板打开、3 节点/2 连线渲染 |
+| V7 | 从机 UI 运行 | `<run-id>` → `completed`，输出 `hello!` |
+| V8 | 从机 Command 节点 | `/remote-use status` → 返回 “remote-use is off for this session…” |
+| V9 | 从机 user-only Skill | `code-review` → `OK`，childId 已创建/释放 |
+| V10 | 从机 Shell 节点 | `echo cueflow-remote-shell` → stdout 正确 |
+| V11 | 本机/从机修复 | Shell 增加 `sandboxPolicy` 解析；API 容忍 UTF-8 BOM |
+| V12 | 清理 | 临时 profile / 测试文件清理；主 `desktop` 保留插件安装 |
 
-**未验证**：真实 Skill 节点（user-only skill）执行、真实 Command 节点执行、Shell 在受限 sandbox 下的拒绝路径。它们有适配器单测与 Mock 覆盖，但需要在有明确需求时做一次真实 smoke。
+**仍未验证**：真实取消中的子代理、极窄窗口下的拖拽 E2E、受限 sandbox 主动拒绝路径。

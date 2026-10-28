@@ -7,7 +7,7 @@
 
 | 层 | 结果 |
 |---|---|
-| L1 单元测试 | 52 个测试全部通过（graph/validation/template/executor/adapters/API/host apply/templates） |
+| L1 单元测试 | 55 个测试全部通过（graph/validation/template/executor/adapters/API/host apply/templates） |
 | L2 API 集成 | workflow CRUD、validate、run 轮询、取消、400/404/409/422 均通过 |
 | L3 独立 UI | dark/light/narrow/run 截图；CDP 合成拖拽、连线、删除、自连拒绝、保存、运行对话框均通过 |
 | L4 真实 DSH | 临时 profile 启动、插件加载、面板打开、health/catalog、保存、确定性图、Shell、Read File、Agent、面板内运行全部通过 |

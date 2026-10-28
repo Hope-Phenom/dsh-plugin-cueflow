@@ -179,6 +179,45 @@ test('shell node returns stdout/stderr/exitCode', async () => {
   assert.match(result.outputs.text, /stdout text/)
 })
 
+test('shell node resolves the sandbox policy from the live session', async () => {
+  const services = baseServices()
+  const parent = { id: 'session-parent', session: { id: 'session-parent' } }
+  services.agents = { get: () => parent, list: () => [parent] }
+  let policyRequest
+  services.sandboxPolicy = {
+    resolve(request) {
+      policyRequest = request
+      return { mode: 'workspace-write', workspaceRoot: 'F:\\workspace', sessionId: 'session-parent' }
+    },
+  }
+  let shellRequest
+  services.shell.resolve = request => {
+    shellRequest = request
+    return request
+  }
+  const adapters = createAdapters({ getServices: () => services })
+  await adapters.executeNode(node('shell', { command: 'echo hi' }), {}, context())
+  assert.equal(policyRequest.session.id, 'session-parent')
+  assert.equal(shellRequest.sandboxPolicy.workspaceRoot, 'F:\\workspace')
+})
+
+test('shell node falls back to the workflow cwd for agentless execution', async () => {
+  const services = baseServices()
+  services.agents = { get: () => undefined, list: () => [] }
+  services.sandboxPolicy = {
+    resolve: () => ({ mode: 'workspace-write', workspaceRoot: 'F:\\fallback' }),
+  }
+  let shellRequest
+  services.shell.resolve = request => {
+    shellRequest = request
+    return request
+  }
+  const adapters = createAdapters({ getServices: () => services })
+  await adapters.executeNode(node('shell', { command: 'echo hi' }), {}, context({ cwd: 'F:\\project' }))
+  assert.equal(shellRequest.sandboxPolicy.workspaceRoot, 'F:\\project')
+  assert.equal(shellRequest.sandboxPolicy.mode, 'workspace-write')
+})
+
 test('shell node fails on non-zero exit by default', async () => {
   const services = baseServices()
   services.shell.execute = async () => ({

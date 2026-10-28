@@ -255,19 +255,20 @@ pnpm ui:shot       # Edge headless 截图（若可用）
 ## 9. 已知测试缺口（MVP）
 
 - 没有真实浏览器中的拖拽 E2E（只有截图 + 辅助函数测试）；M5 可引入 Playwright。
-- 没有真实 DSH 的自动化测试（DSH 没有公开的 headless GUI 驱动）；L4 是手工清单。
-- Command 的真实返回形状可能随 DSH 版本变化；适配器有兼容分支，但需要至少一次真实 smoke。
-- Shell 的 sandbox 行为取决于 profile 配置；测试只验证调用参数，不验证策略效果。
+- 没有真实 DSH 的自动化测试框架；L4 用临时 profile + remote-use 手工/脚本 smoke。
+- 真实取消中的子代理仍未跑（单元测试覆盖 cancel/abort）。
+- 极窄面板（DSH 窗口 800px）下节点缩放较小，可用但需要缩放/平移。
 
-## 10. 实际执行结果（2026-10-27）
+## 10. 实际执行结果（2026-10-28）
 
 | 层 | 命令/方式 | 结果 |
 |---|---|---|
-| L1 | `node --test test/*.test.js` | 52 个测试全部通过（graph/validation/template/executor/adapters/API/host apply/templates） |
-| L2 | 同上的 `test/api.test.js` + `test/index.test.js` | 路由、CRUD、422、404、400、取消、Host apply 均通过 |
+| L1 | `node --test test/*.test.js` | 55 个测试全部通过（graph/validation/template/executor/adapters/API/host apply/templates） |
+| L2 | 同上的 `test/api.test.js` + `test/index.test.js` | 路由、CRUD、422、404、400、取消、Host apply、BOM 请求均通过 |
 | L3 | `pnpm ui:shot` | dark/light/narrow/run 四张截图，无运行时异常 |
 | L3 交互 | CDP 合成 pointer/keyboard 事件 | 节点拖拽、删除连线、重连、自连拒绝、保存、打开运行对话框均通过 |
-| L4 | 临时 profile `cueflow-check`（端口 2618） | 插件加载、面板打开、health/catalog、保存、确定性图、Shell、File、Agent、面板内运行全部通过 |
-| L4 限制 | 未跑 | 真实 Skill 执行、真实 Command 执行、取消中的真实子代理（有单测/Mock 覆盖） |
+| L4 临时 profile | 从机 <test-host>，`cueflow-check` 端口 2619 | 插件加载、health/catalog、确定性图、Read File、Shell（补 sandbox shim）、Skill、Command 均通过 |
+| L4 主桌面 | 从机 <test-host>，`desktop` profile 端口 60167 | 面板打开、3 节点/2 连线渲染、UI 运行输出 `hello!`、Command `/remote-use status`、user-only Skill `code-review`、Shell `echo` 全部通过 |
+| L4 限制 | 未跑 | 真实取消中的子代理；极窄窗口下的拖拽 E2E |
 
-截图位置：`.screenshots/`（`dark-1440.png`、`light-1440.png`、`narrow-900.png`、`run-1440.png`、`real-dsh-1440.png`）。
+截图位置：`.screenshots/`。从机主桌面截图：`remote-cueflow-panel-window.png`、`remote-cueflow-run-window.png`。

@@ -11,9 +11,14 @@ CueFlow opens a full-screen node canvas inside DSH. Wire typed nodes into a DAG,
 
 ## Status
 
-MVP implemented. Real-DSH smoke passed in a **temporary** profile (`cueflow-check`, port 2618): host route/catalog, workflow save, deterministic graph, Shell, Read File, Agent node, and running a graph from the panel. The temporary profile and test data were removed; the user's `desktop` profile was not modified.
+MVP implemented and verified on a **second Windows machine** (<test-host>):
+- temporary `cueflow-check` profile: health/catalog, deterministic graph, Read File, Shell (with sandbox shim), Skill, Command;
+- main `desktop` profile: panel opens, 3 nodes / 2 links render, UI run → `hello!`;
+- real `code-review` (user-only Skill), `/remote-use status` Command, and Shell `echo` all passed.
 
-Real **Skill** and **Command** node executions are unit/mock-tested but were not run against a live session to avoid model/command side effects. See [`docs/README.md`](docs/README.md) for status, [`docs/decisions.md`](docs/decisions.md) for decisions, and [`docs/10-implementation-plan.md`](docs/10-implementation-plan.md) for evidence.
+Two real-machine fixes landed: Shell now resolves `sandboxPolicy` per call (session cwd or workflow cwd), and the API accepts UTF-8 BOM bodies.
+
+Still untested: cancelling a live subagent, drag E2E at extremely narrow widths. See [`docs/README.md`](docs/README.md) for status, [`docs/decisions.md`](docs/decisions.md) for decisions, and [`docs/10-implementation-plan.md`](docs/10-implementation-plan.md) for evidence.
 
 ## Install (local checkout)
 

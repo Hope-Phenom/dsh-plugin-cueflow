@@ -134,5 +134,6 @@ MVP 没有独立设置页；可配置项都在工作流文档里：
 - 没有第三方节点注册。
 - 画布多选/框选未实现（单选 + 快捷键）。
 - 真实 DSH 的自动化 E2E 缺失；L4 用临时 profile 手工/脚本 smoke。
-- 真实 Skill 与 Command 节点执行未跑（单元/Mock 已覆盖）；首次使用建议先跑一个纯确定性图，再逐个启用 Skill/Command/Agent。
+- 真实 Skill / Command 已在从机主 `desktop` profile 验证；真实取消中的子代理、极窄窗口拖拽 E2E 仍未跑。
 - Agent catalog 的 `title` 可能为空（会话标题服务未接）；ID 仍然可用。
+- Shell 依赖 `ctx.sandboxPolicy`：无 live session 时用 workflow cwd 作为 workspace root；若 workspace root 与 `%TEMP%` 重叠，Windows ACL 会拒绝，需换项目目录或使用 danger-full-access。

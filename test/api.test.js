@@ -170,6 +170,21 @@ test('a deterministic run completes and exposes output', async () => {
   }
 })
 
+test('run bodies with a UTF-8 BOM are accepted', async () => {
+  const app = await makeServer()
+  try {
+    const result = await json(app.base, '/runs', {
+      method: 'POST',
+      body: `\uFEFF${JSON.stringify({ workflow: simpleWorkflow(), inputs: { n1: 'bom' } })}`,
+    })
+    assert.equal(result.response.status, 201, JSON.stringify(result.body))
+    const settled = await waitFor(app.base, result.body.run.id)
+    assert.equal(settled.run.outputs.n3.value, 'bom')
+  } finally {
+    await app.close()
+  }
+})
+
 test('missing required run input returns 422 before scheduling', async () => {
   const app = await makeServer()
   try {

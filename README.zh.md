@@ -11,9 +11,14 @@ CueFlow 在 DSH 内打开一张全屏节点画布：把有类型端口的节点�
 
 ## 状态
 
-MVP 已实现。已在**临时** DSH profile（`cueflow-check`，端口 2618）完成真实联调：Host 路由/catalog、workflow 保存、确定性图、Shell、Read File、Agent 节点，以及从面板运行工作流。临时 profile 与测试数据已删除，未改动当前 `desktop` profile。
+MVP 已实现，并在**从机 Windows <test-host>** 完成实机验证：
+- 临时 `cueflow-check` profile：health/catalog、确定性图、Read File、Shell（补 sandbox shim）、Skill、Command；
+- 主 `desktop` profile：面板打开，3 节点 / 2 连线正常渲染，面板内运行 → `hello!`；
+- 真实 user-only Skill `code-review`、`/remote-use status` Command、Shell `echo` 均通过。
 
-真实 **Skill** 与 **Command** 节点的执行只有单元/Mock 覆盖，未在 live 会话中运行（避免模型/命令副作用）。状态见 [`docs/README.md`](docs/README.md)，决策见 [`docs/decisions.md`](docs/decisions.md)，证据见 [`docs/10-implementation-plan.md`](docs/10-implementation-plan.md)。
+实机发现并修复两处：Shell 每次调用需解析 `sandboxPolicy`（live session cwd 或 workflow cwd）；API 需容忍 UTF-8 BOM。
+
+仍未验证：真实取消中的子代理、极窄窗口拖拽 E2E。状态见 [`docs/README.md`](docs/README.md)，决策见 [`docs/decisions.md`](docs/decisions.md)，证据见 [`docs/10-implementation-plan.md`](docs/10-implementation-plan.md)。
 
 ## 本地安装
 
