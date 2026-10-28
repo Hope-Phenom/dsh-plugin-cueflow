@@ -1,7 +1,7 @@
 # 14 · 工作负载差距
 
 > “能跑通”不等于“能作为工作负载”。本文按 **P0（上真实仓库前必须）** / **P1（规模化）** 列出差距、验收标准与当前状态。
-> 当前已验证：88 个测试、从机主 `desktop` profile、面板 + UI run、审批/CSRF/队列/重试/心跳/Shell + Agent 取消。极窄拖拽 E2E 仍未覆盖。
+> 当前已验证：90 个测试、从机主 `desktop` profile、面板 + UI run、审批/CSRF/队列/重试/心跳/Shell + Agent 取消。极窄拖拽 E2E 仍未覆盖。
 
 ## 0. 两种“工作负载”
 
@@ -113,11 +113,11 @@
 
 ## 3. P1 持久化、版本与协作
 
-**状态**：⚠️ 版本/回滚、草稿恢复、逻辑 workspace 过滤已实现；schema 迁移/物理 workspace 隔离待做
+**状态**：⚠️ 版本/回滚、草稿、schema 迁移、逻辑 workspace 过滤已实现；物理 workspace 隔离/审计身份待做
 
 - **Workflow 版本**：✅ 每次保存把旧版归档到 `workflows/.history/<id>/`，保留最近 20 版；API/UI 可列举、读取、恢复（从机 `wf_versions_smoke` 已验证）。
 - **自动保存/草稿恢复**：✅ 编辑 700ms 后写入 localStorage 草稿；刷新/重开面板时若无 active run 自动恢复并标记 dirty；保存成功后清除。跨设备/清缓存仍会丢。
-- **Schema 迁移**：只有 `schemaVersion: 1`，没有迁移器。
+- **Schema 迁移**：✅ 启动时把缺失/0 版本 workflow 规范化为 v1；未来 `schemaVersion > 1` 保持不动。
 - **Workspace 隔离**：⚠️ 逻辑过滤已实现（`settings.workspace` + 列表过滤；legacy 全局可见）；文件仍存全局 `$DSH_HOME`。
 - **审计身份**：run 记录有 sessionId/cwd，但没有“谁触发”的身份；多用户需要。
 - **保留策略配置**：run 固定 50 条；需要按项目/时间/大小配置。
@@ -178,6 +178,7 @@
 | 真实性 Skill/Command/Shell/Agent | ✅ 已通过 |
 
 > 这不是“全部都要一次做完”的清单；它是按风险排序的路线图。P0-1 到 P0-4 是投入产出最高的四项。
+
 
 
 
