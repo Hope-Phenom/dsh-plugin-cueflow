@@ -141,9 +141,15 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 
 ### M6-P1-4 · 编辑体验
 
+**状态**：⚠️ 窄窗口拖拽 E2E 已加入；其余编辑体验待做
+
 **范围**：多选/复制粘贴/分组/Reroute；端口拖空白建节点；可搜索 Skill/Command；运行历史详情；窄窗口拖拽 E2E；键盘/ARIA。
 
-**验收**：200 节点图可编辑；窄窗口拖拽可用；键盘完成核心流程。
+**验收**：
+- [x] 900px 窄窗口添加/拖拽节点（Playwright 2 tests）；
+- [ ] 多选/复制粘贴/分组/Reroute；
+- [ ] 200 节点图可编辑；
+- [ ] 键盘完成核心流程/ARIA 审计。
 
 ### M6-P1-5 · 工程化与发布
 
@@ -152,9 +158,9 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 **范围**：Windows CI（test/build/shot/E2E）；类型检查/lint；Playwright；npm 发布/CHANGELOG/兼容矩阵；安全测试/性能测试。
 
 **验收**：
-- [x] Windows CI：install / test / build / ui:build / ui:shot / pack dry-run；
+- [x] Windows CI：install / test / build / ui:build / ui:shot / Playwright / pack dry-run；
 - [ ] 类型检查/lint；
-- [ ] Playwright 拖拽/运行/取消 E2E；
+- [x] Playwright 窄窗口添加/拖拽 E2E；运行/取消 E2E 待补；
 - [ ] npm 发布/CHANGELOG/兼容矩阵；
 - [ ] 200 节点与并发 run 压测基线。
 

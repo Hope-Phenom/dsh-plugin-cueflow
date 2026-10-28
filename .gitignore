@@ -4,3 +4,5 @@ node_modules/
 *.log
 .tmp-*
 .transfer/
+test-results/
+playwright-report/

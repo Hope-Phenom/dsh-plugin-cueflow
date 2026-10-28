@@ -42,6 +42,9 @@ jobs:
       - name: Render UI screenshots
         run: pnpm ui:shot
 
+      - name: Playwright canvas E2E
+        run: pnpm e2e
+
       - name: Pack dry run
         run: pnpm pack --dry-run
 

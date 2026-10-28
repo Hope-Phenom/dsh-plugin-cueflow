@@ -131,7 +131,7 @@
 - 运行历史列表、run 详情、从历史 run 恢复；
 - 断网/API 不可用的离线态与重试；
 - 键盘导航/ARIA 审计；
-- 极窄窗口拖拽 E2E（你提到的项）；
+- 极窄窗口拖拽 E2E（你提到的项）：✅ Playwright `e2e/canvas.spec.js` 覆盖 900px 下添加/拖拽节点；
 - 画布性能：200 节点/500 边下的渲染与拖拽。
 
 ## 5. P1 工程化与发布
@@ -165,7 +165,7 @@
 | 项 | 状态 |
 |---|---|
 | 真实 Agent 取消 | ✅ Shell + Agent 取消已验证；drain/abort-all 可选 |
-| 极窄窗口拖拽 E2E | ❌ 未跑 |
+| 极窄窗口拖拽 E2E | ✅ Playwright 900px 添加/拖拽通过 |
 | Shell/Command 审批 | ✅ 从机面板已验证 |
 | 全局 run 队列/预算 | ✅ 从机队列已验证；墙钟/Token 单测 |
 | retry/onError/局部重跑 | ✅ 单测；从机 onError=skip 已验证 |
