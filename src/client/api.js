@@ -100,6 +100,13 @@ export function cancelRun(id) {
   return request(`/runs/${encodeURIComponent(id)}/cancel`, { method: 'POST' })
 }
 
+export function decideApproval(runId, approvalId, decision) {
+  return request(`/runs/${encodeURIComponent(runId)}/approvals/${encodeURIComponent(approvalId)}`, {
+    method: 'POST',
+    body: JSON.stringify({ decision }),
+  })
+}
+
 export function listRuns(limit = 20) {
   return request(`/runs?limit=${encodeURIComponent(limit)}`)
 }

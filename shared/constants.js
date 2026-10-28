@@ -24,6 +24,12 @@ export const LIMITS = Object.freeze({
   maxLogsPerNode: 80,
 })
 
+export const DEFAULT_APPROVAL_TIMEOUT_MS = 5 * 60 * 1000
+
+/** Node types that can execute an arbitrary command/action and need approval. */
+export const APPROVAL_NODE_TYPES = Object.freeze(['shell', 'command'])
+export const APPROVAL_MODES = Object.freeze(['allow', 'ask', 'deny'])
+
 export const DEFAULT_CONCURRENCY = 2
 export const MIN_CONCURRENCY = 1
 export const MAX_CONCURRENCY = 8
@@ -62,6 +68,7 @@ export const TERMINAL_RUN_STATUS = Object.freeze(['completed', 'error', 'cancell
 export const NODE_STATUS = Object.freeze([
   'idle',
   'queued',
+  'waiting-approval',
   'running',
   'success',
   'error',

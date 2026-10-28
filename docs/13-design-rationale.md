@@ -115,6 +115,20 @@ DSH 父会话（用户选中的 live Agent）
 
 设计选择记录：D-009（subagent）、D-010（显式选父会话）、D-045（会话模型）。
 
+### 5.1 显式会话模式（M6-P1-1）
+
+当前默认是 `isolated`：每个 Agent/Skill 节点一个 child。对多步编码任务，这会丢失“审查→修改→测试”的上下文连续性。因此 M6 计划引入 run 级 `sessionMode`：
+
+| 模式 | 语义 | 用途 |
+|---|---|---|
+| `isolated` | 当前行为；每节点 child | 并行、干净、可复现，默认 |
+| `workflow` | 一次 run 复用一个 child（可按分支） | 多步 Agent 共享上下文，不污染父会话 |
+| `parent` | 在选中父会话执行 | 结果写回当前对话；要求 idle + 单 run 锁 + 明确警告 |
+
+`workflow` 是投入产出最高的模式：它保留上下文但不写入父会话；代价是该 session 内节点串行、上下文会增长。`parent` 适合“助手在当前任务里继续做”，但不适合作为默认：会污染 transcript、无法并行、取消语义复杂。
+
+实现前必须确认 DSH 是否支持向已有 child session 追加 turn；不支持就退回 `fork` + 摘要，不假装支持。该模式排在 P0-1..P0-6 之后，见 [16 · M6 计划](16-m6-plan.md)。
+
 ## 6. 为什么选 `main` + `sidebar.panellist`
 
 DSH 的插件管理器/Task Manager 使用同一模式：左侧入口，`main` keyed panel 全屏。相比：

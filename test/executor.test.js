@@ -187,6 +187,90 @@ test('events are monotonic and filterable', async () => {
   assert.ok(after.length < run.events.length)
 })
 
+test('ask approval pauses a shell node and allows once', async () => {
+  const workflow = wf([node('shell', 's', 0, { command: 'echo hi', approval: 'ask' })])
+  const run = createRunRecord({ workflow })
+  const { executeNode } = makeExecutor({
+    shell: async () => ({ outputs: { stdout: 'hi', text: 'hi' } }),
+  })
+  let requested = null
+  const requestApproval = async request => {
+    requested = request
+    return { id: 'apr_test', result: Promise.resolve('allowed-once') }
+  }
+  await executeRun(run, { executeNode, requestApproval })
+  assert.equal(run.status, 'completed')
+  assert.equal(run.nodeStates.s.status, 'success')
+  assert.equal(requested.action, 'shell')
+  assert.equal(requested.detail.command, 'echo hi')
+  assert.equal(run.nodeStates.s.pendingApproval, null)
+})
+
+test('rejected approval fails the node and run', async () => {
+  const workflow = wf([node('command', 'c', 0, { command: 'status', approval: 'ask' })])
+  const run = createRunRecord({ workflow })
+  const { executeNode } = makeExecutor()
+  await executeRun(run, {
+    executeNode,
+    requestApproval: async () => ({ id: 'apr_reject', result: Promise.resolve('rejected') }),
+  })
+  assert.equal(run.status, 'error')
+  assert.equal(run.nodeStates.c.status, 'error')
+  assert.equal(run.nodeStates.c.error.code, 'APPROVAL_REJECTED')
+})
+
+test('deny approval never invokes the executor', async () => {
+  const workflow = wf([node('shell', 's', 0, { command: 'echo hi', approval: 'deny' })])
+  const run = createRunRecord({ workflow })
+  let executed = false
+  const { executeNode } = makeExecutor({
+    shell: async () => {
+      executed = true
+      return { outputs: {} }
+    },
+  })
+  await executeRun(run, { executeNode })
+  assert.equal(executed, false)
+  assert.equal(run.status, 'error')
+  assert.equal(run.nodeStates.s.error.code, 'APPROVAL_DENIED')
+})
+
+test('ask approval fails closed when no approval channel exists', async () => {
+  const workflow = wf([node('shell', 's', 0, { command: 'echo hi' })])
+  const run = createRunRecord({ workflow })
+  let executed = false
+  const { executeNode } = makeExecutor({
+    shell: async () => {
+      executed = true
+      return { outputs: {} }
+    },
+  })
+  await executeRun(run, { executeNode })
+  assert.equal(executed, false)
+  assert.equal(run.status, 'error')
+  assert.equal(run.nodeStates.s.error.code, 'APPROVAL_UNAVAILABLE')
+})
+
+test('cancelling while approval is pending cancels the node', async () => {
+  const workflow = wf([node('shell', 's', 0, { command: 'echo hi' })])
+  const run = createRunRecord({ workflow })
+  const { executeNode } = makeExecutor()
+  const controller = new AbortController()
+  const requestApproval = async request => ({
+    id: 'apr_cancel',
+    result: new Promise(resolve => {
+      request.signal.addEventListener('abort', () => resolve('cancelled'), { once: true })
+    }),
+  })
+  const promise = executeRun(run, { executeNode, signal: controller.signal, requestApproval })
+  await delay(20)
+  assert.equal(run.nodeStates.s.status, 'waiting-approval')
+  controller.abort()
+  await promise
+  assert.equal(run.status, 'cancelled')
+  assert.equal(run.nodeStates.s.status, 'cancelled')
+})
+
 test('disabled nodes are skipped', async () => {
   const workflow = wf([node('agent', 'a', 0, { prompt: 'a' })])
   workflow.nodes[0].disabled = true

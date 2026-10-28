@@ -223,6 +223,7 @@
 |---|---|---|---|
 | `command` | string | `""` | 命令名，不带 `/` |
 | `fallbackInput` | string | `""` | 未连接 `input` 时使用 |
+| `approval` | `ask` / `allow` / `deny` | `ask` | `ask` 需一次确认；`allow` 直接执行；`deny` 拒绝 |
 | `timeoutMs` | number | `120000` | 命令执行超时（2 分钟） |
 
 **执行**
@@ -261,6 +262,7 @@
 |---|---|---|---|
 | `command` | string | `""` | 未连接 `command` 时使用 |
 | `workdir` | string | `""` | 工作目录；空则用 run.cwd |
+| `approval` | `ask` / `allow` / `deny` | `ask` | `ask` 需一次确认；`allow` 直接执行；`deny` 拒绝 |
 | `timeoutMs` | number | `120000` | 超时（2 分钟） |
 | `failOnNonZero` | boolean | `true` | 非零退出是否让节点失败 |
 | `maxOutputChars` | number | `20000` | 输出截断 |
@@ -276,7 +278,9 @@
 
 **安全**
 
-- 不拼接未经用户确认的命令；`command` 来自配置或上游 Template/Input，上游可以来自模型输出——这是用户显式连线造成的，UI 在 Shell 节点上显示警示色与说明。
+- 默认 `approval: ask`：运行到 Shell/Command 节点时 UI 暂停并显示命令/动作；批准只对本次执行有效，拒绝/超时/无审批通道都 fail-closed。
+- `allow` 是显式的“我信任这张图/这条命令”，`deny` 用于禁止执行；它们都写进 workflow，便于审查。
+- `command` 来自配置或上游 Template/Input，上游可以来自模型输出——这是用户显式连线造成的，UI 在 Shell 节点上显示警示色与说明。
 - MVP 不提供 `env` / `dshEnv` 覆盖；避免绕过 DSH 的环境治理。
 
 ### 3.7 Read File

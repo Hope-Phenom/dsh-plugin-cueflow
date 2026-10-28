@@ -54,6 +54,7 @@ The independent UI test page imports the same `src/client` code used in DSH; onl
 | [Design rationale](docs/13-design-rationale.md) | Why the graph, nodes, execution and session model |
 | [Readiness gaps](docs/14-readiness-gaps.md) | What is still missing for production workloads |
 | [API reference](docs/15-api-reference.md) | Host routes, data model, errors, limits |
+| [M6 plan](docs/16-m6-plan.md) | P0/P1 workload-readiness TODO and acceptance |
 | [Testing](docs/09-testing-strategy.md) | Four-layer strategy |
 | [Decisions](docs/decisions.md) | Autonomous design decisions |
 

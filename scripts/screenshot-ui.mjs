@@ -38,6 +38,7 @@ const shots = [
   { name: 'light-1440.png', url: '/?clean=1&theme=light&lang=en', size: '1440,900', budget: 5000 },
   { name: 'narrow-900.png', url: '/?clean=1&lang=zh', size: '900,900', budget: 5000 },
   { name: 'run-1440.png', url: '/?clean=1&run=1', size: '1440,900', budget: 7000 },
+  { name: 'approval-1440.png', url: '/?clean=1&run=1&approval=1', size: '1440,900', budget: 7000 },
 ]
 
 try {

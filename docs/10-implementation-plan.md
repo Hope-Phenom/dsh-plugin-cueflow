@@ -86,7 +86,7 @@
 
 | # | 方式 | 结果 |
 |---|---|---|
-| V1 | `pnpm test`（55 个测试） | 全部通过：graph/validation/template/executor/adapters/API/host apply/templates |
+| V1 | `pnpm test`（62 个测试） | 全部通过：graph/validation/template/executor/adapters/API/host apply/templates/approval |
 | V2 | `pnpm build` | `lib/client.js` 生成，约 476 KiB 含 sourcemap |
 | V3 | `pnpm ui:shot` | dark/light/narrow/run 四张截图生成；无运行时异常 |
 | V4 | 本机临时 profile `cueflow-check`（2618） | 插件加载、路由、catalog、保存、确定性图、Shell、File、Agent、UI 运行 |

@@ -263,9 +263,9 @@ pnpm ui:shot       # Edge headless 截图（若可用）
 
 | 层 | 命令/方式 | 结果 |
 |---|---|---|
-| L1 | `node --test test/*.test.js` | 55 个测试全部通过（graph/validation/template/executor/adapters/API/host apply/templates） |
+| L1 | `node --test test/*.test.js` | 62 个测试全部通过（graph/validation/template/executor/adapters/API/host apply/templates/approval） |
 | L2 | 同上的 `test/api.test.js` + `test/index.test.js` | 路由、CRUD、422、404、400、取消、Host apply、BOM 请求均通过 |
-| L3 | `pnpm ui:shot` | dark/light/narrow/run 四张截图，无运行时异常 |
+| L3 | `pnpm ui:shot` | dark/light/narrow/run/approval 五张截图，无运行时异常 |
 | L3 交互 | CDP 合成 pointer/keyboard 事件 | 节点拖拽、删除连线、重连、自连拒绝、保存、打开运行对话框均通过 |
 | L4 临时 profile | 从机 <test-host>，`cueflow-check` 端口 2619 | 插件加载、health/catalog、确定性图、Read File、Shell（补 sandbox shim）、Skill、Command 均通过 |
 | L4 主桌面 | 从机 <test-host>，`desktop` profile 端口 60167 | 面板打开、3 节点/2 连线渲染、UI 运行输出 `hello!`、Command `/remote-use status`、user-only Skill `code-review`、Shell `echo` 全部通过 |

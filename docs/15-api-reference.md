@@ -152,6 +152,18 @@
 - 已结束：409 `RUN_CONFLICT`；
 - 不存在：404。
 
+### `POST /runs/:id/approvals/:approvalId`
+
+```json
+{ "decision": "allow" }
+```
+
+- `allow` → 一次性批准；节点继续执行；
+- `reject` → 节点 `error`，run `error`；
+- 非 pending：409 `APPROVAL_CONFLICT`；
+- 找不到：404 `APPROVAL_NOT_FOUND`；
+- 进程重启后旧 pending approval 不在 live map：409 `APPROVAL_NOT_LIVE`（不会误执行）。
+
 ## 4. 数据模型
 
 ### WorkflowDocument
@@ -178,7 +190,24 @@
 
 ### RunRecord
 
-字段：`id/workflowId/workflowName/workflowSnapshot/status/inputs/sessionId/cwd/createdAt/startedAt/endedAt/nodeStates/outputs/error/events`。
+字段：`id/workflowId/workflowName/workflowSnapshot/status/inputs/sessionId/cwd/createdAt/startedAt/endedAt/nodeStates/approvals/outputs/error/events`。
+
+`approvals[id]`：
+
+```json
+{
+  "id": "apr_...",
+  "nodeId": "n2",
+  "nodeTitle": "git diff",
+  "action": "shell",
+  "detail": { "command": "git diff", "workdir": "E:\\WorkSpace\\repo" },
+  "status": "pending",
+  "requestedAt": 0,
+  "decidedAt": null
+}
+```
+
+`status`: `pending` / `allowed-once` / `rejected` / `cancelled`。
 
 `nodeStates[id]`：
 
@@ -194,7 +223,7 @@
 ```
 
 运行状态：`queued/running/completed/error/cancelled`。
-节点状态：`idle/queued/running/success/error/skipped/cancelled`。
+节点状态：`idle/queued/waiting-approval/running/success/error/skipped/cancelled`。
 
 ## 5. 错误码
 
@@ -205,6 +234,10 @@
 | 404 | `NOT_FOUND` | workflow/run 不存在 |
 | 405 | `METHOD_NOT_ALLOWED` | 方法不支持 |
 | 409 | `RUN_CONFLICT` | run 已结束，不能重复取消 |
+| 409 | `APPROVAL_CONFLICT` | approval 已决定 |
+| 409 | `APPROVAL_NOT_LIVE` | approval 不属于当前 live run |
+| 404 | `APPROVAL_NOT_FOUND` | approval 不存在 |
+| 400 | `APPROVAL_INVALID` | 决定不是 allow/reject |
 | 409 | `CAPABILITY_MISSING` | 缺少 DSH 服务（部分路径） |
 | 413 | `BODY_TOO_LARGE` | body 超过 1 MiB |
 | 422 | `VALIDATION_FAILED` | 图/运行输入校验失败 |

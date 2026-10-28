@@ -226,6 +226,86 @@ test('path traversal ids are rejected', async () => {
   }
 })
 
+test('shell approval pauses the run, then allows it once', async () => {
+  const workflow = createEmptyWorkflow('approval flow', {
+    id: 'wf_approval',
+    nodes: [node('shell', 's', 0, { command: 'echo hi', approval: 'ask' })],
+    edges: [],
+  })
+  const adapters = {
+    async executeNode() {
+      return { outputs: { stdout: 'hi', stderr: '', exitCode: 0, text: 'hi' } }
+    },
+  }
+  const app = await makeServer({ adapters })
+  try {
+    const started = await json(app.base, '/runs', { method: 'POST', body: JSON.stringify({ workflow }) })
+    assert.equal(started.response.status, 201, JSON.stringify(started.body))
+    const runId = started.body.run.id
+
+    let approval
+    const deadline = Date.now() + 3000
+    while (Date.now() < deadline) {
+      const { body } = await json(app.base, `/runs/${runId}`)
+      approval = Object.values(body.run?.approvals ?? {}).find(item => item.status === 'pending')
+      if (approval) break
+      await new Promise(resolve => setTimeout(resolve, 20))
+    }
+    assert.ok(approval, 'expected a pending approval')
+    assert.equal(approval.action, 'shell')
+    assert.equal(approval.detail.command, 'echo hi')
+
+    const decided = await json(app.base, `/runs/${runId}/approvals/${approval.id}`, {
+      method: 'POST',
+      body: JSON.stringify({ decision: 'allow' }),
+    })
+    assert.equal(decided.response.status, 200, JSON.stringify(decided.body))
+    assert.equal(decided.body.run.approvals[approval.id].status, 'allowed-once')
+
+    const settled = await waitFor(app.base, runId)
+    assert.equal(settled.run.status, 'completed')
+    assert.equal(settled.run.nodeStates.s.status, 'success')
+    assert.ok(settled.events.some(event => event.type === 'approval/asked'))
+    assert.ok(settled.events.some(event => event.type === 'approval/decided'))
+  } finally {
+    await app.close()
+  }
+})
+
+test('rejecting an approval fails the node', async () => {
+  const workflow = createEmptyWorkflow('reject approval', {
+    id: 'wf_reject',
+    nodes: [node('shell', 's', 0, { command: 'echo no', approval: 'ask' })],
+    edges: [],
+  })
+  const app = await makeServer({
+    adapters: { async executeNode() { return { outputs: {} } } },
+  })
+  try {
+    const started = await json(app.base, '/runs', { method: 'POST', body: JSON.stringify({ workflow }) })
+    const runId = started.body.run.id
+    let approval
+    const deadline = Date.now() + 3000
+    while (Date.now() < deadline) {
+      const { body } = await json(app.base, `/runs/${runId}`)
+      approval = Object.values(body.run?.approvals ?? {}).find(item => item.status === 'pending')
+      if (approval) break
+      await new Promise(resolve => setTimeout(resolve, 20))
+    }
+    assert.ok(approval)
+    const decided = await json(app.base, `/runs/${runId}/approvals/${approval.id}`, {
+      method: 'POST',
+      body: JSON.stringify({ decision: 'reject' }),
+    })
+    assert.equal(decided.response.status, 200)
+    const settled = await waitFor(app.base, runId)
+    assert.equal(settled.run.status, 'error')
+    assert.equal(settled.run.nodeStates.s.error.code, 'APPROVAL_REJECTED')
+  } finally {
+    await app.close()
+  }
+})
+
 test('a run can be cancelled while an agent node is waiting', async () => {
   const workflow = createEmptyWorkflow('cancel me', {
     id: 'wf_cancel',

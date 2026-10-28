@@ -89,9 +89,11 @@ MVP 没有独立设置页；可配置项都在工作流文档里：
 
 ## 6. 权限与审批
 
-- CueFlow 不绕过 DSH 的审批：通过 `ctx.shell` / `ctx.fs` 的调用仍受当前 composition 的 sandbox / approval 策略约束。
-- 如果 profile 使用 `danger-full-access`，Shell 节点也会拥有该权限；这是 DSH 的配置，不是 CueFlow 的提升。
+- Shell/Command 节点有 CueFlow 自己的 one-shot 审批：默认 `ask`，`allow` 才直接执行，`deny` 直接失败。`ask` 在 UI 显示命令/动作，批准只对本次执行有效。
+- 这不是 DSH `ctx.approval` 的复用：workflow run 不在 DSH turn 内，`ctx.approval.request()` 要求 open turn。CueFlow 的审批队列是 Host 独立实现，审批记录写入 run JSON。
+- `ctx.shell` / `ctx.fs` 仍受当前 composition 的 sandbox 策略约束；如果 profile 使用 `danger-full-access`，Shell 节点也会拥有该权限——这是 DSH 的配置，不是 CueFlow 的提升。
 - Agent 节点启动的子代理继承父会话的权限与工具策略；`delivery: 'caller'` 只影响通知，不提升权限。
+- 公开 Web 部署仍需 API 认证/CSRF（M6-P0-2）；在这之前不要把 CueFlow 路由暴露到不可信网络。
 
 ## 7. 故障排查
 

@@ -590,7 +590,7 @@ export function StatusDot({ status }) {
 function statusTone(status) {
   if (status === 'error') return 'red'
   if (status === 'success' || status === 'completed') return 'green'
-  if (status === 'running') return 'amber'
+  if (status === 'running' || status === 'waiting-approval') return 'amber'
   if (status === 'cancelled') return 'amber'
   if (status === 'skipped') return ''
   return ''

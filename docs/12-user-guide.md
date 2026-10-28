@@ -200,7 +200,11 @@ Input ─value──▶ Condition ─true──▶ Agent(fix)
 
 - Shell 节点会执行命令；不要把不可信模型输出直接接到 Shell。
 - Command 节点会执行已注册命令；先确认命令语义。
-- 当前实现没有把 Shell/Command 接入 DSH 的 tool approval 链；在 `workspace-write` 及以上模式使用前请阅读 [14 · 工作负载差距](14-readiness-gaps.md#p0-1-shellcommand-审批链)。
+- Shell/Command 默认 `approval: ask`：运行到该节点时 UI 会暂停并显示命令/动作，只有点击 **批准一次** 才执行；**拒绝** 会让该节点失败。
+- 需要频繁运行的受控命令可显式改成 `allow`；不希望执行的节点用 `deny`。审批记录（approvalId、命令、cwd、决定）写入 run JSON。
+
+![Shell 审批](assets/approval.png)
+- CueFlow 的审批是 Host 独立队列，不复用 DSH `ctx.approval`（run 不在 DSH turn 内）；DSH sandbox 仍然生效。公开部署还需 M6-P0-2 的 API 认证。
 - Skill 的 user-only 语义是“用户显式调用”；CueFlow 会记录 invocation 到 run 日志。
 - 没有任意 JS/Python 代码节点；可执行能力仅白名单节点。
 

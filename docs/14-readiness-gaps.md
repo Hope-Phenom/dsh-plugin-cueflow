@@ -1,7 +1,7 @@
 # 14 · 工作负载差距
 
 > “能跑通”不等于“能作为工作负载”。本文按 **P0（上真实仓库前必须）** / **P1（规模化）** 列出差距、验收标准与当前状态。
-> 当前已验证：55 个测试、从机主 `desktop` profile、面板 + UI run、Agent/Skill/Command/Shell/File。真实取消与极窄拖拽 E2E 仍未覆盖，但它们是本文 P1 的一小部分。
+> 当前已验证：62 个测试、从机主 `desktop` profile、面板 + UI run、Agent/Skill/Command/Shell/File。真实取消与极窄拖拽 E2E 仍未覆盖，但它们是本文 P1 的一小部分。
 
 ## 0. 两种“工作负载”
 
@@ -16,15 +16,20 @@
 
 ### P0-1 Shell/Command 审批链
 
-**现状**：Shell 调 `ctx.shell`，Command 调 `ctx.commands.execute`，都绕过了 `ctx.tools` 的 `tools/pre-execute` 审批/guard 链。sandbox 仍生效，但“逐次确认”不生效。
+**状态**：✅ 已实现（M6-P0-1），UI harness + 单测/API 测试通过；真实 DSH 面板待最终 smoke。
 
-**风险**：Agent 输出 → Template → Shell 的连线在 `workspace-write` 下可执行未经确认的命令；Command 可触发有副作用的命令。
+**实现**：Shell/Command 节点增加 `approval: ask | allow | deny`，默认 `ask`。`ask` 时 Host 创建 pending approval，节点进入 `waiting-approval`；UI 显示命令/动作，批准一次后执行，拒绝/超时/无通道 fail-closed。审批记录写入 run JSON（approvalId、动作、命令、cwd、状态、时间）。`allow`/`deny` 是显式的 workflow 配置。
+
+**为什么不是直接复用 `ctx.approval`**：DSH 的 `ctx.approval.request()` 要求 open turn；CueFlow run 在 Host 中执行，不在 DSH turn 内。因此实现 Host 自有的一次性审批队列，不伪装成 DSH tool approval。
 
 **验收**：
-- 节点配置 `approval: never | ask | allow`；
-- `ask` 时 Host 发起一次 DSH 审批（或等价 UI 确认），拒绝则节点 `error`；
-- 运行记录记录 `approvalId`、命令、cwd、决定；
-- 未配置时默认 `ask`（至少对 Shell/Command）。
+- [x] 节点配置 `ask` / `allow` / `deny`；
+- [x] `ask` 时 UI 显示命令/动作，批准后执行，拒绝后节点 `error`；
+- [x] 无审批通道时 `APPROVAL_UNAVAILABLE`，绝不静默执行；
+- [x] 运行取消时 pending approval 变 `cancelled`；
+- [x] run JSON 含审批记录；
+- [x] 单测覆盖 allow/ask/deny/cancel/unavailable；
+- [ ] 真实 DSH 面板手工验证 Shell + Command（待重启/安装最新 Host）。
 
 ### P0-2 API 认证/CSRF
 

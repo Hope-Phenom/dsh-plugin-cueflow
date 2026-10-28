@@ -12,6 +12,7 @@ import { isTerminalRun } from '../shared/constants.js'
 const BASE = '/api/dsh/dsh-plugin-cueflow'
 let sequence = 0
 let shouldFail = false
+let approvalDemo = false
 const workflows = new Map()
 const runs = new Map()
 
@@ -53,6 +54,7 @@ export function installMockHost() {
   if (params.get('theme') === 'light') document.body.removeAttribute('data-ds-dark-theme')
   else document.body.setAttribute('data-ds-dark-theme', '')
   if (params.get('fail') === '1') shouldFail = true
+  approvalDemo = params.get('approval') === '1'
 
   document.getElementById('harness-bar')?.addEventListener('click', event => {
     const action = event.target.closest('button')?.dataset.action
@@ -156,6 +158,14 @@ async function route(path, url, method, body) {
       cancelMockRun(run)
       return { status: 200, body: { ok: true, run: publicRun(run) } }
     }
+    if (segments.length === 4 && segments[2] === 'approvals' && method === 'POST') {
+      const run = runs.get(decodeURIComponent(segments[1]))
+      const approval = run?.approvals?.[decodeURIComponent(segments[3])]
+      if (!run || !approval) return { status: 404, body: { ok: false, code: 'APPROVAL_NOT_FOUND', error: 'approval not found' } }
+      if (approval.status !== 'pending') return { status: 409, body: { ok: false, code: 'APPROVAL_CONFLICT', error: 'approval already decided' } }
+      decideMockApproval(run, approval, body?.decision)
+      return { status: 200, body: { ok: true, run: publicRun(run) } }
+    }
   }
   return { status: 404, body: { ok: false, code: 'NOT_FOUND', error: `${method} ${path}` } }
 }
@@ -192,6 +202,7 @@ function createMockRun(workflow, inputs, fail) {
     startedAt: Date.now(),
     endedAt: null,
     nodeStates: {},
+    approvals: {},
     events: [],
     outputs: {},
     error: null,
@@ -216,6 +227,32 @@ function createMockRun(workflow, inputs, fail) {
   const nodes = (workflow.nodes ?? []).filter(node => node.type !== 'note')
   let delay = 300
   const timers = []
+  if (approvalDemo) {
+    const target = nodes.find(node => node.type === 'shell' || node.type === 'command')
+    if (target) {
+      const timer = setTimeout(() => {
+        if (run.status !== 'running') return
+        const state = run.nodeStates[target.id]
+        state.status = 'waiting-approval'
+        state.pendingApproval = { id: 'apr_mock', action: target.type, detail: {} }
+        const id = 'apr_mock'
+        run.approvals[id] = {
+          id,
+          nodeId: target.id,
+          nodeTitle: target.title || target.id,
+          action: target.type,
+          detail: { command: target.config?.command || '/review', workdir: run.cwd },
+          status: 'pending',
+          requestedAt: Date.now(),
+          decidedAt: null,
+        }
+        push('approval/asked', `Approval required for ${target.title || target.id}`, target.id, { id, action: target.type, detail: run.approvals[id].detail })
+      }, 300)
+      timers.push(timer)
+      run.__timers = timers
+      return run
+    }
+  }
   nodes.forEach((node, index) => {
     timers.push(setTimeout(() => {
       if (run.status !== 'running') return
@@ -262,6 +299,37 @@ function createMockRun(workflow, inputs, fail) {
   }, delay + 500))
   run.__timers = timers
   return run
+}
+
+function decideMockApproval(run, approval, decision) {
+  if (decision !== 'allow' && decision !== 'reject') return
+  approval.status = decision === 'allow' ? 'allowed-once' : 'rejected'
+  approval.decidedAt = Date.now()
+  const state = run.nodeStates[approval.nodeId]
+  if (state) {
+    state.pendingApproval = null
+    state.endedAt = Date.now()
+    state.status = decision === 'allow' ? 'success' : 'error'
+    if (decision === 'reject') state.error = { code: 'APPROVAL_REJECTED', message: 'The mock approval was rejected.' }
+  }
+  run.endedAt = Date.now()
+  run.status = decision === 'allow' ? 'completed' : 'error'
+  if (decision === 'reject') run.error = state?.error
+  run.events.push({
+    seq: run.events.length,
+    time: Date.now(),
+    type: 'approval/decided',
+    message: `Approval ${approval.status} for ${approval.nodeTitle}`,
+    nodeId: approval.nodeId,
+    data: { id: approval.id, action: approval.action, outcome: approval.status },
+  })
+  run.events.push({
+    seq: run.events.length,
+    time: Date.now(),
+    type: decision === 'allow' ? 'run/end' : 'run/error',
+    message: decision === 'allow' ? 'Run completed' : 'The mock approval was rejected.',
+    ...(decision === 'reject' ? { nodeId: approval.nodeId, data: state?.error } : {}),
+  })
 }
 
 function cancelMockRun(run) {

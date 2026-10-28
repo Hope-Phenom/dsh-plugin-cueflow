@@ -150,11 +150,16 @@ export const NODE_TYPES = Object.freeze({
     fields: [
       field('command', 'Command', 'command', { hint: 'Without the leading slash.' }),
       field('fallbackInput', 'Fallback input', 'textarea', { rows: 3, hint: 'Used when the input port is not connected.' }),
+      field('approval', 'Approval', 'select', {
+        options: ['ask', 'allow', 'deny'],
+        hint: 'ask = require a one-shot confirmation; allow = run directly; deny = never run.',
+      }),
       field('timeoutMs', 'Timeout (ms)', 'number', { min: 1000, step: 1000 }),
     ],
     defaults: {
       command: '',
       fallbackInput: '',
+      approval: 'ask',
       timeoutMs: DEFAULT_TIMEOUTS.command,
     },
   },
@@ -177,6 +182,10 @@ export const NODE_TYPES = Object.freeze({
     fields: [
       field('command', 'Command', 'textarea', { rows: 3, placeholder: 'git diff --stat', hint: 'A connected command input overrides this.' }),
       field('workdir', 'Working directory', 'text', { placeholder: 'run working directory' }),
+      field('approval', 'Approval', 'select', {
+        options: ['ask', 'allow', 'deny'],
+        hint: 'ask = require a one-shot confirmation; allow = run directly; deny = never run.',
+      }),
       field('timeoutMs', 'Timeout (ms)', 'number', { min: 1000, step: 1000 }),
       field('failOnNonZero', 'Fail on non-zero exit', 'boolean'),
       field('maxOutputChars', 'Max output characters', 'number', { min: 1000, step: 1000 }),
@@ -184,6 +193,7 @@ export const NODE_TYPES = Object.freeze({
     defaults: {
       command: '',
       workdir: '',
+      approval: 'ask',
       timeoutMs: DEFAULT_TIMEOUTS.shell,
       failOnNonZero: true,
       maxOutputChars: 20_000,

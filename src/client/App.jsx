@@ -1,7 +1,7 @@
 import { React, h } from './react.js'
 import { CSS } from './styles.js'
 import {
-  ApiError, cancelRun, deleteWorkflow, getCatalog, getRun, getWorkflow,
+  ApiError, cancelRun, decideApproval, deleteWorkflow, getCatalog, getRun, getWorkflow,
   listRuns, listWorkflows, saveWorkflow, startRun,
 } from './api.js'
 import { createNode, estimateNodeHeight } from '../../shared/node-types.js'
@@ -12,6 +12,7 @@ import { NodeLibrary } from './NodeLibrary.jsx'
 import { Canvas } from './Canvas.jsx'
 import { Inspector, StatusBadge } from './Inspector.jsx'
 import { RunDialog } from './RunDialog.jsx'
+import { ApprovalDialog } from './ApprovalDialog.jsx'
 import { CueFlowIcon, Alert, Check, Chevron, Close, Copy, Download, Fit, LayoutIcon, Play, Plus, Redo, Save, Stop, Trash, Undo } from './Icons.jsx'
 
 const EMPTY_SETTINGS = { ...DEFAULT_WORKFLOW_SETTINGS }
@@ -437,6 +438,22 @@ export function CueFlowPanel({ t }) {
     }
   }, [notify, run, tr])
 
+  const pendingApproval = run
+    ? Object.values(run.approvals ?? {}).find(approval => approval.status === 'pending') ?? null
+    : null
+
+  const decideCurrentApproval = React.useCallback(async decision => {
+    if (!run || !pendingApproval) return
+    try {
+      const data = await decideApproval(run.id, pendingApproval.id, decision)
+      if (data.run) setRun(data.run)
+      notify(decision === 'allow' ? tr('approvalAllow') : tr('approvalReject'), decision === 'allow' ? 'success' : 'warn')
+    } catch (cause) {
+      handleApiError(cause, setIssues, notify, tr)
+      throw cause
+    }
+  }, [notify, pendingApproval, run, tr])
+
   const openRun = React.useCallback(async runId => {
     try {
       const data = await getRun(runId, -1)
@@ -768,6 +785,15 @@ export function CueFlowPanel({ t }) {
         catalog={catalog}
         onClose={() => setRunDialogOpen(false)}
         onRun={startWorkflowRun}
+        t={tr}
+      />
+
+      <ApprovalDialog
+        open={Boolean(pendingApproval)}
+        approval={pendingApproval}
+        nodeTitle={pendingApproval ? nodeTitle(current, pendingApproval.nodeId) : ''}
+        onDecision={decideCurrentApproval}
+        onCancelRun={() => void cancelCurrentRun()}
         t={tr}
       />
 

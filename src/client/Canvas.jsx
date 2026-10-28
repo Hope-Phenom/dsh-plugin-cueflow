@@ -482,6 +482,7 @@ function NodeCard({
         selected ? 'selected' : '',
         statusClass === 'error' ? 'has-error' : '',
         statusClass === 'running' ? 'is-running' : '',
+        statusClass === 'waiting-approval' ? 'is-waiting-approval' : '',
         disabled ? 'is-disabled' : '',
         dragging ? 'is-dragging' : '',
       ].filter(Boolean).join(' ')}
@@ -568,6 +569,9 @@ function NodeCard({
             {disabled && <div className="cue-node-summary" style={{ color: 'var(--cue-faint)' }}>disabled</div>}
             {runStatus === 'running' && status === 'running' && (
               <div className="cue-node-summary" style={{ color: 'var(--cue-amber)' }}>running…</div>
+            )}
+            {status === 'waiting-approval' && (
+              <div className="cue-node-summary" style={{ color: 'var(--cue-orange)' }}>{t('statusWaitingApproval')}…</div>
             )}
           </>
         )}
