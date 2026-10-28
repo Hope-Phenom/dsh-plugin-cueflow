@@ -509,10 +509,10 @@ export function Canvas({
       </div>
 
       <div className="cue-canvas-controls">
-        <button className="cue-btn icon sm" type="button" title={t('zoomOut')} onClick={() => zoomBy(1 / 1.15)}><ZoomOut size={14} /></button>
+        <button className="cue-btn icon sm" type="button" title={t('zoomOut')} aria-label={t('zoomOut')} onClick={() => zoomBy(1 / 1.15)}><ZoomOut size={14} /></button>
         <span className="cue-zoom-label">{Math.round(viewport.scale * 100)}%</span>
-        <button className="cue-btn icon sm" type="button" title={t('zoomIn')} onClick={() => zoomBy(1.15)}><ZoomIn size={14} /></button>
-        <button className="cue-btn icon sm" type="button" title={t('fit')} onClick={onFit}><Fit size={14} /></button>
+        <button className="cue-btn icon sm" type="button" title={t('zoomIn')} aria-label={t('zoomIn')} onClick={() => zoomBy(1.15)}><ZoomIn size={14} /></button>
+        <button className="cue-btn icon sm" type="button" title={t('fit')} aria-label={t('fit')} onClick={onFit}><Fit size={14} /></button>
       </div>
 
       {palette && (

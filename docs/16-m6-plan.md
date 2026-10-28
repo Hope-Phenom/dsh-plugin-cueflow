@@ -163,7 +163,8 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 - [x] Shift+拖拽框选（Playwright）；
 - [x] 节点分组（Group 框；拖动 Group 移动成员）；
 - [ ] 200 节点图可编辑；
-- [ ] 键盘完成核心流程/ARIA 审计。
+- [x] 核心键盘：Ctrl/Cmd+S、C/V、Enter、Z/Y、Delete、Escape；
+- [~] ARIA：常用图标按钮已补 aria-label；完整审计仍待做。
 
 ### M6-P1-5 · 工程化与发布
 

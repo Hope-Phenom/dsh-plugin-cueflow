@@ -825,6 +825,7 @@ export function CueFlowPanel({ t }) {
             className="cue-btn icon ghost cue-inspector-toggle"
             type="button"
             title={tr('inspector')}
+            aria-label={tr('inspector')}
             aria-pressed={inspectorOpen}
             onClick={() => {
               setInspectorPreference(!inspectorOpen)
@@ -833,8 +834,8 @@ export function CueFlowPanel({ t }) {
           >
             <LayoutIcon size={14} />
           </button>
-          <button className="cue-btn icon ghost" type="button" title={tr('undo')} disabled={!historyState.past.length} onClick={undo}><Undo size={14} /></button>
-          <button className="cue-btn icon ghost" type="button" title={tr('redo')} disabled={!historyState.future.length} onClick={redo}><Redo size={14} /></button>
+          <button className="cue-btn icon ghost" type="button" title={tr('undo')} aria-label={tr('undo')} disabled={!historyState.past.length} onClick={undo}><Undo size={14} /></button>
+          <button className="cue-btn icon ghost" type="button" title={tr('redo')} aria-label={tr('redo')} disabled={!historyState.future.length} onClick={redo}><Redo size={14} /></button>
           <button className="cue-btn outline sm" type="button" onClick={() => setTemplateOpen(true)}><Plus size={12} /> {tr('newWorkflow')}</button>
           <button className={`cue-btn outline sm ${errorCount ? 'danger' : ''}`} type="button" onClick={() => { setInspectorTab('issues'); setDockOpen(true); }}>
             <Alert size={12} /> {tr('validate')} {errorCount ? `(${errorCount})` : ''}
@@ -843,7 +844,7 @@ export function CueFlowPanel({ t }) {
             {saving ? <span className="cue-spinner" /> : <Save size={12} />} {saving ? tr('saving') : tr('save')}
           </button>
           {running ? (
-            <button className="cue-btn danger sm" type="button" data-cue-action="cancel-run" onClick={() => void cancelCurrentRun()}><Stop size={12} /> {tr('cancel')}</button>
+            <button className="cue-btn danger sm" type="button" data-cue-action="cancel-run" aria-label={tr('cancel')} onClick={() => void cancelCurrentRun()}><Stop size={12} /> {tr('cancel')}</button>
           ) : (
             <button className="cue-btn primary sm" type="button" data-cue-action="run" onClick={beginRun}><Play size={12} /> {tr('run')}</button>
           )}
