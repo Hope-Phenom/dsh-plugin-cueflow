@@ -77,6 +77,7 @@
 | D-069 | 2026-10-28 | 多选对齐只做左/上/右/下；不做分布/网格/自动布局 | 对齐是低风险、可测试的 80% 收益；自动布局需要图算法和新交互 | 立即做自动布局；只做单节点对齐 | `App.jsx`、`Canvas.jsx`、`e2e/` | accepted（P1-4e） |
 | D-070 | 2026-10-28 | Workflow schema 迁移在 Host 启动时执行：缺失/0 → 当前 v1；未来版本不动 | 避免打开旧 workflow 时才失败；未来版本留给未来迁移器 | 惰性迁移；拒绝所有非 v1 | `store.js`、`index.js` | accepted（P1-3d） |
 | D-071 | 2026-10-28 | 加 `pnpm bench`（200 节点/500 边 merge DAG），CI 执行；暂不发布 npm | 用数量级基线防回退；发布还缺干净环境/CI 安装验证，先不把 `private` 改掉 | 直接 npm publish；先做并发 run 压测 | `scripts/bench.mjs`、CI、CHANGELOG | accepted（P1-5d） |
+| D-072 | 2026-10-28 | 框选用 Shift+拖拽画布空白，矩形与节点包围盒相交即选中 | 不引入新工具模式，复用 Shift 修饰键；框选用屏幕坐标换算 world | 增加选择工具按钮；只做全选 | `Canvas.jsx`、App、e2e | accepted（P1-4f） |
 
 ---
 

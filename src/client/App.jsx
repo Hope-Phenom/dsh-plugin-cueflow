@@ -285,6 +285,13 @@ export function CueFlowPanel({ t }) {
     setHistoryVersion(value => value + 1)
   }, [setCurrent])
 
+  const selectNodes = React.useCallback(ids => {
+    setSelectedNodeIds(ids)
+    setSelectedNodeId(ids[0] ?? null)
+    setSelectedEdgeId(null)
+    setInspectorTab('node')
+  }, [])
+
   const selectNode = React.useCallback((nodeId, { center = false, additive = false } = {}) => {
     if (additive) {
       setSelectedNodeIds(previous => {
@@ -853,6 +860,7 @@ export function CueFlowPanel({ t }) {
             onDeleteNode={deleteNode}
             onFit={() => fitToWorkflow()}
             onAlign={alignSelected}
+            onSelectNodes={selectNodes}
             t={tr}
           />
         </div>

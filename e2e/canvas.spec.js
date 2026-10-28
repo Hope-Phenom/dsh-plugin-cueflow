@@ -74,6 +74,20 @@ test('align left moves selected nodes to the same x', async ({ page }) => {
   expect(xs[0]).toBe(xs[1])
 })
 
+test('shift-drag box-selects visible nodes', async ({ page }) => {
+  await page.goto('/?clean=1&lang=en')
+  const canvas = page.locator('.cue-canvas')
+  const box = await canvas.boundingBox()
+  if (!box) throw new Error('canvas has no box')
+  await page.keyboard.down('Shift')
+  await page.mouse.move(box.x + 6, box.y + 6)
+  await page.mouse.down()
+  await page.mouse.move(box.x + box.width - 20, box.y + box.height - 20, { steps: 8 })
+  await page.mouse.up()
+  await page.keyboard.up('Shift')
+  await expect(page.locator('.cue-node.selected')).not.toHaveCount(0)
+})
+
 test('narrow layout keeps the inspector toggle usable', async ({ page }) => {
   await page.goto('/?clean=1&lang=en')
   const toggle = page.locator('.cue-inspector-toggle')

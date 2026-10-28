@@ -1,6 +1,6 @@
 import { Fragment, React, h } from './react.js'
 import { NodeIcon, Search, More, Trash, Copy, Fit, ZoomIn, ZoomOut } from './Icons.jsx'
-import { getInputs, getOutputs } from '../../shared/node-types.js'
+import { estimateNodeHeight, getInputs, getOutputs } from '../../shared/node-types.js'
 import { estimatePortPosition } from '../../shared/graph.js'
 import { PORT_COLORS } from '../../shared/constants.js'
 
@@ -29,6 +29,7 @@ export function Canvas({
   onDeleteNode,
   onFit,
   onAlign,
+  onSelectNodes,
   t,
 }) {
   const containerRef = React.useRef(null)
@@ -39,11 +40,12 @@ export function Canvas({
   const [panning, setPanning] = React.useState(false)
   const [linking, setLinking] = React.useState(null)
   const [dragNodeId, setDragNodeId] = React.useState(null)
+  const [boxSelect, setBoxSelect] = React.useState(null)
 
   const propsRef = React.useRef(null)
   propsRef.current = {
     workflow, viewport, setViewport, onSelectNode, onSelectEdge, onClearSelection,
-    onAddNode, onConnect, onMoveNode, onBeginNodeDrag,
+    onAddNode, onConnect, onMoveNode, onBeginNodeDrag, onSelectNodes,
   }
   const interaction = React.useRef({ pan: null, drag: null, linking: null })
 
@@ -98,6 +100,17 @@ export function Canvas({
   React.useEffect(() => {
     const onMove = event => {
       const state = interaction.current
+      if (state.box) {
+        const current = localScreen(event.clientX, event.clientY)
+        state.box.currentX = current.x
+        state.box.currentY = current.y
+        setBoxSelect({
+          x: Math.min(state.box.startX, current.x),
+          y: Math.min(state.box.startY, current.y),
+          width: Math.abs(current.x - state.box.startX),
+          height: Math.abs(current.y - state.box.startY),
+        })
+      }
       if (state.pan) {
         const dx = event.clientX - state.pan.startX
         const dy = event.clientY - state.pan.startY
@@ -134,6 +147,27 @@ export function Canvas({
 
     const onUp = event => {
       const state = interaction.current
+      if (state.box) {
+        const box = state.box
+        const scale = propsRef.current.viewport.scale
+        const x1 = (Math.min(box.startX, box.currentX) - propsRef.current.viewport.x) / scale
+        const y1 = (Math.min(box.startY, box.currentY) - propsRef.current.viewport.y) / scale
+        const x2 = (Math.max(box.startX, box.currentX) - propsRef.current.viewport.x) / scale
+        const y2 = (Math.max(box.startY, box.currentY) - propsRef.current.viewport.y) / scale
+        const ids = Math.abs(box.currentX - box.startX) > 4 || Math.abs(box.currentY - box.startY) > 4
+          ? (propsRef.current.workflow.nodes ?? [])
+              .filter(node => {
+                const right = node.position.x + NODE_WIDTH
+                const bottom = node.position.y + estimateNodeHeight(node.type, node.config)
+                return node.position.x < x2 && right > x1 && node.position.y < y2 && bottom > y1
+              })
+              .map(node => node.id)
+          : []
+        state.box = null
+        setBoxSelect(null)
+        propsRef.current.onSelectNodes?.(ids)
+        return
+      }
       if (state.pan) {
         const pan = state.pan
         state.pan = null
@@ -225,6 +259,12 @@ export function Canvas({
     if (event.target.closest?.('.cue-node, .cue-palette, .cue-menu, .cue-canvas-controls')) return
     setPalette(null)
     setMenu(null)
+    if (event.shiftKey && event.button === 0) {
+      const start = localScreen(event.clientX, event.clientY)
+      interaction.current.box = { startX: start.x, startY: start.y, currentX: start.x, currentY: start.y }
+      setBoxSelect({ x: start.x, y: start.y, width: 0, height: 0 })
+      return
+    }
     interaction.current.pan = {
       startX: event.clientX,
       startY: event.clientY,
@@ -330,6 +370,12 @@ export function Canvas({
       }}
       aria-label={t('canvas')}
     >
+      {boxSelect && (
+        <div
+          className="cue-box-select"
+          style={{ left: boxSelect.x, top: boxSelect.y, width: boxSelect.width, height: boxSelect.height }}
+        />
+      )}
       {selectedNodeIds.length > 1 && (
         <div className="cue-align-toolbar" data-cue-action="align-toolbar">
           <span className="cue-align-label">{selectedNodeIds.length} selected</span>

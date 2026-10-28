@@ -195,6 +195,13 @@ body[data-ds-dark-theme] .cue-root, html[data-ds-dark-theme] .cue-root, .cue-roo
 
 /* canvas */
 .cue-canvas-wrap { position: relative; flex: 1 1 auto; min-width: 0; min-height: 0; overflow: hidden; background: var(--cue-canvas); }
+.cue-box-select {
+  position: absolute;
+  z-index: 15;
+  border: 1px solid var(--cue-cyan);
+  background: color-mix(in srgb, var(--cue-cyan) 12%, transparent);
+  pointer-events: none;
+}
 .cue-align-toolbar {
   position: absolute;
   top: 10px;

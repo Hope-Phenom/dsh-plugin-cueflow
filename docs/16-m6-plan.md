@@ -158,7 +158,8 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 - [x] 多选（Shift/Ctrl 点击）+ 复制/粘贴多个节点（Playwright）；
 - [x] Reroute 直通节点；
 - [x] 多选左/上/右/下对齐（Playwright）；
-- [ ] 框选/分组；
+- [x] Shift+拖拽框选（Playwright）；
+- [ ] 节点分组；
 - [ ] 200 节点图可编辑；
 - [ ] 键盘完成核心流程/ARIA 审计。
 
