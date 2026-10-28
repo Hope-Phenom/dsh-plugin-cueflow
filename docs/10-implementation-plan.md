@@ -16,7 +16,7 @@
 ## 2. M2 详细任务
 
 - [x] `shared/constants.js`：类型、状态、限制、默认值。
-- [x] `shared/node-types.js`：14 个节点定义（含 Subflow/Fan-out/Reroute） + `createNode` + `getNodeType`。
+- [x] `shared/node-types.js`：15 个节点定义（含 Subflow/Fan-out/Reroute/Group） + `createNode` + `getNodeType`。
 - [x] `shared/graph.js`：拓扑序、环检测、入边索引、端口值解析、节点尺寸估算。
 - [x] `shared/validation.js`：结构/端口/类型/必填/限制 + 运行输入校验。
 - [x] `shared/template.js`：`{{...}}` 插值。
@@ -100,6 +100,8 @@
 | V12 | 清理 | 临时 profile / 测试文件清理；主 `desktop` 保留插件安装 |
 
 **仍未验证**：真实取消中的子代理、极窄窗口下的拖拽 E2E、受限 sandbox 主动拒绝路径。
+
+
 
 
 

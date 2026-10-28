@@ -169,6 +169,7 @@ export const zh = {
   alignTop: '上对齐',
   alignRight: '右对齐',
   alignBottom: '下对齐',
+  groupSelection: '分组',
 }
 
 export const en = {
@@ -336,6 +337,7 @@ export const en = {
   alignTop: 'Align top',
   alignRight: 'Align right',
   alignBottom: 'Align bottom',
+  groupSelection: 'Group',
 }
 
 /** Format `{name}` placeholders used by the dictionaries. */

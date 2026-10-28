@@ -114,7 +114,7 @@ test('health, catalog and workflow CRUD', async () => {
 
     const catalog = await json(app.base, '/catalog')
     assert.equal(catalog.response.status, 200)
-    assert.equal(catalog.body.nodeTypes.length, 14)
+    assert.equal(catalog.body.nodeTypes.length, 15)
     assert.equal(catalog.body.skills[0].name, 'code-review')
     assert.equal(catalog.body.skills[0].modelInvocable, false)
     assert.equal(catalog.body.commands[0].name, 'simplify')

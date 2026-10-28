@@ -452,6 +452,10 @@
 3. 写入 `run.outputs[node.id] = { name, format, value }`。
 4. 节点预览显示前 `previewLines` 行。
 
+### 3.10.1 Group
+
+视觉分组框：不执行、无端口；用于把相关节点圈在一起。配置 `label`、`width`、`height`。选中 2+ 节点后可用画布工具条“分组”创建包围框。
+
 ### 3.11 Note
 
 画布批注，不参与执行。用于解释流程、标记待办。

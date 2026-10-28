@@ -359,6 +359,21 @@ export const NODE_TYPES = Object.freeze({
     defaults: { name: 'Output', format: 'text', previewLines: 12 },
   },
 
+  group: {
+    type: 'group',
+    title: 'Group',
+    category: 'note',
+    description: 'A visual frame for keeping related nodes together.',
+    inputs: [],
+    outputs: [],
+    fields: [
+      field('label', 'Label', 'text', { placeholder: 'Group' }),
+      field('width', 'Width', 'number', { min: 240, max: 4000, step: 20 }),
+      field('height', 'Height', 'number', { min: 140, max: 4000, step: 20 }),
+    ],
+    defaults: { label: 'Group', width: 640, height: 360 },
+  },
+
   note: {
     type: 'note',
     title: 'Note',
@@ -473,10 +488,11 @@ export function getNodeTypeCatalog() {
 }
 
 /** Rough height used before the DOM measures a node. */
-export function estimateNodeHeight(type, _config) {
+export function estimateNodeHeight(type, config) {
   const def = NODE_TYPES[type]
   if (!def) return 120
   if (type === 'note') return 140
+  if (type === 'group') return 36 + Math.max(140, Number(config?.height) || 360)
   const rows = Math.max(def.inputs.length, def.outputs.length)
   const hasPreview = type === 'output' || type === 'agent' || type === 'skill' || type === 'command' || type === 'shell' || type === 'template'
   return 36 + 12 + rows * 24 + (hasPreview ? 58 : 10)

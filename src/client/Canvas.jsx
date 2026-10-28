@@ -29,6 +29,7 @@ export function Canvas({
   onDeleteNode,
   onFit,
   onAlign,
+  onGroup,
   onSelectNodes,
   t,
 }) {
@@ -256,7 +257,7 @@ export function Canvas({
 
   const onCanvasPointerDown = event => {
     if (event.button !== 0 && event.button !== 1) return
-    if (event.target.closest?.('.cue-node, .cue-palette, .cue-menu, .cue-canvas-controls')) return
+    if (event.target.closest?.('.cue-node, .cue-palette, .cue-menu, .cue-canvas-controls, .cue-align-toolbar')) return
     setPalette(null)
     setMenu(null)
     if (event.shiftKey && event.button === 0) {
@@ -379,6 +380,17 @@ export function Canvas({
       {selectedNodeIds.length > 1 && (
         <div className="cue-align-toolbar" data-cue-action="align-toolbar">
           <span className="cue-align-label">{selectedNodeIds.length} selected</span>
+          <button
+            type="button"
+            className="cue-btn ghost sm"
+            data-cue-action="group-selection"
+            onClick={event => {
+              event.stopPropagation()
+              onGroup?.()
+            }}
+          >
+            {t('groupSelection')}
+          </button>
           {[
             ['left', t('alignLeft')],
             ['top', t('alignTop')],
@@ -541,6 +553,7 @@ function NodeCard({
   const accent = categoryColor(def?.category)
   const disabled = node.disabled
   const isNote = node.type === 'note'
+  const isGroup = node.type === 'group'
   const statusClass = disabled ? 'skipped' : status
   const title = node.title || def?.title || node.type
   const summary = summarize(node, def)
@@ -549,6 +562,7 @@ function NodeCard({
       ref={nodeRef}
       className={[
         'cue-node',
+        isGroup ? 'cue-group-node' : '',
         selected ? 'selected' : '',
         statusClass === 'error' ? 'has-error' : '',
         statusClass === 'running' ? 'is-running' : '',
@@ -557,7 +571,16 @@ function NodeCard({
         dragging ? 'is-dragging' : '',
       ].filter(Boolean).join(' ')}
       data-type={node.type}
-      style={{ left: node.position.x, top: node.position.y, '--cue-node-accent': accent }}
+      style={{
+        left: node.position.x,
+        top: node.position.y,
+        '--cue-node-accent': accent,
+        ...(isGroup ? {
+          width: Math.max(240, Number(node.config?.width) || 640),
+          height: Math.max(140, Number(node.config?.height) || 360),
+          zIndex: 0,
+        } : {}),
+      }}
       onPointerDown={event => {
         if (event.target.closest?.('.cue-dot, .cue-node-head-btn')) return
         event.stopPropagation()
@@ -586,7 +609,9 @@ function NodeCard({
         </button>
       </div>
       <div className="cue-node-body">
-        {isNote ? (
+        {isGroup ? (
+          <div className="cue-group-text">{node.config?.label || 'Group'}</div>
+        ) : isNote ? (
           <div className="cue-note-text">{node.config?.text || '…'}</div>
         ) : (
           <>

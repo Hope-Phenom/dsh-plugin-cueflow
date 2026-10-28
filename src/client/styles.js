@@ -260,6 +260,15 @@ body[data-ds-dark-theme] .cue-root, html[data-ds-dark-theme] .cue-root, .cue-roo
 .cue-node:hover { border-color: var(--cue-border-strong); }
 .cue-node.selected { border-color: var(--cue-amber); box-shadow: 0 0 0 1px var(--cue-amber), 0 8px 22px rgba(0,0,0,.10); }
 .cue-node.has-error { border-color: var(--cue-red); }
+.cue-node:not(.cue-group-node) { z-index: 2; }
+.cue-group-node {
+  background: color-mix(in srgb, var(--cue-panel-2) 40%, transparent) !important;
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--cue-amber) 35%, var(--cue-border)) !important;
+  box-shadow: none !important;
+}
+.cue-group-node .cue-node-body { height: calc(100% - 36px); }
+.cue-group-text { padding: 10px 12px; color: var(--cue-faint); font-size: 12px; font-weight: 600; letter-spacing: .02em; }
 .cue-node.is-running { border-color: var(--cue-amber); }
 .cue-node.is-waiting-approval { border-color: var(--cue-orange); box-shadow: 0 0 0 1px color-mix(in srgb, var(--cue-orange) 35%, transparent); }
 .cue-node.is-disabled { opacity: .62; }

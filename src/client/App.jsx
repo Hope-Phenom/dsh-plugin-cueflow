@@ -406,6 +406,25 @@ export function CueFlowPanel({ t }) {
     setInspectorTab('node')
   }, [applyChange])
 
+  const groupSelected = React.useCallback(() => {
+    const ids = new Set(selectedNodeIds)
+    const nodes = (workflowRef.current?.nodes ?? []).filter(node => ids.has(node.id) && node.type !== 'group')
+    if (nodes.length < 2) return
+    const left = Math.min(...nodes.map(node => node.position.x))
+    const top = Math.min(...nodes.map(node => node.position.y))
+    const right = Math.max(...nodes.map(node => node.position.x + 264))
+    const bottom = Math.max(...nodes.map(node => node.position.y + estimateNodeHeight(node.type, node.config)))
+    const group = createNode('group', {
+      title: 'Group',
+      position: { x: left - 24, y: top - 48 },
+      config: { label: 'Group', width: right - left + 48, height: bottom - top + 72 },
+    })
+    applyChange(current => ({ ...current, nodes: [...current.nodes, group] }))
+    setSelectedNodeId(group.id)
+    setSelectedNodeIds([group.id])
+    setInspectorTab('node')
+  }, [applyChange, selectedNodeIds])
+
   const alignSelected = React.useCallback(mode => {
     const ids = new Set(selectedNodeIds)
     if (ids.size < 2) return
@@ -860,6 +879,7 @@ export function CueFlowPanel({ t }) {
             onDeleteNode={deleteNode}
             onFit={() => fitToWorkflow()}
             onAlign={alignSelected}
+            onGroup={groupSelected}
             onSelectNodes={selectNodes}
             t={tr}
           />

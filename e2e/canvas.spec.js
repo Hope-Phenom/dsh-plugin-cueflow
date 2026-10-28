@@ -88,6 +88,18 @@ test('shift-drag box-selects visible nodes', async ({ page }) => {
   await expect(page.locator('.cue-node.selected')).not.toHaveCount(0)
 })
 
+test('groups the current selection into a visual frame', async ({ page }) => {
+  await page.goto('/?clean=1&lang=en')
+  await page.locator('.cue-library-item').filter({ hasText: 'Agent' }).first().click()
+  await page.evaluate(() => {
+    const nodes = [...document.querySelectorAll('.cue-node')]
+    nodes[0].dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0 }))
+    nodes[1].dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, button: 0, shiftKey: true }))
+  })
+  await page.locator('[data-cue-action="group-selection"]').click()
+  await expect(page.locator('.cue-group-node')).toHaveCount(1)
+})
+
 test('narrow layout keeps the inspector toggle usable', async ({ page }) => {
   await page.goto('/?clean=1&lang=en')
   const toggle = page.locator('.cue-inspector-toggle')
