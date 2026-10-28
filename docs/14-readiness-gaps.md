@@ -115,7 +115,7 @@
 
 **状态**：⚠️ 版本/回滚已实现；自动保存/迁移/workspace 隔离待做
 
-- **Workflow 版本**：✅ 每次保存把旧版归档到 `workflows/.history/<id>/`，保留最近 20 版；API/UI 可列举、读取、恢复。
+- **Workflow 版本**：✅ 每次保存把旧版归档到 `workflows/.history/<id>/`，保留最近 20 版；API/UI 可列举、读取、恢复（从机 `wf_versions_smoke` 已验证）。
 - **自动保存/草稿恢复**：刷新/崩溃会丢未保存修改。
 - **Schema 迁移**：只有 `schemaVersion: 1`，没有迁移器。
 - **Workspace 隔离**：workflows 存在全局 `$DSH_HOME`；多项目需要 workspace-scoped 库。
