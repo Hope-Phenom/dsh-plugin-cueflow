@@ -112,6 +112,7 @@ ComfyUI 把扩散模型的一整条推理链拆成有类型端口的节点，让
 
 - 临时 profile `cueflow-check`：`/health` → `ok:true`，`/catalog` 能列出 node types、skills、commands、live agents。
 - 临时 profile：确定性图 → `hello!`；Read File → `remote-file-ok`；Shell `echo cueflow-remote-shell` → stdout（需给临时 profile 补 sandbox shim）。
+- 从机 Subflow：父 workflow 运行子 workflow `wf_child_smoke`，输出 `nested!`。
 - 临时 profile 发现并修复：Shell 必须按 session / workflow cwd 解析 `sandboxPolicy`；API 必须容忍 PowerShell 5.1 的 UTF-8 BOM。
 - 主 `desktop` profile：插件安装成功；面板打开，3 节点 / 2 连线正常渲染；UI 运行 → `completed`，输出 `hello!`。
 - 主 `desktop` profile：Command 节点执行 `/remote-use status` 返回文本；user-only Skill `code-review` 返回 `OK`；Shell `echo` 返回 stdout。
