@@ -50,6 +50,7 @@
 | D-042 | 2026-10-28 | Shell 节点必须显式传 `sandboxPolicy`：live session 用 session cwd/mode，无 session 用 workflow cwd 作 workspace root | 从机实测 `workspace-write` 默认 root 为 `C:\Users\<user>`，`%TEMP%` 在其内部导致 Windows ACL 拒绝 | 只依赖 shell executor 默认 policy；强制 danger-full-access | `adapters.js`、`index.js` | accepted（从机已验证） |
 | D-043 | 2026-10-28 | HTTP body 解析容忍 UTF-8 BOM | PowerShell 5.1 `Set-Content -Encoding UTF8` 产生 BOM；真实测试出现 `BAD_JSON` | 要求客户端去 BOM；拒绝 BOM | `api.js` + API 测试 | accepted |
 | D-044 | 2026-10-28 | 从机主 `desktop` profile 用 `dsh plugin add` 安装，临时 profile 只做无干扰冒烟；安装/重启由用户手动完成 | 保持用户日常 DSH 可控；仍获得真实桌面验证 | 自动结束/重启 DSH；只测临时 profile | 从机安装流程 | accepted |
+| D-045 | 2026-10-28 | Workflow run 是 CueFlow Host 的独立 run，不是父 DSH 会话的 turn；Agent/Skill 默认 `spawn` 子会话，Command 在父会话执行，Shell/File 是 Host 能力 | 保持父会话干净、避免子代理继承整段上下文；Command 需要父会话生命周期；run 需要独立复现 | 所有节点塞进父会话；默认 `fork` 继承父上下文；每个节点单独一个顶层 Agent | `executor.js`、`adapters.js`、`12/13` 文档 | accepted |
 
 ---
 
@@ -123,4 +124,5 @@ DSH 的 client bundle 是单文件 CJS 工厂，不能可靠地加载相对 ESM 
 |---|---|
 | 2026-10-27 | 初版：D-001 ~ D-035 |
 | 2026-10-27 | 实现后修订：D-003/D-006/D-009/D-013 经真实 DSH 验证；新增 D-036 ~ D-041；D-007/D-008 仍待真实执行 |
-| 2026-10-28 | 从机 <test-host> 实机验证：D-007/D-008 已通过；新增 D-042（sandboxPolicy）、D-043（BOM）、D-044（从机安装流程） |
+| 2026-10-28 | 从机 <test-host> 实机验证：D-007/D-008 已通过；新增 D-042（sandboxPolicy）、D-043（BOM）、D-044（从机安装流程）、D-045（run 与 DSH 会话边界） |
+| 2026-10-28 | 文档补齐：12 使用文档、13 设计阐明、14 工作负载差距、15 API 参考；主文档与 README 导航同步 |

@@ -345,6 +345,19 @@ let text = await fs.readText(target, signal)
 
 **仍未实测**：真实取消中的子代理、极窄窗口拖拽 E2E。其余 MVP 能力已从机实机覆盖。
 
+### 4.8 会话归属（重要）
+
+CueFlow 的 run **不是**父 DSH 会话里的一个 turn。各节点的归属如下：
+
+| 节点 | 运行位置 | 是否进入父会话消息 |
+|---|---|---|
+| Agent / Skill | `ctx.subagents.startActivation` 的 child session；默认 `spawn`，可选 `fork`；`delivery:'caller'` | 否；结果只回 CueFlow |
+| Command | `ctx.commands.execute(parent, …)` | 是；命令生命周期落在父会话 |
+| Shell / Read File | Host 进程；run cwd + DSH `ctx.shell`/`ctx.fs` 策略 | 否 |
+| 图/调度/事件 | CueFlow `RunManager` + run JSON | 否；独立 run 记录 |
+
+多个 Agent/Skill 节点各自拥有 child session，彼此也不共享同一个 session。父会话只作为归属、权限、cwd 的锚点。设计原因与代价见 [13 · 设计阐明](13-design-rationale.md#5-会话模型为什么不是同一个会话)，决策见 D-045。
+
 ## 5. 客户端注册
 
 ```js

@@ -50,6 +50,10 @@ pnpm ui:shot    # 无头截图（需要 Edge/Chrome）
 | [ComfyUI 研究](docs/01-research-comfyui.md) | 节点图为什么有效 |
 | [DSH 研究](docs/02-research-dsh.md) | 插件、Slots、Skill/Command/Subagent |
 | [节点参考](docs/05-node-reference.md) | 端口、配置、语义 |
+| [使用文档](docs/12-user-guide.md) | 安装、第一条流程、示例、排错 |
+| [设计阐明](docs/13-design-rationale.md) | 为什么是节点图、节点集、执行与会话模型 |
+| [工作负载差距](docs/14-readiness-gaps.md) | 生产使用还缺什么 |
+| [API 参考](docs/15-api-reference.md) | Host 路由、数据模型、错误码、限制 |
 | [测试策略](docs/09-testing-strategy.md) | 四层测试 |
 | [决策记录](docs/decisions.md) | 自主决策与待验证项 |
 
