@@ -146,6 +146,25 @@ test('subflow calls the injected nested workflow runner', async () => {
   assert.match(result.outputs.text, /nested/)
 })
 
+test('fanout runs the child workflow once per item', async () => {
+  const services = baseServices()
+  const calls = []
+  const adapters = createAdapters({ getServices: () => services })
+  adapters.setRunWorkflow(async value => {
+    calls.push(value)
+    return { runId: `run_${calls.length}`, outputs: { value: value.inputs.task } }
+  })
+  const result = await adapters.executeNode(
+    node('fanout', { workflowId: 'wf_child', itemKey: 'task' }),
+    { items: ['a', 'b'] },
+    context(),
+  )
+  assert.equal(calls.length, 2)
+  assert.deepEqual(calls.map(call => call.inputs.task), ['a', 'b'])
+  assert.equal(result.outputs.count, 2)
+  assert.equal(result.outputs.results[1].value, 'b')
+})
+
 test('aborting an agent disposes its activation immediately', async () => {
   const services = baseServices()
   let disposed = 0

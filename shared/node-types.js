@@ -243,6 +243,31 @@ export const NODE_TYPES = Object.freeze({
     },
   },
 
+  fanout: {
+    type: 'fanout',
+    title: 'Fan-out',
+    category: 'control',
+    description: 'Run the same saved workflow once per item in an array.',
+    inputs: [{ id: 'items', label: 'items', type: 'json', required: true }],
+    outputs: [
+      { id: 'results', label: 'results', type: 'json' },
+      { id: 'count', label: 'count', type: 'number' },
+      { id: 'text', label: 'text', type: 'text' },
+    ],
+    fields: [
+      field('workflowId', 'Workflow ID', 'text', { placeholder: 'wf_...' }),
+      field('itemKey', 'Item input key', 'text', { placeholder: 'task', hint: 'The child Input node id that receives each item.' }),
+      field('maxItems', 'Max items', 'number', { min: 1, max: 100, step: 1 }),
+      ...RETRY_FIELDS,
+    ],
+    defaults: {
+      workflowId: '',
+      itemKey: 'task',
+      maxItems: 20,
+      ...RETRY_DEFAULTS,
+    },
+  },
+
   'file-read': {
     type: 'file-read',
     title: 'Read File',

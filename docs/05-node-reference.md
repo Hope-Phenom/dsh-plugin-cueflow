@@ -317,6 +317,21 @@
 3. 子 run 记录写入 `runs/`；父节点输出子 run 的 `outputs`。
 4. 嵌套深度上限 5；子 workflow 里的 Shell/Command `approval: ask` 没有 UI 审批面，会 fail-closed，需显式 `allow`。
 
+### 3.6.2 Fan-out
+
+对数组逐项运行同一个已保存 workflow，返回结果数组（顺序执行，受 `maxItems` 限制）。
+
+**端口**
+
+| 方向 | id | 类型 | 必填 | 说明 |
+|---|---|---|---|---|
+| in | `items` | json | 是 | JSON 数组 |
+| out | `results` | json | — | 每个子 run 的 outputs 数组 |
+| out | `count` | number | — | 实际执行数量 |
+| out | `text` | text | — | `results` 的字符串形式 |
+
+**配置**：`workflowId`、`itemKey`（默认 `task`，子 workflow 接收每项的 Input 节点 id）、`maxItems`（默认 20，最大 100），以及通用 retry/onError。
+
 ### 3.7 Read File
 
 读取一个文本文件。通过 `ctx.fs`，继承 DSH 的文件策略。

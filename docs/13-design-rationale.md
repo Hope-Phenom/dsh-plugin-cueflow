@@ -34,7 +34,7 @@ CueFlow 借 ComfyUI 的**视觉编程**隐喻，但不照搬它的模型加载/�
 - workflow 与 run 分离，run 保存 workflow 快照；
 - 画布状态（缩放/选中）不写进 workflow。
 
-## 3. 节点集为什么是这 12 个
+## 3. 节点集为什么是这 13 个
 
 节点集按“编码主链路 + 最小通用性”选：
 
@@ -45,7 +45,7 @@ CueFlow 借 ComfyUI 的**视觉编程**隐喻，但不照搬它的模型加载/�
 | Agent | Agent / Skill | 让模型/技能真正工作 |
 | DSH | Command | 复用 DSH 已有的斜杠命令 |
 | 执行 | Shell / Read File | 确定性命令与文件上下文 |
-| 控制 | Condition / Merge / Subflow | 分支、汇合与子图复用 |
+| 控制 | Condition / Merge / Subflow / Fan-out | 分支、汇合、子图复用与数组 fan-out |
 | 辅助 | Note | 画布解释，不执行 |
 
 **刻意不做**：

@@ -123,14 +123,15 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 
 ### M6-P1-2 · 循环 / fan-out / 子工作流
 
-**状态**：⚠️ Subflow 节点已实现；循环/fan-out 待做
+**状态**：⚠️ Subflow + 顺序 Fan-out 已实现；并发 fan-out 待做
 
 **范围**：Map 节点或数组输入；子图节点引用 workflow + 输入/输出映射；并发上限；递归深度限制。
 
 **验收**：
 - [x] Subflow 节点引用已保存 workflow，输入/输出映射，嵌套深度 5；从机 parent→child 输出 `nested!`；
-- [ ] 循环 / fan-out / 数组逐项执行；
-- [ ] 子图失败项可定位/并发上限。
+- [x] 循环 / fan-out / 数组逐项执行（Fan-out，顺序）；
+- [x] 子图 maxItems 上限；失败项以节点 error 定位；
+- [ ] 并发 fan-out / 单项失败继续策略。
 
 ### M6-P1-3 · 持久化与版本
 

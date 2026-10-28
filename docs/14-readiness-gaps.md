@@ -1,7 +1,7 @@
 # 14 · 工作负载差距
 
 > “能跑通”不等于“能作为工作负载”。本文按 **P0（上真实仓库前必须）** / **P1（规模化）** 列出差距、验收标准与当前状态。
-> 当前已验证：83 个测试、从机主 `desktop` profile、面板 + UI run、审批/CSRF/队列/重试/心跳/Shell + Agent 取消。极窄拖拽 E2E 仍未覆盖。
+> 当前已验证：84 个测试、从机主 `desktop` profile、面板 + UI run、审批/CSRF/队列/重试/心跳/Shell + Agent 取消。极窄拖拽 E2E 仍未覆盖。
 
 ## 0. 两种“工作负载”
 
@@ -101,7 +101,7 @@
 
 | 缺口 | 为什么需要 | 验收 |
 |---|---|---|
-| 循环 / fan-out / map | 对文件、测试用例逐项执行 | 未实现；需要数组输入 + 并发上限 |
+| 循环 / fan-out / map | 对文件、测试用例逐项执行 | ✅ Fan-out 节点：数组逐项运行子 workflow，顺序执行，maxItems 100；并发执行待做 |
 | 显式会话模式 | 多步 Agent 保留上下文 | 已开放 `isolated` / `inherit`；`workflow`/`parent` 待结果收集 API |
 | 子工作流 | 复用“审查/实现/测试”子图 | ✅ Subflow 节点（workflowId + input/output 映射，深度上限 5）；从机 parent→child 输出 `nested!` |
 | JSON 变换 | 从 Agent 结构化输出取字段 | 安全 JSONPath/模板，不执行任意代码 |
@@ -177,6 +177,7 @@
 | 真实性 Skill/Command/Shell/Agent | ✅ 已通过 |
 
 > 这不是“全部都要一次做完”的清单；它是按风险排序的路线图。P0-1 到 P0-4 是投入产出最高的四项。
+
 
 
 
