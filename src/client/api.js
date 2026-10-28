@@ -20,6 +20,7 @@ async function request(path, options = {}) {
     credentials: 'same-origin',
     ...options,
     headers: {
+      'x-cueflow-request': '1',
       ...(options.body ? { 'content-type': 'application/json' } : {}),
       ...(options.headers ?? {}),
     },

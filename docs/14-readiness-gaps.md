@@ -1,7 +1,7 @@
 # 14 · 工作负载差距
 
 > “能跑通”不等于“能作为工作负载”。本文按 **P0（上真实仓库前必须）** / **P1（规模化）** 列出差距、验收标准与当前状态。
-> 当前已验证：62 个测试、从机主 `desktop` profile、面板 + UI run、Agent/Skill/Command/Shell/File。真实取消与极窄拖拽 E2E 仍未覆盖，但它们是本文 P1 的一小部分。
+> 当前已验证：64 个测试、从机主 `desktop` profile、面板 + UI run、Agent/Skill/Command/Shell/File。真实取消与极窄拖拽 E2E 仍未覆盖，但它们是本文 P1 的一小部分。
 
 ## 0. 两种“工作负载”
 
@@ -33,13 +33,18 @@
 
 ### P0-2 API 认证/CSRF
 
-**现状**：`/api/dsh/dsh-plugin-cueflow` 直接注册在 `ctx.webServer`，无 token/Origin 校验；桌面版在回环端口风险较低，`dsh web` 公开部署时不可接受。
+**状态**：✅ CSRF/Origin/JSON 防护已实现（M6-P0-2）；身份认证依赖 DSH 的已认证 Web 表面。
+
+**实现**：所有写请求要求 `X-CueFlow-Request: 1`；跨源 `Origin` / `Sec-Fetch-Site: cross-site` 拒绝；有 body 的请求必须 `application/json`。跨站表单无法设置自定义 header，跨源 preflight 也不会被放行。
+
+**边界**：这不是身份认证。桌面版在回环端口；`dsh web` 公开部署必须经过 DSH 自己的登录/连接认证，CueFlow 不另开端口。
 
 **验收**：
-- 校验 `Origin`/`Sec-Fetch-Site` 或 CSRF token；
-- 只接受 `application/json`；
-- 公开部署走 DSH 已认证连接；`/runs` 不允许匿名触发；
-- 失败返回 401/403，不泄露内部信息。
+- [x] 校验 `Origin` / `Sec-Fetch-Site`；
+- [x] 只接受 JSON body；
+- [x] 缺 CSRF header → 403；跨源 → 403；
+- [x] 同源 UI 正常；
+- [ ] 真实 DSH 面板 smoke（待安装最新 Host 后重启）。
 
 ### P0-3 全局运行队列与预算
 

@@ -1,7 +1,23 @@
 # 15 · API 参考
 
 > Host 路由：`/api/dsh/dsh-plugin-cueflow`。所有响应为 JSON；错误响应统一 `{ ok:false, code, error, details? }`。
-> 该路由由 DSH Web 服务器/Electron IPC 承载，默认只在本机回环使用；公开部署前必须补认证/CSRF（见 [14](14-readiness-gaps.md#p0-2-api-认证csrf)）。
+> 该路由由 DSH Web 服务器/Electron IPC 承载，默认只在本机回环使用；公开部署前必须使用 DSH 的已认证 Web 表面（见 [14](14-readiness-gaps.md#p0-2-api-认证csrf)）。
+
+## 0. 请求保护（CSRF）
+
+所有 `POST/PUT/PATCH/DELETE` 必须带：
+
+```http
+X-CueFlow-Request: 1
+Content-Type: application/json
+```
+
+- 自定义 header 让跨站表单无法直接触发；跨源请求的 preflight 不会被放行；
+- `Sec-Fetch-Site: cross-site` / 不匹配的 `Origin` → 403 `ORIGIN_REJECTED`；
+- 缺 header → 403 `CSRF_REQUIRED`；
+- 有 body 但非 JSON → 415 `UNSUPPORTED_MEDIA_TYPE`。
+
+这是 CSRF 防护，不是身份认证。公开部署仍需 DSH 的登录/连接认证；CueFlow 不额外监听端口。
 
 ## 1. 健康与能力
 
@@ -266,7 +282,7 @@ PowerShell 5.1 的 `Set-Content -Encoding UTF8` 会写 BOM；CueFlow 已容忍�
 ```powershell
 $body = '{"workflow":{"schemaVersion":1,"id":"wf_demo","name":"demo","nodes":[],"edges":[],"settings":{"concurrency":1}},"inputs":{}}'
 Set-Content -LiteralPath body.json -Value $body -Encoding ascii
-curl.exe -sS -X POST -H Content-Type:application/json --data-binary "@body.json" `
+curl.exe -sS -X POST -H Content-Type:application/json -H X-CueFlow-Request:1 --data-binary "@body.json" `
   http://127.0.0.1:60167/api/dsh/dsh-plugin-cueflow/runs
 ```
 

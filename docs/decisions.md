@@ -53,6 +53,7 @@
 | D-045 | 2026-10-28 | Workflow run 是 CueFlow Host 的独立 run，不是父 DSH 会话的 turn；Agent/Skill 默认 `spawn` 子会话，Command 在父会话执行，Shell/File 是 Host 能力 | 保持父会话干净、避免子代理继承整段上下文；Command 需要父会话生命周期；run 需要独立复现 | 所有节点塞进父会话；默认 `fork` 继承父上下文；每个节点单独一个顶层 Agent | `executor.js`、`adapters.js`、`12/13` 文档 | accepted |
 | D-046 | 2026-10-28 | M6 会话模式采用语义名 `isolated / workflow / parent`，不向用户暴露 `spawn/fork` | 用户需要选择的是上下文边界；`workflow` 共享 child 是隔离与连续性的折中；`parent` 写回对话需显式警告 | 所有节点同会话；只暴露 provider 名；默认 parent | [16 · M6 计划](16-m6-plan.md) | accepted（P1 实施） |
 | D-047 | 2026-10-28 | Shell/Command 的审批使用 CueFlow Host 自有队列，不复用 `ctx.approval.request()` | 该 API 要求 open turn，而 workflow run 在 Host、不在 DSH turn 内；复用会抛错或迫使伪造 turn | 伪造 DSH turn；默认 allow；只在 UI 做 pre-run 确认 | `executor.js`、`runs.js`、`api.js`、`ApprovalDialog.jsx` | accepted（P0-1） |
+| D-048 | 2026-10-28 | API 写请求用 `X-CueFlow-Request: 1` + Origin/Sec-Fetch-Site + JSON body 做 CSRF 防护，不新增 CueFlow token | 自定义 header 不能被跨站表单设置，跨源 preflight 不放行；身份认证继续交给 DSH Web 表面 | 自建 token 登录；开放 CORS；只依赖 SameSite cookie | `api.js`、`src/client/api.js` | accepted（P0-2） |
 
 ---
 

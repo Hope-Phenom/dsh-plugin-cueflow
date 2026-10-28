@@ -39,9 +39,16 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 
 ### M6-P0-2 · API 认证 / CSRF
 
-**范围**：Origin/Sec-Fetch-Site 或 CSRF token；只接受 JSON；公开部署走 DSH 已认证连接；匿名触发 `/runs` 返回 401/403。
+**状态**：✅ CSRF/Origin/JSON 防护已实现；真实 DSH smoke 待做
 
-**验收**：跨站 `text/plain` POST 被拒；同源 UI 正常；错误不泄露内部细节。
+**范围**：`X-CueFlow-Request` header + Origin/Sec-Fetch-Site 校验；只接受 JSON；公开部署走 DSH 已认证连接；匿名/跨站触发 `/runs` 返回 403。
+
+**验收**：
+- [x] 跨站 `text/plain` POST 被拒（403/415）；
+- [x] 缺 CSRF header → 403 `CSRF_REQUIRED`；
+- [x] 同源 UI 正常（API 测试 + UI harness）；
+- [x] 错误不泄露内部细节；
+- [ ] 真实 DSH 面板 smoke。
 
 ### M6-P0-3 · 全局运行队列与预算
 
@@ -126,4 +133,4 @@ P0-1 与 P0-3 有交集（审批等待也占资源），但先做 P0-1 以关闭
 
 | 日期 | 变更 |
 |---|---|
-| 2026-10-28 | 建立 M6 计划；P0-1 审批链实现并通过 62 个测试 + approval 截图；P1-1 会话模式纳入计划（当前默认 isolated）；真实 DSH smoke 待做 |
+| 2026-10-28 | 建立 M6 计划；P0-1 审批链实现并通过测试 + approval 截图；P0-2 CSRF 防护实现；P1-1 会话模式纳入计划（当前默认 isolated）；真实 DSH smoke 待做 |

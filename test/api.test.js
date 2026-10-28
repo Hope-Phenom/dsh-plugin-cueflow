@@ -87,7 +87,7 @@ async function makeServer(overrides = {}) {
 async function json(base, path, options = {}) {
   const response = await fetch(`${base}/api/dsh/dsh-plugin-cueflow${path}`, {
     ...options,
-    headers: { 'content-type': 'application/json', ...(options.headers ?? {}) },
+    headers: { 'content-type': 'application/json', 'x-cueflow-request': '1', ...(options.headers ?? {}) },
   })
   const body = await response.json()
   return { response, body }
@@ -221,6 +221,51 @@ test('path traversal ids are rejected', async () => {
     const result = await json(app.base, '/workflows/..%2F..%2Fetc')
     assert.equal(result.response.status, 400)
     assert.equal(result.body.code, 'BAD_REQUEST')
+  } finally {
+    await app.close()
+  }
+})
+
+test('mutating requests require the CueFlow CSRF header', async () => {
+  const app = await makeServer()
+  try {
+    const response = await fetch(`${app.base}/api/dsh/dsh-plugin-cueflow/runs`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ workflow: simpleWorkflow() }),
+    })
+    assert.equal(response.status, 403)
+    assert.equal((await response.json()).code, 'CSRF_REQUIRED')
+  } finally {
+    await app.close()
+  }
+})
+
+test('cross-origin mutations and non-JSON bodies are rejected', async () => {
+  const app = await makeServer()
+  try {
+    const crossOrigin = await fetch(`${app.base}/api/dsh/dsh-plugin-cueflow/runs`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-cueflow-request': '1',
+        origin: 'https://evil.example',
+      },
+      body: JSON.stringify({ workflow: simpleWorkflow() }),
+    })
+    assert.equal(crossOrigin.status, 403)
+    assert.equal((await crossOrigin.json()).code, 'ORIGIN_REJECTED')
+
+    const textPlain = await fetch(`${app.base}/api/dsh/dsh-plugin-cueflow/runs`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'text/plain',
+        'x-cueflow-request': '1',
+      },
+      body: JSON.stringify({ workflow: simpleWorkflow() }),
+    })
+    assert.equal(textPlain.status, 415)
+    assert.equal((await textPlain.json()).code, 'UNSUPPORTED_MEDIA_TYPE')
   } finally {
     await app.close()
   }
