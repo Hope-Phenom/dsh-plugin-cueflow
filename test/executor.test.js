@@ -271,6 +271,33 @@ test('cancelling while approval is pending cancels the node', async () => {
   assert.equal(run.nodeStates.s.status, 'cancelled')
 })
 
+test('seeded upstream outputs are not executed again', async () => {
+  const workflow = wf([
+    node('input', 'n1', 0, { defaultValue: 'hello' }),
+    node('template', 'n2', 100, { template: '{{input}}!' }),
+    node('output', 'n3', 200, { name: 'result' }),
+  ], [
+    edge('e1', 'n1', 'value', 'n2', 'value'),
+    edge('e2', 'n2', 'text', 'n3', 'value'),
+  ])
+  const run = createRunRecord({
+    workflow,
+    seedValues: { n1: { value: 'seeded' }, n2: { text: 'seeded!' } },
+  })
+  const executed = []
+  const { executeNode } = makeExecutor()
+  const wrapped = async (node, inputs, ctx) => {
+    executed.push(node.id)
+    return executeNode(node, inputs, ctx)
+  }
+  await executeRun(run, { executeNode: wrapped })
+  assert.equal(run.status, 'completed')
+  assert.deepEqual(executed, ['n3'])
+  assert.equal(run.nodeStates.n1.status, 'success')
+  assert.equal(run.nodeStates.n2.outputs.text, 'seeded!')
+  assert.equal(run.outputs.n3.value, 'seeded!')
+})
+
 test('long-running nodes emit heartbeats', async () => {
   const workflow = wf([node('agent', 'a', 0, { prompt: 'a', sleep: 40 })])
   const run = createRunRecord({ workflow })

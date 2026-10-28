@@ -351,6 +351,42 @@ test('rejecting an approval fails the node', async () => {
   }
 })
 
+test('a failed run can resume from its failed node', async () => {
+  const workflow = createEmptyWorkflow('rerun me', {
+    id: 'wf_rerun',
+    nodes: [node('shell', 's', 0, { command: 'echo retry', approval: 'allow' })],
+    edges: [],
+  })
+  let calls = 0
+  const adapters = {
+    async executeNode() {
+      calls += 1
+      if (calls === 1) throw Object.assign(new Error('first attempt fails'), { code: 'TRANSIENT' })
+      return { outputs: { stdout: 'retry', stderr: '', exitCode: 0, text: 'retry' } }
+    },
+  }
+  const app = await makeServer({ adapters })
+  try {
+    const started = await json(app.base, '/runs', { method: 'POST', body: JSON.stringify({ workflow }) })
+    const first = await waitFor(app.base, started.body.run.id)
+    assert.equal(first.run.status, 'error')
+    assert.equal(first.run.nodeStates.s.error.code, 'TRANSIENT')
+
+    const resumed = await json(app.base, `/runs/${started.body.run.id}/rerun`, {
+      method: 'POST',
+      body: '{}',
+    })
+    assert.equal(resumed.response.status, 201, JSON.stringify(resumed.body))
+    assert.equal(resumed.body.fromNodeId, 's')
+    const second = await waitFor(app.base, resumed.body.run.id)
+    assert.equal(second.run.status, 'completed')
+    assert.equal(second.run.nodeStates.s.outputs.stdout, 'retry')
+    assert.ok(calls >= 2)
+  } finally {
+    await app.close()
+  }
+})
+
 test('a run can be cancelled while an agent node is waiting', async () => {
   const workflow = createEmptyWorkflow('cancel me', {
     id: 'wf_cancel',

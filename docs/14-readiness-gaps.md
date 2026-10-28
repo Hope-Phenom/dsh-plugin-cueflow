@@ -1,7 +1,7 @@
 # 14 · 工作负载差距
 
 > “能跑通”不等于“能作为工作负载”。本文按 **P0（上真实仓库前必须）** / **P1（规模化）** 列出差距、验收标准与当前状态。
-> 当前已验证：72 个测试、从机主 `desktop` profile、面板 + UI run、Agent/Skill/Command/Shell/File。真实取消与极窄拖拽 E2E 仍未覆盖，但它们是本文 P1 的一小部分。
+> 当前已验证：74 个测试、从机主 `desktop` profile、面板 + UI run、审批/CSRF/队列/重试/心跳。真实 Agent 取消与极窄拖拽 E2E 仍未覆盖。
 
 ## 0. 两种“工作负载”
 
@@ -57,43 +57,45 @@
 - [x] `maxWallClockMs` / `maxAgentCalls` / `maxTokens` 字段与错误码；
 - [x] UI 显示队列位置；
 - [x] 取消 queued/active run 清理定时器与队列；
-- [ ] 从机真实并发 smoke。
+- [x] 从机真实并发 smoke（4 个 run，2 active + queued，取消 queued）。
 
 ### P0-4 失败恢复与重试
 
-**状态**：⚠️ 部分实现：retry/onError 已完成；从失败节点继续待做
+**状态**：✅ retry/onError/局部重跑已实现；真实长节点 smoke 待补
 
-**已实现**：Agent/Skill/Command/Shell/File 节点增加 `retry`（0–5）、`retryDelayMs`、`onError: fail | skip`；每个 attempt 记录 `attempts`，`node/retry` 事件；`skip` 会让该节点 `skipped` 并继续。Shell/Command 默认 `retry: 0`，避免自动重试副作用。
+**实现**：Agent/Skill/Command/Shell/File 节点增加 `retry`（0–5）、`retryDelayMs`、`onError: fail | skip`；每个 attempt 记录 `attempts`，`node/retry` 事件；`skip` 会让该节点 `skipped` 并继续。Shell/Command 默认 `retry: 0`，避免自动重试副作用。`POST /runs/:id/rerun` 从失败节点继续：只 seed 上游成功节点，不再执行它们。
 
 **验收**：
 - [x] `retry` + backoff；
 - [x] `onError: fail | skip`；
 - [x] 非幂等节点默认不重试；
 - [x] run 记录 attempts / retry 事件；
-- [ ] 从失败节点继续（保留上游输出）；
+- [x] 从失败节点继续（保留上游输出）；
 - [ ] 真实 DSH 长节点 smoke。
 
 ### P0-5 长任务可观测与重连
 
-**状态**：⚠️ 部分实现：heartbeat + active list + UI 自动接回已完成；重启恢复沿用 store recovery
+**状态**：✅ heartbeat/active list/UI 自动接回已实现；真实从机 remount 已验证
 
-**已实现**：节点每 10s 发 `node/heartbeat`；`GET /runs` 合并 running/queued 内存记录（之前只读落盘）；UI bootstrap 检测 running/queued run 并自动加载其 workflow 快照/事件。DSH 崩溃后的 running run 由既有 recovery 标记 error。
+**实现**：节点每 10s 发 `node/heartbeat`；`GET /runs` 合并 running/queued 内存记录；UI bootstrap 检测 running/queued run 并自动加载其 workflow 快照/事件；加载 run 时同步 workflow selector 摘要。DSH 崩溃后的 running run 由既有 recovery 标记 error。
 
 **验收**：
 - [x] active runs 列表（`GET /runs` 包含 running/queued）；
-- [x] UI 刷新自动接回 active run；
+- [x] UI remount 自动接回 active run（从机 `<run-id>`）；
 - [x] heartbeat（10s）；
 - [x] interrupted run 可诊断（store recovery）；
-- [ ] 真实 DSH 长 Agent + 刷新 smoke。
+- [ ] workflow selector 修正后的从机 smoke。
 
 ### P0-6 取消语义
 
-**现状**：单元测试覆盖 abort；真实子代理 dispose、Shell 子进程终止未在从机验证；fail-fast 不主动取消正在运行的节点。
+**状态**：⚠️ Shell 取消已在从机验证；真实 Agent child dispose 待补
+
+**实现**：run cancel abort 所有 running 节点；Shell 子进程/Agent signal 传入 adapter；queued run 取消从队列移除并落盘。真实从机 Shell 长任务取消已验证（run `<run-id>`，2s 内 cancelled）。
 
 **验收**：
-- 真实 Agent + Shell 运行中取消，10s 内状态 `cancelled`；
-- child session 结束、进程退出、监听器移除；
-- 失败 vs 取消的策略可配置（drain / abort-all）。
+- [x] 真实 Shell 运行中取消，2s 内 `cancelled`；
+- [ ] 真实 Agent child session dispose；
+- [ ] 失败 vs 取消策略可配置（drain / abort-all）。
 
 ## 2. P1 工作流表达力
 
@@ -159,12 +161,12 @@
 
 | 项 | 状态 |
 |---|---|
-| 真实取消中的子代理 | ❌ 单测覆盖，真实未跑 |
+| 真实 Agent 取消 | ⚠️ Shell 取消已验证；Agent child dispose 未跑 |
 | 极窄窗口拖拽 E2E | ❌ 未跑 |
-| Shell/Command 审批 | ❌ 未接入 |
-| 全局 run 队列/预算 | ❌ 未实现 |
-| retry/onError/局部重跑 | ❌ 未实现 |
-| active run 重连/heartbeat | ❌ 未实现 |
+| Shell/Command 审批 | ✅ 从机面板已验证 |
+| 全局 run 队列/预算 | ✅ 从机队列已验证；墙钟/Token 单测 |
+| retry/onError/局部重跑 | ✅ 单测；从机 onError=skip 已验证 |
+| active run 重连/heartbeat | ✅ 从机 remount + heartbeat 已验证 |
 | 循环/fan-out/子图 | ❌ 未实现 |
 | workflow 版本/自动保存 | ❌ 未实现 |
 | CI/E2E/类型检查 | ❌ 未实现 |

@@ -60,11 +60,11 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 - [x] 并发启动多个 run 时只运行 `maxActiveRuns` 个；
 - [x] 队列位置可见；取消 queued run 生效；
 - [x] 墙钟/Agent/Token 预算以 `RUN_BUDGET_EXCEEDED` 结束；
-- [ ] 从机真实并发 smoke。
+- [x] 从机真实并发 smoke（4 个 run；2 active + queued；取消 queued）。
 
 ### M6-P0-4 · 重试 / onError / 局部重跑
 
-**状态**：⚠️ retry/onError 已完成；局部重跑待做
+**状态**：✅ 已实现（retry/onError/局部重跑）；真实长节点 smoke 待补
 
 **范围**：节点 `retry`（0–5）/`retryDelayMs`；`onError: fail | skip`；非幂等节点默认不自动重试；从失败节点继续（保留上游输出）；run 记录 attempt。
 
@@ -72,7 +72,7 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 - [x] 瞬时失败自动重试；
 - [x] `onError=skip` 下游按缺失输入处理；
 - [x] run 记录 attempts / `node/retry`；
-- [ ] 局部重跑不重复执行已成功上游；
+- [x] 局部重跑不重复执行已成功上游（seedValues + upstream closure）；
 - [ ] 真实 DSH smoke。
 
 ### M6-P0-5 · 运行恢复与心跳
@@ -86,13 +86,19 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 - [x] 10s heartbeat；
 - [x] `GET /runs` 包含 running/queued；
 - [x] 重启后 interrupted run 由 store recovery 标记；
-- [ ] 真实 DSH 长 Agent + 刷新 smoke。
+- [x] 从机真实 remount 自动接回 + heartbeat（<run-id>）；
+- [ ] workflow selector 修正后的从机 smoke。
 
 ### M6-P0-6 · 真实取消
 
+**状态**：⚠️ Shell 取消从机已验证；Agent child dispose 待补
+
 **范围**：真实 Agent + Shell 运行中取消；child session dispose、shell 子进程终止；失败 vs 取消策略可配置。
 
-**验收**：10s 内 run `cancelled`，无残留子进程/监听器。
+**验收**：
+- [x] 真实 Shell 运行中取消，2s 内 `cancelled`（<run-id>）；
+- [ ] 真实 Agent child session dispose；
+- [ ] 失败 vs 取消策略可配置（drain / abort-all）。
 
 ## 3. P1（规模化与体验）
 

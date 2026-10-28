@@ -169,6 +169,18 @@ Content-Type: application/json
 - 已结束：409 `RUN_CONFLICT`；
 - 不存在：404。
 
+### `POST /runs/:id/rerun`
+
+```json
+{ "fromNodeId": "n2" }
+```
+
+- 只允许已结束的 run；运行中返回 409；
+- 默认从 `run.error.nodeId` 或第一个 error 节点继续；
+- 计算 `fromNodeId` 的上游闭包，把其中成功节点的 outputs 作为新 run 的 `seedValues`；
+- 新 run 不重复执行这些上游节点，只执行 `fromNodeId` 及其下游；
+- 返回 201 + 新 run；`seeded` 列出被复用的节点 id。
+
 ### `POST /runs/:id/approvals/:approvalId`
 
 ```json
@@ -271,6 +283,7 @@ Content-Type: application/json
 | 409 | `RUN_CONFLICT` | run 已结束，不能重复取消 |
 | 409 | `APPROVAL_CONFLICT` | approval 已决定 |
 | 409 | `APPROVAL_NOT_LIVE` | approval 不属于当前 live run |
+| 400 | `RERUN_INVALID` | 局部重跑没有失败节点/节点不存在 |
 | 500 | `RUN_BUDGET_EXCEEDED` | 墙钟/Agent/Token 预算超限（run.error.code） |
 | 404 | `APPROVAL_NOT_FOUND` | approval 不存在 |
 | 400 | `APPROVAL_INVALID` | 决定不是 allow/reject |

@@ -2,7 +2,7 @@ import { React, h } from './react.js'
 import { CSS } from './styles.js'
 import {
   ApiError, cancelRun, decideApproval, deleteWorkflow, getCatalog, getRun, getWorkflow,
-  listRuns, listWorkflows, saveWorkflow, startRun,
+  listRuns, listWorkflows, rerunRun, saveWorkflow, startRun,
 } from './api.js'
 import { createNode, estimateNodeHeight } from '../../shared/node-types.js'
 import { canConnect } from '../../shared/graph.js'
@@ -115,6 +115,7 @@ export function CueFlowPanel({ t }) {
 
   const loadWorkflow = React.useCallback((wf, { dirty: nextDirty = false } = {}) => {
     const normalized = normalizeWorkflow(clone(wf))
+    setWorkflows(previous => ensureWorkflowSummary(previous, normalized))
     setCurrent(normalized, { dirty: nextDirty })
     setSelectedNodeId(normalized.nodes?.[0]?.id ?? null)
     setSelectedEdgeId(null)
@@ -468,9 +469,28 @@ export function CueFlowPanel({ t }) {
     }
   }, [notify, pendingApproval, run, tr])
 
+  const rerunCurrentRun = React.useCallback(async () => {
+    if (!run) return
+    try {
+      const data = await rerunRun(run.id)
+      if (data.run) {
+        if (data.run.workflowSnapshot) loadWorkflow(data.run.workflowSnapshot)
+        setRun(data.run)
+        setEvents([])
+        lastSeqRef.current = -1
+        setInspectorTab('run')
+        setDockOpen(true)
+        notify(tr('rerunStarted'), 'success')
+      }
+    } catch (cause) {
+      handleApiError(cause, setIssues, notify, tr)
+    }
+  }, [loadWorkflow, notify, run, tr])
+
   const openRun = React.useCallback(async runId => {
     try {
       const data = await getRun(runId, -1)
+      if (data.run?.workflowSnapshot) loadWorkflow(data.run.workflowSnapshot)
       setRun(data.run)
       setEvents(data.events ?? [])
       lastSeqRef.current = (data.events ?? []).reduce((max, event) => Math.max(max, event.seq), -1)
@@ -479,7 +499,7 @@ export function CueFlowPanel({ t }) {
     } catch (cause) {
       notify(cause instanceof Error ? cause.message : String(cause), 'error')
     }
-  }, [notify])
+  }, [loadWorkflow, notify])
 
   const switchWorkflow = React.useCallback(async id => {
     if (!id || id === workflowRef.current?.id) return
@@ -731,6 +751,7 @@ export function CueFlowPanel({ t }) {
           onOpenRun={openRun}
           onClearRun={clearRun}
           onCancelRun={cancelCurrentRun}
+          onRerun={rerunCurrentRun}
           onDeleteWorkflow={removeWorkflow}
           onExport={exportWorkflow}
           onImport={importWorkflow}
@@ -894,6 +915,22 @@ function safeFileName(name) {
 
 function clone(value) {
   return value === undefined ? undefined : JSON.parse(JSON.stringify(value))
+}
+
+function ensureWorkflowSummary(previous, workflow) {
+  const summary = {
+    id: workflow.id,
+    name: workflow.name,
+    description: workflow.description ?? '',
+    updatedAt: workflow.updatedAt ?? 0,
+    createdAt: workflow.createdAt ?? 0,
+    nodeCount: workflow.nodes?.length ?? 0,
+    edgeCount: workflow.edges?.length ?? 0,
+  }
+  if (previous.some(row => row.id === summary.id)) {
+    return previous.map(row => (row.id === summary.id ? { ...row, ...summary } : row))
+  }
+  return [summary, ...previous]
 }
 
 function emptyWorkflow() {

@@ -101,6 +101,13 @@ export function cancelRun(id) {
   return request(`/runs/${encodeURIComponent(id)}/cancel`, { method: 'POST' })
 }
 
+export function rerunRun(id, fromNodeId) {
+  return request(`/runs/${encodeURIComponent(id)}/rerun`, {
+    method: 'POST',
+    body: JSON.stringify(fromNodeId ? { fromNodeId } : {}),
+  })
+}
+
 export function decideApproval(runId, approvalId, decision) {
   return request(`/runs/${encodeURIComponent(runId)}/approvals/${encodeURIComponent(approvalId)}`, {
     method: 'POST',

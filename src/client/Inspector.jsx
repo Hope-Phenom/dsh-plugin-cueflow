@@ -24,6 +24,7 @@ export function Inspector({
   onOpenRun,
   onClearRun,
   onCancelRun,
+  onRerun,
   onDeleteWorkflow,
   onExport,
   onImport,
@@ -98,6 +99,7 @@ export function Inspector({
             onOpenRun={onOpenRun}
             onCancelRun={onCancelRun}
             onClearRun={onClearRun}
+            onRerun={onRerun}
             t={t}
           />
         )}
@@ -464,7 +466,7 @@ function WorkflowForm({ workflow, issues, runHistory, onUpdateWorkflow, onDelete
   )
 }
 
-function RunPanel({ workflow, run, events, runHistory, onSelectNode, onOpenRun, onCancelRun, onClearRun, t }) {
+function RunPanel({ workflow, run, events, runHistory, onSelectNode, onOpenRun, onCancelRun, onClearRun, onRerun, t }) {
   if (!run) {
     return (
       <div>
@@ -506,6 +508,9 @@ function RunPanel({ workflow, run, events, runHistory, onSelectNode, onOpenRun, 
         {run.error && <div className="cue-warning" style={{ marginTop: 8 }}><Alert size={13} /><span className="cue-warning-text">{run.error.message}</span></div>}
         <div className="cue-inline" style={{ marginTop: 8 }}>
           {running && <button type="button" className="cue-btn danger sm" onClick={onCancelRun}><Stop size={12} /> {t('cancel')}</button>}
+          {!running && (run.status === 'error' || Object.values(run.nodeStates ?? {}).some(state => state.status === 'error')) && (
+            <button type="button" className="cue-btn sm" onClick={onRerun}><Play size={12} /> {t('rerunFromFailure')}</button>
+          )}
           <button type="button" className="cue-btn ghost sm" onClick={onClearRun}>{t('clearResults')}</button>
         </div>
       </div>
