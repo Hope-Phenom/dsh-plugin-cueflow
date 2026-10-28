@@ -98,7 +98,7 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 **验收**：
 - [x] 真实 Shell 运行中取消，2s 内 `cancelled`（<run-id>）；
 - [x] 真实 Agent 运行中取消，5s 内 `cancelled`（<run-id>）；
-- [x] `abort-all` / `drain` 可选（单测覆盖；从机 drain smoke 待补）。
+- [x] `abort-all` / `drain` 可选（单测 + 从机 drain <run-id>）。
 
 ## 3. P1（规模化与体验）
 
@@ -115,6 +115,7 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 **验收**：
 - [x] UI 可选 `isolated` / `inherit`；非法值被 validation 拒绝；
 - [x] run JSON 记录 `settings.sessionMode`；
+- [x] 从机 `inherit` <run-id> 完成，输出 `INHERIT_OK`；
 - [ ] `workflow` 共享 child（需要 child turn 结果收集 API）；
 - [ ] `parent` 写回父会话（需要父会话 turn API）。
 

@@ -95,7 +95,7 @@
 **验收**：
 - [x] 真实 Shell 运行中取消，2s 内 `cancelled`；
 - [x] 真实 Agent 运行中取消，5s 内 `cancelled`（<run-id>）；
-- [x] 失败 vs 取消策略可配置（drain / abort-all，单测覆盖）。
+- [x] 失败 vs 取消策略可配置（`abort-all` / `drain`；从机 drain <run-id> 验证：run cancelled，两个节点 success）。
 
 ## 2. P1 工作流表达力
 
