@@ -291,6 +291,32 @@
 - `command` 来自配置或上游 Template/Input，上游可以来自模型输出——这是用户显式连线造成的，UI 在 Shell 节点上显示警示色与说明。
 - MVP 不提供 `env` / `dshEnv` 覆盖；避免绕过 DSH 的环境治理。
 
+### 3.6.1 Subflow
+
+运行一个已保存的 workflow，并把它的 `outputs` 作为本节点输出。
+
+**端口**
+
+| 方向 | id | 类型 | 必填 | 说明 |
+|---|---|---|---|---|
+| in | `input` | json | 否 | 传给子 workflow 的输入对象；按 Input 节点 id 匹配 |
+| out | `text` | text | — | `outputs` 的字符串形式 |
+| out | `json` | json | — | 子 workflow 的 `outputs` |
+
+**配置**
+
+| key | 类型 | 默认 | 说明 |
+|---|---|---|---|
+| `workflowId` | string | `""` | 已保存的 workflow id |
+| `retry` / `retryDelayMs` / `onError` | — | — | 同通用恢复字段 |
+
+**执行**
+
+1. 从 store 读取 `workflowId` 的 workflow；不存在 → `SUBFLOW_WORKFLOW_REQUIRED` / `SUBFLOW_NOT_FOUND`。
+2. 用 `runNested` 直接执行（不占用全局队列，避免父 run 等待自己占用的槽）。
+3. 子 run 记录写入 `runs/`；父节点输出子 run 的 `outputs`。
+4. 嵌套深度上限 5；子 workflow 里的 Shell/Command `approval: ask` 没有 UI 审批面，会 fail-closed，需显式 `allow`。
+
 ### 3.7 Read File
 
 读取一个文本文件。通过 `ctx.fs`，继承 DSH 的文件策略。

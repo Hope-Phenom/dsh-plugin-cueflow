@@ -7,7 +7,7 @@ CueFlow opens a full-screen node canvas inside DSH. Wire typed nodes into a DAG,
 - **Agent** / **Skill** — run a subagent; Skill nodes can load model-invocable *and* user-only skills.
 - **Command** — run a DSH slash command against a live session.
 - **Shell** / **Read File** — execute through DSH's `ctx.shell` / `ctx.fs`, inheriting its policies.
-- **Input / Template / Condition / Merge / Output / Note** — deterministic glue.
+- **Input / Template / Subflow / Condition / Merge / Output / Note** — deterministic glue.
 
 ## Status
 
@@ -62,3 +62,4 @@ The independent UI test page imports the same `src/client` code used in DSH; onl
 ## License
 
 MIT
+

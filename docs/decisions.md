@@ -65,6 +65,7 @@
 | D-057 | 2026-10-28 | Workflow 保存前归档旧版到 `workflows/.history`，保留 20 版，提供 list/read/restore API | 保存即覆盖会让误改不可回滚；文件级归档比数据库轻，适合当前 local-json store | 只保留一个备份；引入 SQLite | `store.js`、`api.js`、Inspector | accepted（P1-3a） |
 | D-058 | 2026-10-28 | 草稿保存在浏览器 localStorage（700ms debounce），只在无 active run 时自动恢复 | 不引入后端 draft 端点/目录；刷新/崩溃可恢复；跨设备不保证 | 后端草稿文件；每次编辑自动保存正式版本 | `App.jsx` | accepted（P1-3b） |
 | D-059 | 2026-10-28 | 用 Playwright `channel: msedge` 跑独立 UI harness 的窄窗口 E2E | 不下载 Chromium，CI Windows 与本地 Edge 一致；只测 UI，不依赖 DSH | 只用截图脚本；用 Jest+jsdom | `playwright.config.js`、`e2e/`、CI | accepted（P1-4a） |
+| D-060 | 2026-10-28 | Subflow 节点用 `runNested` 直接执行已保存 workflow，绕过全局队列，深度上限 5 | 父 run 占着 active 槽，子 run 若排队会死锁；嵌套 run 仍写入 runs/ 可审计 | 子 run 入队；不支持子图 | `adapters.js`、`runs.js`、`node-types.js` | accepted（P1-2a） |
 
 ---
 

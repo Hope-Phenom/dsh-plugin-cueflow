@@ -26,7 +26,7 @@ ComfyUI 把扩散模型的一整条推理链拆成有类型端口的节点，让
 |---|---|---|
 | 在 DSH 左侧栏打开全屏 CueFlow 面板 | ✅ 真实 DSH 已验证 | 注册 `sidebar.panellist` + `main` keyed slot；面板可打开 |
 | 画布：拖拽、缩放、平移、新建节点、连线、删除、撤销/重做 | ✅ 已实现 | 独立 UI 页 + 真实 DSH；拖拽/删除/重连已用 CDP 操作验证 |
-| 节点：Input / Template / Agent / Skill / Command / Shell / File Read / Condition / Merge / Output / Note | ✅ 从机实机已验证 | 确定性 / Shell / File / Agent / user-only Skill / Command / UI 运行均通过 |
+| 节点：Input / Template / Agent / Skill / Command / Shell / Subflow / File Read / Condition / Merge / Output / Note | ✅ 从机实机已验证 | 确定性 / Shell / File / Agent / user-only Skill / Command / Subflow / UI 运行均通过 |
 | Skill 节点支持模型可见与仅用户可见两类 Skill | ✅ 从机实机已验证 | trusted `ctx.skills.get()`；`code-review`（user-only）返回 `OK` |
 | Command 节点调用 DSH 斜杠命令 | ✅ 从机实机已验证 | `ctx.commands.execute` 执行 `/remote-use status` 并返回文本 |
 | 运行引擎：DAG 调度、并发、超时、取消、条件跳过、事件日志 | ✅ 已实现 + 测试 | 见 [执行引擎](07-execution-engine.md) |
@@ -50,7 +50,7 @@ ComfyUI 把扩散模型的一整条推理链拆成有类型端口的节点，让
 | [10 · 实施计划](10-implementation-plan.md) | 里程碑、验收标准、当前进度与后续迭代。 |
 | [11 · 运维与安全](11-operations.md) | 安装、构建、配置、安全边界、故障排查、已知限制。 |
 | [12 · 使用文档](12-user-guide.md) | 第一次安装、Hello World、节点速查、常用示例、运行对话框、排错与安全提示。 |
-| [13 · 设计阐明](13-design-rationale.md) | 为什么是节点图、为什么是这 11 个节点、执行语义、会话模型、UI/安全取舍与备选方案。 |
+| [13 · 设计阐明](13-design-rationale.md) | 为什么是节点图、为什么是这 12 个节点、执行语义、会话模型、UI/安全取舍与备选方案。 |
 | [14 · 工作负载差距](14-readiness-gaps.md) | 从“能跑”到“可承载工作负载”还差什么：审批、队列、预算、重试、恢复、表达力、工程化。 |
 | [15 · API 参考](15-api-reference.md) | Host 路由、请求/响应、Workflow/Run 数据模型、错误码、限制、会话语义与 curl 示例。 |
 | [16 · M6 计划](16-m6-plan.md) | 从可运行到可承载工作负载的 P0/P1 TODO、验收标准与实施顺序。 |

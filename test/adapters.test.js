@@ -127,6 +127,25 @@ test('inherit session mode selects the fork provider', async () => {
   assert.equal(captured.provider, 'fork')
 })
 
+test('subflow calls the injected nested workflow runner', async () => {
+  const services = baseServices()
+  let request
+  const adapters = createAdapters({ getServices: () => services })
+  adapters.setRunWorkflow(async value => {
+    request = value
+    return { runId: 'run_nested', outputs: { out: { value: 'nested' } } }
+  })
+  const result = await adapters.executeNode(
+    node('subflow', { workflowId: 'wf_child' }),
+    { input: { task: 'x' } },
+    context(),
+  )
+  assert.equal(request.workflowId, 'wf_child')
+  assert.deepEqual(request.inputs, { task: 'x' })
+  assert.deepEqual(result.outputs.json, { out: { value: 'nested' } })
+  assert.match(result.outputs.text, /nested/)
+})
+
 test('aborting an agent disposes its activation immediately', async () => {
   const services = baseServices()
   let disposed = 0

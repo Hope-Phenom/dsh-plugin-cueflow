@@ -110,6 +110,9 @@ Review this diff:
 ### Read File
 只读文件，路径相对 run cwd 或绝对路径；内容超过 `maxChars` 会截断。
 
+### Subflow
+运行另一个已保存的 workflow，把它的 outputs 作为本节点输出；输入对象按子 workflow 的 Input 节点 id 匹配。嵌套深度上限 5。子 workflow 里的 `approval: ask` 没有 UI 审批面，需显式 `allow`。
+
 ### Condition / Merge
 Condition 把值路由到 `true`/`false`；未走分支无值，下游必填输入会 `skipped`。Merge 用 `first`/`array`/`concat` 汇合分支。
 

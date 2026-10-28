@@ -112,6 +112,13 @@ test('unsupported session mode is rejected', () => {
   assert.ok(report.issues.some(issue => issue.code === 'SESSION_MODE'))
 })
 
+test('subflow node requires no special graph shape', () => {
+  const workflow = createEmptyWorkflow('subflow')
+  workflow.nodes.push(createNode('subflow', { id: 'n_sub', position: { x: 0, y: 0 }, config: { workflowId: 'wf_child' } }))
+  const report = validateWorkflow(workflow)
+  assert.equal(report.ok, true, JSON.stringify(report.issues))
+})
+
 test('invalid cancel policy is rejected', () => {
   const workflow = createEmptyWorkflow('cancel policy')
   workflow.settings.cancelPolicy = 'later'

@@ -65,6 +65,7 @@ async function makeServer(overrides = {}) {
   const services = servicesState()
   const adapters = overrides.adapters ?? createAdapters({ getServices: () => services.get() })
   const runs = createRunManager({ store, adapters })
+  adapters.setRunWorkflow?.(request => runs.runNested(request))
   const catalog = createCatalog({ getServices: () => services.get() })
   const route = createRoute({ store, runs, catalog, services, version: 'test' })
   const server = createServer((req, res) => route(req, res))
@@ -113,7 +114,7 @@ test('health, catalog and workflow CRUD', async () => {
 
     const catalog = await json(app.base, '/catalog')
     assert.equal(catalog.response.status, 200)
-    assert.equal(catalog.body.nodeTypes.length, 11)
+    assert.equal(catalog.body.nodeTypes.length, 12)
     assert.equal(catalog.body.skills[0].name, 'code-review')
     assert.equal(catalog.body.skills[0].modelInvocable, false)
     assert.equal(catalog.body.commands[0].name, 'simplify')
@@ -160,6 +161,37 @@ test('workflow saves create versions and restore round-trips', async () => {
     assert.equal(restored.body.workflow.name, 'test flow')
     const current = await json(app.base, `/workflows/${workflow.id}`)
     assert.equal(current.body.workflow.name, 'test flow')
+  } finally {
+    await app.close()
+  }
+})
+
+test('a subflow node runs a saved child workflow', async () => {
+  const app = await makeServer()
+  try {
+    const child = createEmptyWorkflow('child flow', {
+      id: 'wf_child_test',
+      nodes: [
+        node('input', 'in', 0, { defaultValue: 'nested' }),
+        node('template', 't', 100, { template: '{{input}}!' }),
+        node('output', 'out', 200, { name: 'Result' }),
+      ],
+      edges: [
+        edge('e1', 'in', 'value', 't', 'value'),
+        edge('e2', 't', 'text', 'out', 'value'),
+      ],
+    })
+    await json(app.base, '/workflows', { method: 'POST', body: JSON.stringify({ workflow: child }) })
+    const parent = createEmptyWorkflow('parent flow', {
+      id: 'wf_parent_test',
+      nodes: [node('subflow', 'sub', 0, { workflowId: 'wf_child_test' })],
+      edges: [],
+    })
+    const started = await json(app.base, '/runs', { method: 'POST', body: JSON.stringify({ workflow: parent }) })
+    const settled = await waitFor(app.base, started.body.run.id)
+    assert.equal(settled.run.status, 'completed', JSON.stringify(settled.run.error))
+    assert.equal(settled.run.nodeStates.sub.status, 'success')
+    assert.equal(settled.run.nodeStates.sub.outputs.json.out.value, 'nested!')
   } finally {
     await app.close()
   }
