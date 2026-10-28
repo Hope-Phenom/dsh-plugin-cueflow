@@ -153,8 +153,9 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 **范围**：多选/复制粘贴/分组/Reroute；端口拖空白建节点；可搜索 Skill/Command；运行历史详情；窄窗口拖拽 E2E；键盘/ARIA。
 
 **验收**：
-- [x] 900px 窄窗口添加/拖拽节点（Playwright 2 tests）；
-- [ ] 多选/复制粘贴/分组/Reroute；
+- [x] 900px 窄窗口添加/拖拽节点（Playwright）；
+- [x] 复制/粘贴选中节点（Playwright 3 tests）；
+- [ ] 多选/分组/Reroute；
 - [ ] 200 节点图可编辑；
 - [ ] 键盘完成核心流程/ARIA 审计。
 

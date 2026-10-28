@@ -49,6 +49,7 @@ export function CueFlowPanel({ t }) {
   const [saving, setSaving] = React.useState(false)
   const [historyVersion, setHistoryVersion] = React.useState(0)
   const history = React.useRef({ past: [], future: [] })
+  const clipboardRef = React.useRef(null)
   const configEditRef = React.useRef({ nodeId: '', key: '', at: 0 })
   const lastSeqRef = React.useRef(-1)
   const canvasHostRef = React.useRef(null)
@@ -359,6 +360,26 @@ export function CueFlowPanel({ t }) {
     setInspectorTab('node')
   }, [applyChange])
 
+  const copySelectedNode = React.useCallback(() => {
+    const source = workflowRef.current?.nodes?.find(node => node.id === selectedNodeId)
+    if (source) clipboardRef.current = clone(source)
+  }, [selectedNodeId])
+
+  const pasteCopiedNode = React.useCallback(() => {
+    const source = clipboardRef.current
+    if (!source) return
+    const copy = createNode(source.type, {
+      title: `${source.title} copy`,
+      position: { x: source.position.x + 40, y: source.position.y + 40 },
+      config: clone(source.config),
+    })
+    applyChange(current => ({ ...current, nodes: [...current.nodes, copy] }))
+    clipboardRef.current = clone(copy)
+    setSelectedNodeId(copy.id)
+    setSelectedEdgeId(null)
+    setInspectorTab('node')
+  }, [applyChange])
+
   const deleteEdge = React.useCallback(edgeId => {
     applyChange(current => ({ ...current, edges: current.edges.filter(edge => edge.id !== edgeId) }))
     setSelectedEdgeId(null)
@@ -609,6 +630,20 @@ export function CueFlowPanel({ t }) {
         void save()
         return
       }
+      if (mod && event.key.toLowerCase() === 'c') {
+        if (selectedNodeId && !typing) {
+          event.preventDefault()
+          copySelectedNode()
+        }
+        return
+      }
+      if (mod && event.key.toLowerCase() === 'v') {
+        if (!typing) {
+          event.preventDefault()
+          pasteCopiedNode()
+        }
+        return
+      }
       if (mod && event.key === 'Enter') {
         event.preventDefault()
         beginRun()
@@ -643,7 +678,7 @@ export function CueFlowPanel({ t }) {
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [beginRun, deleteEdge, deleteNode, redo, runDialogOpen, save, selectedEdgeId, selectedNodeId, templateOpen, undo])
+  }, [beginRun, copySelectedNode, deleteEdge, deleteNode, pasteCopiedNode, redo, runDialogOpen, save, selectedEdgeId, selectedNodeId, templateOpen, undo])
 
   if (loading) {
     return (

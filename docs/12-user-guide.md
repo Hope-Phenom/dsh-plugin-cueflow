@@ -65,6 +65,7 @@ dsh plugin --profile desktop add "F:\WorkSpace\dsh-plugin-cueflow"
 | 保存 | `Ctrl/Cmd + S` |
 | 运行 | `Ctrl/Cmd + Enter` |
 | 撤销 / 重做 | `Ctrl/Cmd + Z` / `Ctrl/Cmd + Shift + Z` 或 `Ctrl+Y` |
+| 复制/粘贴选中节点 | `Ctrl/Cmd + C` / `Ctrl/Cmd + V` |
 | 删除选中节点/连线 | `Delete` / `Backspace` |
 | 关闭对话框/菜单 | `Escape` |
 | 缩放/适配画布 | 右下角 `- / % / + / Fit` |
