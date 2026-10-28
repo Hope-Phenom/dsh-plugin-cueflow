@@ -56,6 +56,7 @@ ComfyUI 把扩散模型的一整条推理链拆成有类型端口的节点，让
 | [16 · M6 计划](16-m6-plan.md) | 从可运行到可承载工作负载的 P0/P1 TODO、验收标准与实施顺序。 |
 | [17 · 兼容性与发布](17-compatibility.md) | DSH/Node/OS 矩阵、发布检查、升级回滚、性能基线。 |
 | [18 · M6 后续/延期项](18-deferred.md) | 认证身份、多实例锁、完整 ARIA、checkJs、npm 发布等明确延期。 |
+| [19 · npm 发布结构](19-npm-release.md) | 发布文件清单、目录职责、DSH 识别方式与发布命令。 |
 | [决策记录表](decisions.md) | 所有自主决策的编号、理由、替代方案与影响；后续调整以此表为入口。 |
 | [设计自审](reviews/2026-10-27-design-review.md) | 文档自审清单、发现的问题与修正。 |
 | [实现自审](reviews/2026-10-27-implementation-review.md) | 实现阶段发现的问题、修复与真实 DSH 联调记录。 |

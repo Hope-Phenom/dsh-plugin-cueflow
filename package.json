@@ -1,7 +1,7 @@
 {
   "name": "dsh-plugin-cueflow",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "description": "CueFlow — ComfyUI-style workflow orchestration for DeepSeek Harness: node canvas, typed links, DSH Skill/Command/Agent/Shell/FS nodes.",
   "repository": {
     "type": "git",
@@ -50,7 +50,8 @@
     "bench": "node scripts/bench.mjs",
     "bench:runs": "node scripts/bench-runs.mjs",
     "verify:pack": "node scripts/verify-pack.mjs",
-    "verify:install": "node scripts/verify-install.mjs"
+    "verify:install": "node scripts/verify-install.mjs",
+    "prepublishOnly": "pnpm build && pnpm verify:pack"
   },
   "dsh": {
     "bundle": {
