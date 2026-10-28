@@ -399,6 +399,28 @@ export function CueFlowPanel({ t }) {
     setInspectorTab('node')
   }, [applyChange])
 
+  const alignSelected = React.useCallback(mode => {
+    const ids = new Set(selectedNodeIds)
+    if (ids.size < 2) return
+    const nodes = (workflowRef.current?.nodes ?? []).filter(node => ids.has(node.id))
+    if (nodes.length < 2) return
+    const left = Math.min(...nodes.map(node => node.position.x))
+    const top = Math.min(...nodes.map(node => node.position.y))
+    const right = Math.max(...nodes.map(node => node.position.x + 264))
+    const bottom = Math.max(...nodes.map(node => node.position.y + estimateNodeHeight(node.type, node.config)))
+    applyChange(current => ({
+      ...current,
+      nodes: current.nodes.map(node => {
+        if (!ids.has(node.id)) return node
+        if (mode === 'left') return { ...node, position: { ...node.position, x: left } }
+        if (mode === 'right') return { ...node, position: { ...node.position, x: right - 264 } }
+        if (mode === 'top') return { ...node, position: { ...node.position, y: top } }
+        if (mode === 'bottom') return { ...node, position: { ...node.position, y: bottom - estimateNodeHeight(node.type, node.config) } }
+        return node
+      }),
+    }))
+  }, [applyChange, selectedNodeIds])
+
   const deleteSelectedNodes = React.useCallback(() => {
     const ids = new Set(selectedNodeIds)
     if (!ids.size) return
@@ -830,6 +852,7 @@ export function CueFlowPanel({ t }) {
             onToggleDisabled={toggleDisabled}
             onDeleteNode={deleteNode}
             onFit={() => fitToWorkflow()}
+            onAlign={alignSelected}
             t={tr}
           />
         </div>

@@ -165,6 +165,10 @@ export const zh = {
   restore: '恢复',
   versionRestored: '已恢复历史版本',
   draftRestored: '已恢复未保存的草稿（请确认后保存）',
+  alignLeft: '左对齐',
+  alignTop: '上对齐',
+  alignRight: '右对齐',
+  alignBottom: '下对齐',
 }
 
 export const en = {
@@ -328,6 +332,10 @@ export const en = {
   restore: 'Restore',
   versionRestored: 'Version restored',
   draftRestored: 'Recovered an unsaved draft; review and save.',
+  alignLeft: 'Align left',
+  alignTop: 'Align top',
+  alignRight: 'Align right',
+  alignBottom: 'Align bottom',
 }
 
 /** Format `{name}` placeholders used by the dictionaries. */

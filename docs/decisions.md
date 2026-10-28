@@ -74,6 +74,7 @@
 | D-066 | 2026-10-28 | Workspace 隔离先做逻辑过滤：保存记录 `settings.workspace`，列表按 cwd 过滤，legacy 全局可见 | 不迁移现有文件布局，先阻止跨项目列表污染；物理隔离另做 | 直接迁移目录；不做隔离 | `store.js`、`api.js`、`App.jsx` | accepted（P1-3c） |
 | D-067 | 2026-10-28 | 多选用 `selectedNodeIds` 数组，Shift/Ctrl 点击切换；复制/删除作用于整个选择集 | 单节点 inspector 保持 `selectedNodeId` 不变，降低改动面；框选后续再加 | 引入完整 selection model/框选 | `App.jsx`、`Canvas.jsx`、`e2e/` | accepted（P1-4c） |
 | D-068 | 2026-10-28 | 加 Reroute 直通节点（any → any），不做类型转换 | 大图需要整理连线，但不应引入隐式执行/转换 | 用 Note 代替；做多端口 reroute | `node-types.js`、`adapters.js` | accepted（P1-4d） |
+| D-069 | 2026-10-28 | 多选对齐只做左/上/右/下；不做分布/网格/自动布局 | 对齐是低风险、可测试的 80% 收益；自动布局需要图算法和新交互 | 立即做自动布局；只做单节点对齐 | `App.jsx`、`Canvas.jsx`、`e2e/` | accepted（P1-4e） |
 
 ---
 

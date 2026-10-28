@@ -28,6 +28,7 @@ export function Canvas({
   onToggleDisabled,
   onDeleteNode,
   onFit,
+  onAlign,
   t,
 }) {
   const containerRef = React.useRef(null)
@@ -329,6 +330,30 @@ export function Canvas({
       }}
       aria-label={t('canvas')}
     >
+      {selectedNodeIds.length > 1 && (
+        <div className="cue-align-toolbar" data-cue-action="align-toolbar">
+          <span className="cue-align-label">{selectedNodeIds.length} selected</span>
+          {[
+            ['left', t('alignLeft')],
+            ['top', t('alignTop')],
+            ['right', t('alignRight')],
+            ['bottom', t('alignBottom')],
+          ].map(([mode, label]) => (
+            <button
+              type="button"
+              className="cue-btn ghost sm"
+              key={mode}
+              data-cue-action={`align-${mode}`}
+              onClick={event => {
+                event.stopPropagation()
+                onAlign?.(mode)
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
       <div
         className="cue-world"
         style={{ transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.scale})` }}

@@ -195,6 +195,23 @@ body[data-ds-dark-theme] .cue-root, html[data-ds-dark-theme] .cue-root, .cue-roo
 
 /* canvas */
 .cue-canvas-wrap { position: relative; flex: 1 1 auto; min-width: 0; min-height: 0; overflow: hidden; background: var(--cue-canvas); }
+.cue-align-toolbar {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 8px;
+  border: 1px solid var(--cue-border);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--cue-panel) 92%, transparent);
+  box-shadow: var(--cue-shadow);
+  backdrop-filter: blur(8px);
+}
+.cue-align-label { font-size: 10px; color: var(--cue-faint); margin-right: 4px; white-space: nowrap; }
 .cue-canvas {
   position: absolute;
   inset: 0;
