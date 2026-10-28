@@ -140,7 +140,7 @@
 | 缺口 | 验收 |
 |---|---|
 | CI（Windows runner） | ✅ test/build/ui:build/ui:shot/pack dry-run；E2E 待加 |
-| 类型检查 / lint | 至少 `tsc --checkJs` 或迁移 TS；ESLint/格式检查 |
+| 类型检查 / lint | ⚠️ ESLint 基线已加；TypeScript checkJs 暂缓 |
 | 浏览器 E2E | Playwright 覆盖拖拽、连线、运行、取消；可截图对比 |
 | 发布 | npm 包（当前 `private: true`）、版本号、CHANGELOG、兼容矩阵 |
 | 存储迁移测试 | 旧 schema → 新 schema 自动迁移，失败可回滚 |

@@ -39,6 +39,7 @@ pnpm build      # esbuild 打包浏览器 bundle
 pnpm ui         # Vite + Mock Host，http://127.0.0.1:5199
 pnpm ui:shot    # 无头截图（需要 Edge/Chrome）
 pnpm e2e        # Playwright 窄窗口画布 E2E（Edge）
+pnpm lint       # ESLint 基线
 ```
 
 独立 UI 测试页复用 `src/client` 的真实组件，只替换 Host 与 slot 容器。

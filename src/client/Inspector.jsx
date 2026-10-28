@@ -1,5 +1,5 @@
 import { React, h } from './react.js'
-import { Alert, Check, Clock, Close, Copy, Download, FileIcon, NodeIcon, Play, Stop, Trash, Upload } from './Icons.jsx'
+import { Alert, Check, Clock, Download, NodeIcon, Play, Stop, Trash, Upload } from './Icons.jsx'
 import { getInputs, getOutputs } from '../../shared/node-types.js'
 import { PORT_COLORS } from '../../shared/constants.js'
 
@@ -226,7 +226,7 @@ function NodeForm({ node, catalog, workflow, issues, run, onUpdateNode, onUpdate
   )
 }
 
-function FieldControl({ field, value, node, catalog, onChange, onFormatError, t }) {
+function FieldControl({ field, value, node: _node, catalog, onChange, onFormatError, t }) {
   const id = `cue-field-${field.key}`
   const [localError, setLocalError] = React.useState('')
   const hint = field.hint ? <div className="cue-field-hint">{field.hint}</div> : null

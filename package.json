@@ -29,7 +29,8 @@
     "ui": "vite --config vite.config.js",
     "ui:build": "vite build --config vite.config.js",
     "ui:shot": "node scripts/screenshot-ui.mjs",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "lint": "eslint ."
   },
   "dsh": {
     "bundle": {
@@ -46,6 +47,8 @@
   "devDependencies": {
     "@playwright/test": "^1.64.1",
     "esbuild": "^0.25.0",
+    "eslint": "^10.13.0",
+    "globals": "^17.13.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "vite": "^6.0.0"

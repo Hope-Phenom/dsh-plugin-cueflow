@@ -13,7 +13,7 @@ import { Canvas } from './Canvas.jsx'
 import { Inspector, StatusBadge } from './Inspector.jsx'
 import { RunDialog } from './RunDialog.jsx'
 import { ApprovalDialog } from './ApprovalDialog.jsx'
-import { CueFlowIcon, Alert, Check, Chevron, Close, Copy, Download, Fit, LayoutIcon, Play, Plus, Redo, Save, Stop, Trash, Undo } from './Icons.jsx'
+import { CueFlowIcon, Alert, Chevron, Close, LayoutIcon, Play, Plus, Redo, Save, Stop, Undo } from './Icons.jsx'
 
 const EMPTY_SETTINGS = { ...DEFAULT_WORKFLOW_SETTINGS }
 const DRAFT_PREFIX = 'cueflow:draft:'
@@ -47,7 +47,7 @@ export function CueFlowPanel({ t }) {
   const [dockTab, setDockTab] = React.useState('log')
   const [toast, setToast] = React.useState(null)
   const [saving, setSaving] = React.useState(false)
-  const [historyVersion, setHistoryVersion] = React.useState(0)
+  const [, setHistoryVersion] = React.useState(0)
   const history = React.useRef({ past: [], future: [] })
   const clipboardRef = React.useRef(null)
   const configEditRef = React.useRef({ nodeId: '', key: '', at: 0 })
@@ -708,7 +708,6 @@ export function CueFlowPanel({ t }) {
   }
 
   const current = workflow
-  const selectedNode = current?.nodes?.find(node => node.id === selectedNodeId) ?? null
   const running = run ? !isTerminalRun(run.status) : false
   const errorCount = issues.filter(issue => issue.severity === 'error').length
   const historyState = history.current

@@ -462,7 +462,7 @@ export function getNodeTypeCatalog() {
 }
 
 /** Rough height used before the DOM measures a node. */
-export function estimateNodeHeight(type, config) {
+export function estimateNodeHeight(type, _config) {
   const def = NODE_TYPES[type]
   if (!def) return 120
   if (type === 'note') return 140

@@ -39,6 +39,7 @@ pnpm build      # esbuild the browser bundle
 pnpm ui         # Vite + Mock Host at http://127.0.0.1:5199
 pnpm ui:shot    # headless screenshots, if Edge/Chrome is available
 pnpm e2e        # Playwright narrow-canvas E2E (Edge)
+pnpm lint       # ESLint baseline
 ```
 
 The independent UI test page imports the same `src/client` code used in DSH; only the Host and slot container are mocked.

@@ -1,6 +1,6 @@
 import { Fragment, React, h } from './react.js'
-import { NodeIcon, Search, More, Trash, Copy, Fit, ZoomIn, ZoomOut, Close } from './Icons.jsx'
-import { estimateNodeHeight, getInputs, getOutputs } from '../../shared/node-types.js'
+import { NodeIcon, Search, More, Trash, Copy, Fit, ZoomIn, ZoomOut } from './Icons.jsx'
+import { getInputs, getOutputs } from '../../shared/node-types.js'
 import { estimatePortPosition } from '../../shared/graph.js'
 import { PORT_COLORS } from '../../shared/constants.js'
 
@@ -21,7 +21,6 @@ export function Canvas({
   onClearSelection,
   onAddNode,
   onConnect,
-  onDeleteEdge,
   onMoveNode,
   onBeginNodeDrag,
   onDuplicateNode,
@@ -396,7 +395,6 @@ export function Canvas({
               onPortPointerDown={onPortPointerDown}
               onContextMenu={event => onNodeContextMenu(event, node)}
               onSelect={() => onSelectNode(node.id)}
-              onDelete={() => onDeleteNode(node.id)}
               t={t}
             />
           )
@@ -466,14 +464,14 @@ export function Canvas({
 
 function NodeCard({
   node, def, inputs, outputs, connectedIn, connectedOut, selected, status, preview, error,
-  runStatus, dragging, nodeRef, onPointerDown, onPortPointerDown, onContextMenu, onSelect, onDelete, t,
+  runStatus, dragging, nodeRef, onPointerDown, onPortPointerDown, onContextMenu, onSelect, t,
 }) {
   const accent = categoryColor(def?.category)
   const disabled = node.disabled
   const isNote = node.type === 'note'
   const statusClass = disabled ? 'skipped' : status
   const title = node.title || def?.title || node.type
-  const summary = summarize(node, def, t)
+  const summary = summarize(node, def)
   return (
     <div
       ref={nodeRef}
@@ -695,7 +693,7 @@ function pathFor(from, to) {
   return `M ${from.x} ${from.y} C ${from.x + dx} ${from.y}, ${to.x - dx} ${to.y}, ${to.x} ${to.y}`
 }
 
-function summarize(node, def, t) {
+function summarize(node, def) {
   const config = node.config ?? {}
   switch (node.type) {
     case 'input':
