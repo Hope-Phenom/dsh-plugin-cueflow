@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CueFlow · UI harness</title>
+    <style>
+      html, body, #root { width: 100%; height: 100%; margin: 0; }
+      body { background: #0d1015; overflow: hidden; }
+      .harness-bar {
+        position: fixed; right: 14px; bottom: 14px; z-index: 5000;
+        display: flex; align-items: center; gap: 6px; padding: 6px;
+        border: 1px solid #2b3542; border-radius: 9px;
+        background: rgba(20, 25, 32, .94); color: #e7edf5;
+        font: 11px/1.4 "Cascadia Code", Consolas, monospace;
+        box-shadow: 0 12px 32px rgba(0,0,0,.4);
+      }
+      .harness-bar button {
+        height: 26px; border: 1px solid #3b4859; border-radius: 6px;
+        background: #1a212a; color: #e7edf5; padding: 0 8px; cursor: pointer;
+        font: inherit;
+      }
+      .harness-bar button:hover { border-color: #e7b75f; }
+      .harness-bar .primary { background: #e7b75f; color: #1b1408; border-color: #e7b75f; font-weight: 600; }
+      body[data-ds-dark-theme] .harness-bar { background: rgba(20,25,32,.94); color: #e7edf5; }
+      body:not([data-ds-dark-theme]) .harness-bar { background: rgba(247,249,251,.96); color: #141a22; border-color: #cfd7e1; }
+      body:not([data-ds-dark-theme]) .harness-bar button { background: #eef2f6; color: #141a22; border-color: #cfd7e1; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <div class="harness-bar" id="harness-bar">
+      <button data-action="run" class="primary">Run</button>
+      <button data-action="fail">Fail</button>
+      <button data-action="cancel">Cancel</button>
+      <button data-action="theme">Theme</button>
+      <button data-action="width">Width</button>
+    </div>
+    <script type="module" src="/main.jsx"></script>
+  </body>
+</html>

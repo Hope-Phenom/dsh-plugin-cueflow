@@ -1,0 +1,10 @@
+# CueFlow bundle patch.
+#
+# One Host row carries the whole feature: it serves the workflow/run API and
+# adapts DSH skills, commands, subagents, shell and fs. Its browser half is
+# discovered from package.json `dsh.client`, so no second row is needed.
+#
+# Keep the row id stable: it is the plugin identity in the profile patch.
+- insert:
+    - id: dsh-plugin-cueflow
+      name: dsh-plugin-cueflow

@@ -1,0 +1,4 @@
+{
+  "name": "CueFlow",
+  "description": "ComfyUI-style workflow canvas for DSH: wire inputs, skills, commands, agents, shell and files into repeatable flows."
+}

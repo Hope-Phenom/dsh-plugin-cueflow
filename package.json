@@ -1,0 +1,51 @@
+{
+  "name": "dsh-plugin-cueflow",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CueFlow — ComfyUI-style workflow orchestration for DeepSeek Harness: node canvas, typed links, DSH Skill/Command/Agent/Shell/FS nodes.",
+  "type": "module",
+  "main": "lib/index.js",
+  "icon": "./assets/icon.svg",
+  "license": "MIT",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "files": [
+    "lib",
+    "shared",
+    "assets",
+    "locale",
+    "cordis.patch.yml",
+    "README.md",
+    "README.zh.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "node scripts/build-client.mjs",
+    "test": "node --test test/*.test.js",
+    "ui": "vite --config vite.config.js",
+    "ui:build": "vite build --config vite.config.js",
+    "ui:shot": "node scripts/screenshot-ui.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  },
+  "engines": {
+    "dsh": ">=0.2.0 <0.3.0",
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "vite": "^6.0.0"
+  }
+}

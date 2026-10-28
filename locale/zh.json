@@ -1,0 +1,4 @@
+{
+  "name": "CueFlow",
+  "description": "DSH 的 ComfyUI 式工作流画布：把输入、Skill、Command、Agent、Shell 与文件串成可复用的流程。"
+}
