@@ -294,6 +294,17 @@ export const NODE_TYPES = Object.freeze({
     defaults: { path: '', maxChars: 200_000, ...RETRY_DEFAULTS },
   },
 
+  reroute: {
+    type: 'reroute',
+    title: 'Reroute',
+    category: 'control',
+    description: 'Pass a value through to keep large graphs readable.',
+    inputs: [{ id: 'value', label: 'value', type: 'any', required: true }],
+    outputs: [{ id: 'value', label: 'value', type: 'any' }],
+    fields: [],
+    defaults: {},
+  },
+
   condition: {
     type: 'condition',
     title: 'Condition',

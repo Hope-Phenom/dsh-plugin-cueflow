@@ -359,6 +359,15 @@
 3. `text = await ctx.fs.readText(target, signal)`；超过 `maxChars` 截断。
 4. 输出 `text`、`info`。
 
+### 3.7.1 Reroute
+
+把输入原样传到输出，用于整理大图连线；不改变值、不做类型转换。
+
+| 方向 | id | 类型 | 必填 |
+|---|---|---|---|
+| in | `value` | any | 是 |
+| out | `value` | any | — |
+
 ### 3.8 Condition
 
 按规则把输入路由到 `true` 或 `false` 分支。未走的分支输出 `undefined`，下游会因此跳过。

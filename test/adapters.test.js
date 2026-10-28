@@ -373,6 +373,12 @@ test('missing services produce CAPABILITY_MISSING', async () => {
   )
 })
 
+test('reroute passes the value through', async () => {
+  const adapters = createAdapters({ getServices: () => baseServices() })
+  const result = await adapters.executeNode(node('reroute'), { value: { ok: true } }, context())
+  assert.deepEqual(result.outputs, { value: { ok: true } })
+})
+
 test('condition and merge are pure', async () => {
   const adapters = createAdapters({ getServices: () => ({}) })
   const truthy = await adapters.executeNode(node('condition'), { value: 'yes' }, context())

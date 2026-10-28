@@ -7,7 +7,7 @@ CueFlow 在 DSH 内打开一张全屏节点画布：把有类型端口的节点�
 - **Agent / Skill**：启动子代理；Skill 节点既支持模型可见的 Skill，也支持仅用户可见的 Skill。
 - **Command**：对 live 会话执行 DSH 斜杠命令。
 - **Shell / Read File**：通过 `ctx.shell` / `ctx.fs` 执行，继承 DSH 的策略。
-- **Input / Template / Subflow / Fan-out / Condition / Merge / Output / Note**：确定性的胶水节点。
+- **Input / Template / Subflow / Fan-out / Reroute / Condition / Merge / Output / Note**：确定性的胶水节点。
 
 ## 状态
 
@@ -63,5 +63,6 @@ pnpm lint       # ESLint 基线
 ## 许可
 
 MIT
+
 
 
