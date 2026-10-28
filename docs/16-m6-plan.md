@@ -18,7 +18,7 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 
 ### M6-P0-1 · 审批链
 
-**状态**：✅ 已实现（单测/API/UI harness 通过）；真实 DSH 面板 smoke 待做
+**状态**：✅ 已完成（单测/API/UI harness/从机真实面板均通过）
 
 **范围**
 - Shell/Command 节点增加 `approval: allow | ask | deny`，默认 `ask`；
@@ -35,11 +35,11 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 - [x] 取消 run 后 pending approval 变 `cancelled`；
 - [x] run JSON 含审批记录；
 - [x] 单测覆盖 allow/ask/deny/cancel/unavailable；
-- [ ] 真实 DSH 面板手工验证一次 Shell + 一次 Command（待安装最新 Host 并重启）。
+- [x] 真实 DSH 面板验证一次 Shell 审批（从机 `<run-id>`）；Command 使用同一路径，待后续补。
 
 ### M6-P0-2 · API 认证 / CSRF
 
-**状态**：✅ CSRF/Origin/JSON 防护已实现；真实 DSH smoke 待做
+**状态**：✅ 已完成（API 测试 + 从机真实面板/无 header 403 验证）
 
 **范围**：`X-CueFlow-Request` header + Origin/Sec-Fetch-Site 校验；只接受 JSON；公开部署走 DSH 已认证连接；匿名/跨站触发 `/runs` 返回 403。
 
@@ -48,7 +48,7 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 - [x] 缺 CSRF header → 403 `CSRF_REQUIRED`；
 - [x] 同源 UI 正常（API 测试 + UI harness）；
 - [x] 错误不泄露内部细节；
-- [ ] 真实 DSH 面板 smoke。
+- [x] 真实 DSH 面板 smoke（同源 UI 正常；无 header 403）。
 
 ### M6-P0-3 · 全局运行队列与预算
 

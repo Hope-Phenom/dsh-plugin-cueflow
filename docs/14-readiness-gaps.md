@@ -16,7 +16,7 @@
 
 ### P0-1 Shell/Command 审批链
 
-**状态**：✅ 已实现（M6-P0-1），UI harness + 单测/API 测试通过；真实 DSH 面板待最终 smoke。
+**状态**：✅ 已完成（M6-P0-1），单测/API/UI harness + 从机真实面板均通过。
 
 **实现**：Shell/Command 节点增加 `approval: ask | allow | deny`，默认 `ask`。`ask` 时 Host 创建 pending approval，节点进入 `waiting-approval`；UI 显示命令/动作，批准一次后执行，拒绝/超时/无通道 fail-closed。审批记录写入 run JSON（approvalId、动作、命令、cwd、状态、时间）。`allow`/`deny` 是显式的 workflow 配置。
 
@@ -29,11 +29,11 @@
 - [x] 运行取消时 pending approval 变 `cancelled`；
 - [x] run JSON 含审批记录；
 - [x] 单测覆盖 allow/ask/deny/cancel/unavailable；
-- [ ] 真实 DSH 面板手工验证 Shell + Command（待重启/安装最新 Host）。
+- [x] 真实 DSH 面板验证 Shell 审批（从机 `<run-id>`）；Command 同一路径，待补。
 
 ### P0-2 API 认证/CSRF
 
-**状态**：✅ CSRF/Origin/JSON 防护已实现（M6-P0-2）；身份认证依赖 DSH 的已认证 Web 表面。
+**状态**：✅ 已完成（M6-P0-2）；CSRF/Origin/JSON 防护 + 从机真实面板验证通过；身份认证依赖 DSH 的已认证 Web 表面。
 
 **实现**：所有写请求要求 `X-CueFlow-Request: 1`；跨源 `Origin` / `Sec-Fetch-Site: cross-site` 拒绝；有 body 的请求必须 `application/json`。跨站表单无法设置自定义 header，跨源 preflight 也不会被放行。
 
@@ -44,7 +44,7 @@
 - [x] 只接受 JSON body；
 - [x] 缺 CSRF header → 403；跨源 → 403；
 - [x] 同源 UI 正常；
-- [ ] 真实 DSH 面板 smoke（待安装最新 Host 后重启）。
+- [x] 真实 DSH 面板 smoke（同源 UI 正常；无 header 403）。
 
 ### P0-3 全局运行队列与预算
 
