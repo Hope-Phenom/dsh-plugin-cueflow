@@ -3,6 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "description": "CueFlow — ComfyUI-style workflow orchestration for DeepSeek Harness: node canvas, typed links, DSH Skill/Command/Agent/Shell/FS nodes.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hope-Phenom/dsh-plugin-cueflow.git"
+  },
+  "homepage": "https://github.com/Hope-Phenom/dsh-plugin-cueflow",
+  "bugs": {
+    "url": "https://github.com/Hope-Phenom/dsh-plugin-cueflow/issues"
+  },
+  "keywords": ["dsh", "deepseek-harness", "workflow", "comfyui", "agent"],
   "type": "module",
   "main": "lib/index.js",
   "icon": "./assets/icon.svg",

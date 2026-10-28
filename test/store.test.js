@@ -27,6 +27,29 @@ test('migrateWorkflows upgrades pre-schema documents', () => {
   }
 })
 
+test('run retention is configurable', () => {
+  const root = mkdtempSync(join(tmpdir(), 'cueflow-retention-'))
+  const store = createStore({ rootDir: root, runRetention: 2 })
+  try {
+    for (let i = 0; i < 4; i += 1) {
+      store.writeRun({
+        schemaVersion: 1,
+        id: `run_ret_${i}`,
+        workflowId: 'wf',
+        workflowName: 'wf',
+        status: 'completed',
+        createdAt: i,
+        endedAt: i,
+        nodeStates: {},
+        events: [],
+      })
+    }
+    assert.equal(store.listRuns(10).runs.length, 2)
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
 test('migrateWorkflows leaves current and future schemas alone', () => {
   const root = mkdtempSync(join(tmpdir(), 'cueflow-migrate-'))
   const store = createStore({ rootDir: root })

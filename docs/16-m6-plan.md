@@ -146,7 +146,8 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 - [x] 旧 schema 自动迁移（缺失/0 → v1，启动时执行）；
 - [x] 逻辑 workspace 过滤 + 物理 workspace 存储（`workspaces/<hash>/workflows`，legacy 回退）；
 - [x] run `triggeredBy` 审计标记（UI/API；非认证身份）；
-- [ ] 认证身份/保留策略。
+- [x] run 保留条数可配置（`CUEFLOW_RUN_RETENTION`，默认 50）；
+- [ ] 认证身份。
 
 ### M6-P1-4 · 编辑体验
 

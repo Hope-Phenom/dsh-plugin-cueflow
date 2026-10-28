@@ -73,6 +73,7 @@ MVP 没有独立设置页；可配置项都在工作流文档里：
 | 单 run 墙钟预算 | `CUEFLOW_MAX_RUN_MS` | 默认 30 分钟；超时 `RUN_BUDGET_EXCEEDED` |
 | 单 run Agent 调用上限 | `CUEFLOW_MAX_AGENT_CALLS` | 默认 50 |
 | 单 run Token 上限 | `CUEFLOW_MAX_TOKENS` | 默认 0（不限制）；仅在 adapter 返回 usage 时统计 |
+| run 保留条数 | `CUEFLOW_RUN_RETENTION` | 默认 50 |
 
 环境变量在 DSH 启动前设置。后续如果需要全局设置，会增加 `settings.section`；MVP 先用环境变量。
 
