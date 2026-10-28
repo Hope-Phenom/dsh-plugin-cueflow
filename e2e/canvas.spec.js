@@ -98,6 +98,16 @@ test('groups the current selection into a visual frame', async ({ page }) => {
   })
   await page.locator('[data-cue-action="group-selection"]').click()
   await expect(page.locator('.cue-group-node')).toHaveCount(1)
+  const before = await page.locator('.cue-node').evaluateAll(nodes => nodes.map(node => node.style.left))
+  const groupHead = page.locator('.cue-group-node .cue-node-head')
+  const box = await groupHead.boundingBox()
+  if (!box) throw new Error('group head has no box')
+  await page.mouse.move(box.x + 40, box.y + 16)
+  await page.mouse.down()
+  await page.mouse.move(box.x + 140, box.y + 96, { steps: 6 })
+  await page.mouse.up()
+  const after = await page.locator('.cue-node').evaluateAll(nodes => nodes.map(node => node.style.left))
+  expect(after).not.toEqual(before)
 })
 
 test('narrow layout keeps the inspector toggle usable', async ({ page }) => {

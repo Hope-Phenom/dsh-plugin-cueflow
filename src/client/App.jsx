@@ -417,7 +417,7 @@ export function CueFlowPanel({ t }) {
     const group = createNode('group', {
       title: 'Group',
       position: { x: left - 24, y: top - 48 },
-      config: { label: 'Group', width: right - left + 48, height: bottom - top + 72 },
+      config: { label: 'Group', width: right - left + 48, height: bottom - top + 72, members: nodes.map(node => node.id) },
     })
     applyChange(current => ({ ...current, nodes: [...current.nodes, group] }))
     setSelectedNodeId(group.id)
@@ -870,7 +870,20 @@ export function CueFlowPanel({ t }) {
             onDeleteEdge={deleteEdge}
             onMoveNode={(nodeId, position) => {
               const next = clone(workflowRef.current)
-              next.nodes = next.nodes.map(node => (node.id === nodeId ? { ...node, position } : node))
+              const moving = next.nodes.find(node => node.id === nodeId)
+              if (!moving) return
+              const dx = position.x - moving.position.x
+              const dy = position.y - moving.position.y
+              const members = moving.type === 'group' && Array.isArray(moving.config?.members)
+                ? new Set(moving.config.members)
+                : new Set()
+              next.nodes = next.nodes.map(node => {
+                if (node.id === nodeId) return { ...node, position }
+                if (members.has(node.id)) {
+                  return { ...node, position: { x: node.position.x + dx, y: node.position.y + dy } }
+                }
+                return node
+              })
               setCurrent(next, { dirty: true })
             }}
             onBeginNodeDrag={() => pushHistory(workflowRef.current)}
