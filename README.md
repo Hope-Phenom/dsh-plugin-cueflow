@@ -58,13 +58,13 @@ The independent UI test page imports the same `src/client` code used in DSH; onl
 | [ComfyUI research](docs/01-research-comfyui.md) | Why the node-graph metaphor works |
 | [DSH research](docs/02-research-dsh.md) | Plugin, slots, skills, commands, subagents |
 | [Node reference](docs/05-node-reference.md) | Ports, config, semantics |
-| [User guide](docs/12-user-guide.md) | Install, first workflow, examples, troubleshooting |
+| [User manual](USER_MANUAL.md) | Screenshot walkthrough: UI map, Hello World, scenarios, approvals, troubleshooting |
 | [Design rationale](docs/13-design-rationale.md) | Why the graph, nodes, execution and session model |
 | [Readiness gaps](docs/14-readiness-gaps.md) | What is still missing for production workloads |
 | [API reference](docs/15-api-reference.md) | Host routes, data model, errors, limits |
 | [M6 plan](docs/16-m6-plan.md) | P0/P1 workload-readiness TODO and acceptance |
 | [Compatibility](docs/17-compatibility.md) | DSH/Node/OS matrix, release checks, benchmark |
-| [User manual](docs/20-user-manual.md) | Screenshot walkthrough for first-time users |
+
 | [Changelog](CHANGELOG.md) | Version history |
 | [Testing](docs/09-testing-strategy.md) | Four-layer strategy |
 | [Decisions](docs/decisions.md) | Autonomous design decisions |

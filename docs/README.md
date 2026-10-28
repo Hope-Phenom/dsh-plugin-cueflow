@@ -49,7 +49,7 @@ ComfyUI 把扩散模型的一整条推理链拆成有类型端口的节点，让
 | [09 · 测试策略](09-testing-strategy.md) | 如何在不反复重启 DSH 的前提下验证逻辑、UI 与集成。 |
 | [10 · 实施计划](10-implementation-plan.md) | 里程碑、验收标准、当前进度与后续迭代。 |
 | [11 · 运维与安全](11-operations.md) | 安装、构建、配置、安全边界、故障排查、已知限制。 |
-| [12 · 使用文档](12-user-guide.md) | 第一次安装、Hello World、节点速查、常用示例、运行对话框、排错与安全提示。 |
+| [用户手册](../USER_MANUAL.md) | 带截图：安装、界面地图、Hello World、场景演练、审批、保存/版本、排错。 |
 | [13 · 设计阐明](13-design-rationale.md) | 为什么是节点图、为什么是这 12 个节点、执行语义、会话模型、UI/安全取舍与备选方案。 |
 | [14 · 工作负载差距](14-readiness-gaps.md) | 从“能跑”到“可承载工作负载”还差什么：审批、队列、预算、重试、恢复、表达力、工程化。 |
 | [15 · API 参考](15-api-reference.md) | Host 路由、请求/响应、Workflow/Run 数据模型、错误码、限制、会话语义与 curl 示例。 |
@@ -57,7 +57,7 @@ ComfyUI 把扩散模型的一整条推理链拆成有类型端口的节点，让
 | [17 · 兼容性与发布](17-compatibility.md) | DSH/Node/OS 矩阵、发布检查、升级回滚、性能基线。 |
 | [18 · M6 后续/延期项](18-deferred.md) | 认证身份、多实例锁、完整 ARIA、checkJs、npm 发布等明确延期。 |
 | [19 · npm 发布结构](19-npm-release.md) | 发布文件清单、目录职责、DSH 识别方式与发布命令。 |
-| [20 · 用户手册（带截图）](20-user-manual.md) | 面向第一次使用：界面地图、Hello World、审批、保存/版本、排错。 |
+
 | [决策记录表](decisions.md) | 所有自主决策的编号、理由、替代方案与影响；后续调整以此表为入口。 |
 | [设计自审](reviews/2026-10-27-design-review.md) | 文档自审清单、发现的问题与修正。 |
 | [实现自审](reviews/2026-10-27-implementation-review.md) | 实现阶段发现的问题、修复与真实 DSH 联调记录。 |

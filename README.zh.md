@@ -58,13 +58,13 @@ pnpm verify:install # tarball 安装校验
 | [ComfyUI 研究](docs/01-research-comfyui.md) | 节点图为什么有效 |
 | [DSH 研究](docs/02-research-dsh.md) | 插件、Slots、Skill/Command/Subagent |
 | [节点参考](docs/05-node-reference.md) | 端口、配置、语义 |
-| [使用文档](docs/12-user-guide.md) | 安装、第一条流程、示例、排错 |
+| [用户手册](USER_MANUAL.md) | 带截图：界面地图、Hello World、场景演练、审批、排错 |
 | [设计阐明](docs/13-design-rationale.md) | 为什么是节点图、节点集、执行与会话模型 |
 | [工作负载差距](docs/14-readiness-gaps.md) | 生产使用还缺什么 |
 | [API 参考](docs/15-api-reference.md) | Host 路由、数据模型、错误码、限制 |
 | [M6 计划](docs/16-m6-plan.md) | P0/P1 工作负载 TODO 与验收 |
 | [兼容性与发布](docs/17-compatibility.md) | DSH/Node/OS 矩阵、发布检查、性能基线 |
-| [用户手册（带截图）](docs/20-user-manual.md) | 第一次使用：界面地图、Hello World、审批、排错 |
+
 | [变更日志](CHANGELOG.md) | 版本记录 |
 | [测试策略](docs/09-testing-strategy.md) | 四层测试 |
 | [决策记录](docs/decisions.md) | 自主决策与待验证项 |

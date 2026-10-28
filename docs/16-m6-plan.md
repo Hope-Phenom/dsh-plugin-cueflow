@@ -1,6 +1,6 @@
 # 16 · M6 计划：从可运行到可承载工作负载
 
-> 来源：[14 · 工作负载差距](14-readiness-gaps.md)、[13 · 设计阐明](13-design-rationale.md)、[12 · 使用文档](12-user-guide.md)。
+> 来源：[14 · 工作负载差距](14-readiness-gaps.md)、[13 · 设计阐明](13-design-rationale.md)、[用户手册](../USER_MANUAL.md)。
 > 状态：M6-P0-1 实施中；其余按顺序推进。每项完成时更新状态、证据与决策表。
 
 ## 1. 目标与验收口径
