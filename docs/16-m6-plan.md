@@ -64,15 +64,29 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 
 ### M6-P0-4 · 重试 / onError / 局部重跑
 
-**范围**：节点 `retry`（次数/退避）；`onError: fail | skip | branch`；非幂等节点默认不自动重试；从失败节点继续（保留上游输出）；run 记录 attempt。
+**状态**：⚠️ retry/onError 已完成；局部重跑待做
 
-**验收**：瞬时失败自动重试；`onError=skip` 下游按缺失输入处理；局部重跑不会重复执行已成功上游。
+**范围**：节点 `retry`（0–5）/`retryDelayMs`；`onError: fail | skip`；非幂等节点默认不自动重试；从失败节点继续（保留上游输出）；run 记录 attempt。
+
+**验收**：
+- [x] 瞬时失败自动重试；
+- [x] `onError=skip` 下游按缺失输入处理；
+- [x] run 记录 attempts / `node/retry`；
+- [ ] 局部重跑不重复执行已成功上游；
+- [ ] 真实 DSH smoke。
 
 ### M6-P0-5 · 运行恢复与心跳
 
+**状态**：⚠️ 部分实现：heartbeat/active list/自动接回已完成；真实长任务 smoke 待做
+
 **范围**：active runs 列表 + UI 自动重连；节点 heartbeat/阶段日志；DSH 重启后 interrupted run 可诊断；不在内存的 run 只读展示。
 
-**验收**：运行中刷新页面能接回；30s 长 Agent 至少出现一次 heartbeat；重启后 run 状态不丢失。
+**验收**：
+- [x] 运行中刷新页面能接回；
+- [x] 10s heartbeat；
+- [x] `GET /runs` 包含 running/queued；
+- [x] 重启后 interrupted run 由 store recovery 标记；
+- [ ] 真实 DSH 长 Agent + 刷新 smoke。
 
 ### M6-P0-6 · 真实取消
 

@@ -271,6 +271,50 @@ test('cancelling while approval is pending cancels the node', async () => {
   assert.equal(run.nodeStates.s.status, 'cancelled')
 })
 
+test('long-running nodes emit heartbeats', async () => {
+  const workflow = wf([node('agent', 'a', 0, { prompt: 'a', sleep: 40 })])
+  const run = createRunRecord({ workflow })
+  const { executeNode } = makeExecutor()
+  await executeRun(run, { executeNode, heartbeatMs: 10 })
+  assert.ok(run.events.some(event => event.type === 'node/heartbeat' && event.nodeId === 'a'))
+})
+
+test('retry succeeds after a transient failure', async () => {
+  const workflow = wf([node('agent', 'a', 0, { prompt: 'x', retry: 1, retryDelayMs: 0 })])
+  const run = createRunRecord({ workflow })
+  let calls = 0
+  const { executeNode } = makeExecutor({
+    agent: async () => {
+      calls += 1
+      if (calls === 1) throw Object.assign(new Error('transient'), { code: 'TRANSIENT' })
+      return { outputs: { text: 'ok', json: null } }
+    },
+  })
+  await executeRun(run, { executeNode })
+  assert.equal(calls, 2)
+  assert.equal(run.status, 'completed')
+  assert.equal(run.nodeStates.a.attempts, 2)
+  assert.ok(run.events.some(event => event.type === 'node/retry'))
+})
+
+test('onError=skip continues the run but skips the node', async () => {
+  const workflow = wf([
+    node('agent', 'a', 0, { prompt: 'x', onError: 'skip' }),
+    node('output', 'o', 100, { name: 'out' }),
+  ], [
+    edge('e1', 'a', 'text', 'o', 'value'),
+  ])
+  const run = createRunRecord({ workflow })
+  const { executeNode } = makeExecutor({
+    agent: async () => { throw Object.assign(new Error('nope'), { code: 'NOPE' }) },
+  })
+  await executeRun(run, { executeNode })
+  assert.equal(run.status, 'completed')
+  assert.equal(run.nodeStates.a.status, 'skipped')
+  assert.equal(run.nodeStates.a.error.code, 'NOPE')
+  assert.equal(run.nodeStates.o.status, 'skipped')
+})
+
 test('agent-call budget stops further agent nodes', async () => {
   const workflow = wf([
     node('agent', 'a', 0, { prompt: 'a' }),

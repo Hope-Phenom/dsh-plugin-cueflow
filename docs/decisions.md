@@ -55,6 +55,8 @@
 | D-047 | 2026-10-28 | Shell/Command 的审批使用 CueFlow Host 自有队列，不复用 `ctx.approval.request()` | 该 API 要求 open turn，而 workflow run 在 Host、不在 DSH turn 内；复用会抛错或迫使伪造 turn | 伪造 DSH turn；默认 allow；只在 UI 做 pre-run 确认 | `executor.js`、`runs.js`、`api.js`、`ApprovalDialog.jsx` | accepted（P0-1） |
 | D-048 | 2026-10-28 | API 写请求用 `X-CueFlow-Request: 1` + Origin/Sec-Fetch-Site + JSON body 做 CSRF 防护，不新增 CueFlow token | 自定义 header 不能被跨站表单设置，跨源 preflight 不放行；身份认证继续交给 DSH Web 表面 | 自建 token 登录；开放 CORS；只依赖 SameSite cookie | `api.js`、`src/client/api.js` | accepted（P0-2） |
 | D-049 | 2026-10-28 | RunManager 使用有界全局队列 + 每 run budget；环境变量控制上限，默认 2 个 active run / 30min / 50 Agent calls / token 不限 | 防止连续长 run 耗尽 Host；Queue 比 429 对桌面用户更可控；token 上限是 best-effort，取决于 adapter usage | 无限制并发；只做单 run 超时；直接 429 | `runs.js`、`executor.js`、`index.js` | accepted（P0-3） |
+| D-050 | 2026-10-28 | 节点 `retry` 默认 0，最多 5 次；`onError: fail \| skip` 先落地，暂不引入 branch | Shell/Command 非幂等，默认重试会放大副作用；skip 足以让可选步骤失败后继续；branch 需要新的错误端口契约 | 默认重试 3 次；只做 fail-fast；把 onError 做成任意 JS | `executor.js`、`shared/node-types.js` | accepted（P0-4a） |
+| D-051 | 2026-10-28 | 长节点每 10s 发 `node/heartbeat`；`GET /runs` 合并内存 active/queued；UI bootstrap 自动接回 | 轮询只有 start/end 会让长 Agent 看起来卡死；落盘 queued 状态滞后会让运行中 run 从列表消失 | SSE；只靠 run id 查询；每次心跳落盘 | `executor.js`、`runs.js`、`App.jsx` | accepted（P0-5a） |
 
 ---
 

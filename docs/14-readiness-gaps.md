@@ -1,7 +1,7 @@
 # 14 · 工作负载差距
 
 > “能跑通”不等于“能作为工作负载”。本文按 **P0（上真实仓库前必须）** / **P1（规模化）** 列出差距、验收标准与当前状态。
-> 当前已验证：69 个测试、从机主 `desktop` profile、面板 + UI run、Agent/Skill/Command/Shell/File。真实取消与极窄拖拽 E2E 仍未覆盖，但它们是本文 P1 的一小部分。
+> 当前已验证：72 个测试、从机主 `desktop` profile、面板 + UI run、Agent/Skill/Command/Shell/File。真实取消与极窄拖拽 E2E 仍未覆盖，但它们是本文 P1 的一小部分。
 
 ## 0. 两种“工作负载”
 
@@ -61,24 +61,30 @@
 
 ### P0-4 失败恢复与重试
 
-**现状**：fail-fast；无 retry/backoff/onError 分支；失败后只能整图重跑。
+**状态**：⚠️ 部分实现：retry/onError 已完成；从失败节点继续待做
+
+**已实现**：Agent/Skill/Command/Shell/File 节点增加 `retry`（0–5）、`retryDelayMs`、`onError: fail | skip`；每个 attempt 记录 `attempts`，`node/retry` 事件；`skip` 会让该节点 `skipped` 并继续。Shell/Command 默认 `retry: 0`，避免自动重试副作用。
 
 **验收**：
-- 节点 `retry`（次数/退避/可重试错误码）；
-- `onError: fail | skip | branch`；
-- 非幂等节点（Shell/Command）默认不自动重试；
-- 从失败节点继续（保留上游输出）或至少“整图重跑”；
-- run 记录保留每次 attempt。
+- [x] `retry` + backoff；
+- [x] `onError: fail | skip`；
+- [x] 非幂等节点默认不重试；
+- [x] run 记录 attempts / retry 事件；
+- [ ] 从失败节点继续（保留上游输出）；
+- [ ] 真实 DSH 长节点 smoke。
 
 ### P0-5 长任务可观测与重连
 
-**现状**：Agent 节点只有 start/end 事件；UI 刷新后不会自动接回 active run；只能靠已知 run id 查询。
+**状态**：⚠️ 部分实现：heartbeat + active list + UI 自动接回已完成；重启恢复沿用 store recovery
+
+**已实现**：节点每 10s 发 `node/heartbeat`；`GET /runs` 合并 running/queued 内存记录（之前只读落盘）；UI bootstrap 检测 running/queued run 并自动加载其 workflow 快照/事件。DSH 崩溃后的 running run 由既有 recovery 标记 error。
 
 **验收**：
-- active runs 列表 + 自动重连；
-- 节点 heartbeat/阶段日志（至少 10–30s 一次）；
-- UI 显示 elapsed、最近事件、子代理 id；
-- 插件重启后把 interrupted run 展示为可诊断状态，而不是静默丢失。
+- [x] active runs 列表（`GET /runs` 包含 running/queued）；
+- [x] UI 刷新自动接回 active run；
+- [x] heartbeat（10s）；
+- [x] interrupted run 可诊断（store recovery）；
+- [ ] 真实 DSH 长 Agent + 刷新 smoke。
 
 ### P0-6 取消语义
 
@@ -166,3 +172,4 @@
 | 真实性 Skill/Command/Shell/Agent | ✅ 已通过 |
 
 > 这不是“全部都要一次做完”的清单；它是按风险排序的路线图。P0-1 到 P0-4 是投入产出最高的四项。
+

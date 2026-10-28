@@ -22,6 +22,7 @@ export const LIMITS = Object.freeze({
   pollIntervalMs: 600,
   maxSkillChars: 200_000,
   maxLogsPerNode: 80,
+  heartbeatMs: 10_000,
 })
 
 export const DEFAULT_APPROVAL_TIMEOUT_MS = 5 * 60 * 1000

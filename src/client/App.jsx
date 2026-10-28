@@ -132,8 +132,10 @@ export function CueFlowPanel({ t }) {
     try {
       const data = await listRuns(20)
       setRunHistory(data.runs ?? [])
+      return data
     } catch {
       /* history is non-critical */
+      return null
     }
   }, [])
 
@@ -153,7 +155,19 @@ export function CueFlowPanel({ t }) {
         initial = blank?.workflow ?? emptyWorkflow()
       }
       loadWorkflow(initial)
-      await refreshHistory()
+      const history = await refreshHistory()
+      const active = history?.runs?.find(row => row.status === 'running' || row.status === 'queued')
+      if (active) {
+        const data = await getRun(active.id, -1)
+        if (data.run && (data.run.status === 'running' || data.run.status === 'queued')) {
+          if (data.run.workflowSnapshot) loadWorkflow(data.run.workflowSnapshot)
+          setRun(data.run)
+          setEvents(data.events ?? [])
+          lastSeqRef.current = (data.events ?? []).reduce((max, event) => Math.max(max, event.seq), -1)
+          setDockOpen(true)
+          setInspectorTab('run')
+        }
+      }
     } catch (cause) {
       setError(cause)
     } finally {

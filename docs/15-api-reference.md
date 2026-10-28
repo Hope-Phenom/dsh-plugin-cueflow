@@ -141,7 +141,7 @@ Content-Type: application/json
 
 ### `GET /runs?limit=20`
 
-返回 run 摘要列表（按结束/创建时间倒序）。
+返回 run 摘要列表（按结束/创建时间倒序）。列表合并内存中的 `running/queued` 记录，因此运行中的 run 不会因为落盘状态滞后而消失；`queued` 行带 `queuePosition`。
 
 ### `GET /runs/:id?after=<seq>`
 
@@ -157,7 +157,8 @@ Content-Type: application/json
     { "seq": 0, "time": 0, "type": "run/start", "message": "Run started" },
     { "seq": 1, "time": 0, "type": "node/start", "nodeId": "n1", "message": "Running Task" },
     { "seq": 2, "time": 0, "type": "node/end", "nodeId": "n1", "message": "Completed Task" },
-    { "seq": 3, "time": 0, "type": "run/end", "message": "Run completed" }
+    { "seq": 3, "time": 0, "type": "node/heartbeat", "nodeId": "n2", "message": "Review still running" },
+    { "seq": 4, "time": 0, "type": "run/end", "message": "Run completed" }
   ]
 }
 ```
@@ -257,6 +258,7 @@ Content-Type: application/json
 
 运行状态：`queued/running/completed/error/cancelled`。
 节点状态：`idle/queued/waiting-approval/running/success/error/skipped/cancelled`。
+长节点每 10s 发 `node/heartbeat`（type，不改变状态）。
 
 ## 5. 错误码
 

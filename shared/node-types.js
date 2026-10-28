@@ -18,6 +18,18 @@ function field(key, label, kind = 'text', extra = {}) {
   return { key, label, kind, ...extra }
 }
 
+/** Common resiliency fields for nodes that can fail transiently. */
+const RETRY_FIELDS = [
+  field('retry', 'Retry count', 'number', { min: 0, max: 5, step: 1, hint: 'Extra attempts after the first failure.' }),
+  field('retryDelayMs', 'Retry delay (ms)', 'number', { min: 0, max: 60_000, step: 100 }),
+  field('onError', 'On error', 'select', {
+    options: ['fail', 'skip'],
+    hint: 'fail = stop the run; skip = mark this node skipped and continue.',
+  }),
+]
+
+const RETRY_DEFAULTS = { retry: 0, retryDelayMs: 500, onError: 'fail' }
+
 /** @type {Record<string, object>} */
 export const NODE_TYPES = Object.freeze({
   input: {
@@ -87,6 +99,7 @@ export const NODE_TYPES = Object.freeze({
       field('parseJson', 'Parse text as JSON', 'boolean'),
       field('allowPartial', 'Accept partial output on max-tokens', 'boolean'),
       field('timeoutMs', 'Timeout (ms)', 'number', { min: 1000, step: 1000 }),
+      ...RETRY_FIELDS,
     ],
     defaults: {
       prompt: '',
@@ -99,6 +112,7 @@ export const NODE_TYPES = Object.freeze({
       parseJson: false,
       allowPartial: false,
       timeoutMs: DEFAULT_TIMEOUTS.agent,
+      ...RETRY_DEFAULTS,
     },
   },
 
@@ -124,6 +138,7 @@ export const NODE_TYPES = Object.freeze({
       field('outputSchema', 'Output JSON Schema', 'json', { rows: 5 }),
       field('parseJson', 'Parse text as JSON', 'boolean'),
       field('timeoutMs', 'Timeout (ms)', 'number', { min: 1000, step: 1000 }),
+      ...RETRY_FIELDS,
     ],
     defaults: {
       skill: '',
@@ -134,6 +149,7 @@ export const NODE_TYPES = Object.freeze({
       outputSchema: '',
       parseJson: false,
       timeoutMs: DEFAULT_TIMEOUTS.skill,
+      ...RETRY_DEFAULTS,
     },
   },
 
@@ -155,12 +171,14 @@ export const NODE_TYPES = Object.freeze({
         hint: 'ask = require a one-shot confirmation; allow = run directly; deny = never run.',
       }),
       field('timeoutMs', 'Timeout (ms)', 'number', { min: 1000, step: 1000 }),
+      ...RETRY_FIELDS,
     ],
     defaults: {
       command: '',
       fallbackInput: '',
       approval: 'ask',
       timeoutMs: DEFAULT_TIMEOUTS.command,
+      ...RETRY_DEFAULTS,
     },
   },
 
@@ -189,6 +207,7 @@ export const NODE_TYPES = Object.freeze({
       field('timeoutMs', 'Timeout (ms)', 'number', { min: 1000, step: 1000 }),
       field('failOnNonZero', 'Fail on non-zero exit', 'boolean'),
       field('maxOutputChars', 'Max output characters', 'number', { min: 1000, step: 1000 }),
+      ...RETRY_FIELDS,
     ],
     defaults: {
       command: '',
@@ -197,6 +216,7 @@ export const NODE_TYPES = Object.freeze({
       timeoutMs: DEFAULT_TIMEOUTS.shell,
       failOnNonZero: true,
       maxOutputChars: 20_000,
+      ...RETRY_DEFAULTS,
     },
   },
 
@@ -213,8 +233,9 @@ export const NODE_TYPES = Object.freeze({
     fields: [
       field('path', 'Path', 'text', { placeholder: 'src/index.ts', hint: 'Relative to the run working directory, or absolute.' }),
       field('maxChars', 'Max characters', 'number', { min: 1000, step: 1000 }),
+      ...RETRY_FIELDS,
     ],
-    defaults: { path: '', maxChars: 200_000 },
+    defaults: { path: '', maxChars: 200_000, ...RETRY_DEFAULTS },
   },
 
   condition: {
