@@ -21,7 +21,7 @@ dsh plugin --profile desktop add "F:\WorkSpace\dsh-plugin-cueflow"
 
 ### 从插件市场 / npm 安装
 
-当前仓库仍以本地目录开发为主；发布 npm 包后，可在 DSH 的 **插件** 页搜索 `dsh-plugin-cueflow` 安装。安装后仍需重启 DSH 让 Host 行生效。
+当前仓库仍以本地目录开发为主；发布 npm 包后，可在 DSH 的 **插件** 页搜索 `@hope_phenom/dsh-plugin-cueflow` 安装。安装后仍需重启 DSH 让 Host 行生效。
 
 ### 验证安装
 
@@ -230,3 +230,4 @@ Input ─value──▶ Condition ─true──▶ Agent(fix)
 - 节点字段： [05 · 节点参考](05-node-reference.md)
 - 执行/重试/取消语义： [07 · 执行引擎](07-execution-engine.md)
 - 从机实机记录： [2026-10-28 从机验证](reviews/2026-10-28-remote-verification.md)
+

@@ -3,7 +3,7 @@
 ## 1. 包身份
 
 ```text
-name:    dsh-plugin-cueflow
+name:    @hope_phenom/dsh-plugin-cueflow
 version: 0.1.0
 type:    module
 main:    lib/index.js
@@ -49,12 +49,12 @@ shared/validation.js
 shared/values.js
 ```
 
-压缩后约 **167 KB**，解压约 **750 KB**。
+压缩后约 **171 KB**，解压约 **768 KB**。
 
 ## 3. 目录职责
 
 ```text
-dsh-plugin-cueflow/
+@hope_phenom/dsh-plugin-cueflow/   # npm 包名
 ├─ package.json          # dsh.bundle / dsh.client / exports / engines
 ├─ cordis.patch.yml      # DSH Host 插件行，id = dsh-plugin-cueflow
 ├─ lib/
@@ -80,7 +80,14 @@ dsh-plugin-cueflow/
 └─ locale/{en,zh}.json
 ```
 
-## 4. DSH 识别方式
+## 4. 包名与插件 id
+
+- npm 包名：`@hope_phenom/dsh-plugin-cueflow`；
+- `cordis.patch.yml` 的 `id` 仍是 `dsh-plugin-cueflow`；
+- Host API 路径和存储目录仍是 `dsh-plugin-cueflow`，不改，避免破坏已安装用户的数据与路由；
+- `cordis.patch.yml` 的 `name` 使用 scoped 包名。
+
+## 5. DSH 识别方式
 
 `package.json`：
 
@@ -96,7 +103,7 @@ dsh-plugin-cueflow/
 - `lib/index.js` 通过 `dsh.bundle.patch` 被加载；
 - 不需要把 `src/`、`test/`、`docs/`、`scripts/` 发到 npm。
 
-## 5. 发布命令
+## 6. 发布命令
 
 ```bash
 # 1. 确认工作区干净
@@ -109,21 +116,20 @@ pnpm test
 pnpm verify:pack
 pnpm verify:install
 
-# 3. 改 private / 版本
-#    "private": false  或删除
+# 3. 版本（private 已为 false）
 npm version patch
 
-# 4. 发布
+# 4. 发布（scoped 包）
 npm publish --access public
 ```
 
 `prepublishOnly` 会再次执行 `build + verify:pack`，防止发布未构建的 `lib/client.js`。
 
-## 6. 发布后验证
+## 7. 发布后验证
 
 在干净的 DSH profile 中：
 
-1. 通过 DSH 的插件/profile 安装 `dsh-plugin-cueflow`；
+1. 通过 DSH 的插件/profile 安装 `@hope_phenom/dsh-plugin-cueflow`；
 2. 重启 DSH；
 3. 确认 CueFlow 面板出现；
 4. 新建一个 Shell 节点，使用 `approval=allow` 跑一次；

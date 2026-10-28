@@ -6,7 +6,7 @@
 
 ```json
 {
-  "name": "dsh-plugin-cueflow",
+  "name": "@hope_phenom/dsh-plugin-cueflow",
   "version": "0.1.0",
   "type": "module",
   "main": "lib/index.js",
@@ -46,7 +46,7 @@
 ```yaml
 - insert:
     - id: dsh-plugin-cueflow
-      name: dsh-plugin-cueflow
+      name: '@hope_phenom/dsh-plugin-cueflow'
 ```
 
 ## 2. Host 入口
@@ -460,3 +460,5 @@ dsh plugin --profile desktop add "F:\WorkSpace\dsh-plugin-cueflow"
 - [x] 面板内运行、轮询状态、输出展示（从机 UI 运行 `completed`，输出 `hello!`）。
 - [ ] 取消运行后，子代理被 dispose（单元测试覆盖；真实未跑）。
 - [x] 保存后 workflow 仍在；真实 DSH 文件落盘。
+
+

@@ -1,7 +1,12 @@
 {
-  "name": "dsh-plugin-cueflow",
+  "name": "@hope_phenom/dsh-plugin-cueflow",
   "version": "0.1.0",
   "private": false,
+  "author": "Hope-Phenom",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "description": "CueFlow — ComfyUI-style workflow orchestration for DeepSeek Harness: node canvas, typed links, DSH Skill/Command/Agent/Shell/FS nodes.",
   "repository": {
     "type": "git",

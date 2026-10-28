@@ -7,4 +7,4 @@
 # Keep the row id stable: it is the plugin identity in the profile patch.
 - insert:
     - id: dsh-plugin-cueflow
-      name: dsh-plugin-cueflow
+      name: '@hope_phenom/dsh-plugin-cueflow'

@@ -27,6 +27,8 @@ pnpm install
 pnpm build
 # quit DSH first: the profile directory is locked while it runs
 dsh plugin --profile desktop add "F:\WorkSpace\dsh-plugin-cueflow"
+# or, once published:
+dsh plugin --profile desktop add @hope_phenom/dsh-plugin-cueflow
 ```
 
 Open DSH, click the CueFlow icon in the left sidebar.

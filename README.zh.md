@@ -27,6 +27,8 @@ pnpm install
 pnpm build
 # 先退出 DSH：运行中的 DSH 会锁住 profile 目录
 dsh plugin --profile desktop add "F:\WorkSpace\dsh-plugin-cueflow"
+# 发布后也可以：
+dsh plugin --profile desktop add @hope_phenom/dsh-plugin-cueflow
 ```
 
 启动 DSH，点击左侧栏的 CueFlow 图标。

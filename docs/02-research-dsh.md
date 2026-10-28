@@ -10,7 +10,7 @@ DSH 的 profile 由有序的 bundle patch 层组成；一个插件包（bundle�
 
 ```json
 {
-  "name": "dsh-plugin-cueflow",
+  "name": "@hope_phenom/dsh-plugin-cueflow",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
@@ -30,7 +30,7 @@ DSH 的 profile 由有序的 bundle patch 层组成；一个插件包（bundle�
 # cordis.patch.yml
 - insert:
     - id: dsh-plugin-cueflow
-      name: dsh-plugin-cueflow
+      name: '@hope_phenom/dsh-plugin-cueflow'
 ```
 
 `dsh.client` 让 `dsh-client-modules` 扫描到客户端 bundle；`exports["./client"]` 必须指向一个可被浏览器 module loader 执行的单文件。
@@ -250,3 +250,5 @@ CueFlow 的 Shell 节点只使用这个公开接口，不直接 `child_process.e
 - 插件打包与安装: <https://deepseek-harness.github.io/deepseek-harness/en/develop/basic/publish.md>
 - Slot catalog（生成物，含全部 key）: <https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/extensions/cordis-client-runner/src/client/slot-catalog.ts>
 - 本机参考插件 `@hope_phenom/dsh-plugin-notify`：`C:\Users\<user>\.dsh\profiles\desktop\node_modules\@hope_phenom\dsh-plugin-notify`
+
+
