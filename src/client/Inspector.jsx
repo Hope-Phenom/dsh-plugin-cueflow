@@ -269,15 +269,22 @@ function FieldControl({ field, value, node: _node, catalog, onChange, onFormatEr
     return (
       <div className="cue-field">
         <label className="cue-field-label" htmlFor={id}>{field.label}</label>
-        <select id={id} className="cue-select" value={value ?? ''} onChange={event => onChange(event.target.value)}>
-          <option value="">— {t('noSelection')} —</option>
+        <input
+          id={id}
+          className="cue-input"
+          list={`${id}-options`}
+          value={value ?? ''}
+          placeholder={t('searchSkill')}
+          onChange={event => onChange(event.target.value)}
+        />
+        <datalist id={`${id}-options`}>
           {!known && value ? <option value={value}>{value} ({t('missingSkill')})</option> : null}
           {skills.map(skill => (
             <option key={skill.name} value={skill.name}>
               {skill.name}{!skill.modelInvocable ? ` · ${t('skillUserOnly')}` : ''}
             </option>
           ))}
-        </select>
+        </datalist>
         {hint}
       </div>
     )
@@ -289,11 +296,18 @@ function FieldControl({ field, value, node: _node, catalog, onChange, onFormatEr
     return (
       <div className="cue-field">
         <label className="cue-field-label" htmlFor={id}>{field.label}</label>
-        <select id={id} className="cue-select" value={value ?? ''} onChange={event => onChange(event.target.value)}>
-          <option value="">— {t('noSelection')} —</option>
+        <input
+          id={id}
+          className="cue-input"
+          list={`${id}-options`}
+          value={value ?? ''}
+          placeholder={t('searchCommand')}
+          onChange={event => onChange(event.target.value)}
+        />
+        <datalist id={`${id}-options`}>
           {!known && value ? <option value={value}>{value}</option> : null}
           {commands.map(command => <option key={command.name} value={command.name}>{command.name}</option>)}
-        </select>
+        </datalist>
         {commands.length === 0 && <div className="cue-field-hint">{t('noCommands')}</div>}
         {hint}
       </div>

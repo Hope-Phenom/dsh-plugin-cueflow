@@ -50,6 +50,11 @@ export function installMockHost() {
   }
 
   const params = new URLSearchParams(location.search)
+  if (params.get('large') === '1') {
+    localStorage.clear()
+    workflows.clear()
+    workflows.set('wf_large_ui', makeLargeWorkflow())
+  }
   if (params.get('clean') === '1') document.getElementById('harness-bar').style.display = 'none'
   if (params.get('theme') === 'light') document.body.removeAttribute('data-ds-dark-theme')
   else document.body.setAttribute('data-ds-dark-theme', '')
@@ -84,6 +89,28 @@ export function installMockHost() {
   }
 
   if (params.get('run') === '1') setTimeout(() => triggerRun(params.get('fail') === '1'), 900)
+}
+
+function makeLargeWorkflow() {
+  const nodes = Array.from({ length: 200 }, (_, index) => ({
+    id: `n_${index}`,
+    type: 'template',
+    title: `Node ${index}`,
+    position: { x: (index % 20) * 300, y: Math.floor(index / 20) * 180 },
+    config: { template: `node ${index}`, trim: true },
+    disabled: false,
+  }))
+  return normalizeWorkflow({
+    schemaVersion: 1,
+    id: 'wf_large_ui',
+    name: 'Large 200-node workflow',
+    description: 'UI performance fixture',
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    nodes,
+    edges: [],
+    settings: {},
+  })
 }
 
 async function route(path, url, method, body) {

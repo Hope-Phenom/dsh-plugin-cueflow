@@ -110,6 +110,15 @@ test('groups the current selection into a visual frame', async ({ page }) => {
   expect(after).not.toEqual(before)
 })
 
+test('200-node workflow renders and a node can be selected', async ({ page }) => {
+  await page.goto('/?clean=1&large=1&lang=en')
+  const nodes = page.locator('.cue-node')
+  await expect(nodes).toHaveCount(200, { timeout: 15_000 })
+  const first = nodes.first()
+  await first.click({ force: true, position: { x: 12, y: 12 } })
+  await expect(first).toHaveClass(/selected/)
+})
+
 test('narrow layout keeps the inspector toggle usable', async ({ page }) => {
   await page.goto('/?clean=1&lang=en')
   const toggle = page.locator('.cue-inspector-toggle')

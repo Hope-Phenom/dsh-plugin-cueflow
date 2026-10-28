@@ -146,7 +146,7 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 - [x] 旧 schema 自动迁移（缺失/0 → v1，启动时执行）；
 - [x] 逻辑 workspace 过滤 + 物理 workspace 存储（`workspaces/<hash>/workflows`，legacy 回退）；
 - [x] run `triggeredBy` 审计标记（UI/API；非认证身份）；
-- [x] run 保留条数可配置（`CUEFLOW_RUN_RETENTION`，默认 50）；
+- [x] run 保留条数/最大天数可配置（`CUEFLOW_RUN_RETENTION`、`CUEFLOW_RUN_MAX_AGE_DAYS`）；
 - [ ] 认证身份。
 
 ### M6-P1-4 · 编辑体验
@@ -162,7 +162,8 @@ M6 完成时，CueFlow 应能在一台真实开发机上反复执行编码工作
 - [x] 多选左/上/右/下对齐（Playwright）；
 - [x] Shift+拖拽框选（Playwright）；
 - [x] 节点分组（Group 框；拖动 Group 移动成员）；
-- [ ] 200 节点图可编辑；
+- [x] 200 节点 UI 渲染 + 选中（Playwright，10 tests）；
+- [x] Skill/Command 从下拉改为可搜索/可输入的 datalist；
 - [x] 核心键盘：Ctrl/Cmd+S、C/V、Enter、Z/Y、Delete、Escape；
 - [~] ARIA：常用图标按钮已补 aria-label；完整审计仍待做。
 

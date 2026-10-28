@@ -120,7 +120,7 @@
 - **Schema 迁移**：✅ 启动时把缺失/0 版本 workflow 规范化为 v1；未来 `schemaVersion > 1` 保持不动。
 - **Workspace 隔离**：✅ 新 workflow 按 `settings.workspace` 写入 `workspaces/<hash>/workflows`；读取优先 workspace、再回退 legacy 全局；旧 workflow 仍全局可见。
 - **审计身份**：run 记录现有 `triggeredBy`（body/header/UI 标记）与 sessionId/cwd；这不是认证身份，多用户仍需 DSH 身份。
-- **保留策略配置**：✅ `CUEFLOW_RUN_RETENTION` 控制 run 保留条数（默认 50）；按项目/时间/大小待做。
+- **保留策略配置**：✅ `CUEFLOW_RUN_RETENTION` 控制条数、`CUEFLOW_RUN_MAX_AGE_DAYS` 控制天数；按项目/大小待做。
 - **多实例并发写**：store 原子写但没有跨进程锁；多个 DSH 实例共享 `$DSH_HOME` 时有覆盖风险。
 
 ## 4. P1 编辑体验
@@ -147,6 +147,7 @@
 | 遥测/错误关联 | runId → node → child session → command 的可追踪链路 |
 | 安全测试 | ✅ CSRF/Origin、路径遍历、超大 body、坏 JSON、恶意 workflow、审批拒绝 |
 | 性能测试 | ✅ 200/500 graph benchmark + 并发 run benchmark |
+| UI 大图 | ✅ 200 节点渲染 + 选中 E2E；拖拽性能未单独压测 |
 
 ## 6. 最小生产门槛（建议）
 
@@ -178,6 +179,7 @@
 | 真实性 Skill/Command/Shell/Agent | ✅ 已通过 |
 
 > 这不是“全部都要一次做完”的清单；它是按风险排序的路线图。P0-1 到 P0-4 是投入产出最高的四项。
+
 
 
 
