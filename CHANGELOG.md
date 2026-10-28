@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.1 — 2026-10-28
+
+### Fixed
+
+- 改为 scoped npm 包 `@hope_phenom/dsh-plugin-cueflow`。
+- 浏览器 `__ModuleLoader__.load({ id })` 改为 scoped 包名，修复插件管理器安装后 `duplicate factory registration` 导致 web boot 失败。
+- `verify:install` 适配 scoped `node_modules/@hope_phenom/...` 路径。
+
 ## 0.1.0 — 2026-10-28
 
 首个可运行版本，覆盖 M1–M4 与 M6 P0/P1 的主要硬化项。
@@ -7,7 +15,7 @@
 ### Added
 
 - DSH 全屏 CueFlow 面板：typed ports、DAG 连线、检查器、运行 dock。
-- 节点：Input / Template / Agent / Skill / Command / Shell / Subflow / Fan-out / Read File / Reroute / Condition / Merge / Output / Note。
+- 节点：Input / Template / Agent / Skill / Command / Shell / Subflow / Fan-out / Read File / Reroute / Condition / Merge / Output / Group / Note。
 - Skill 支持 model-invocable 与 user-only；Command 走 `ctx.commands.execute`。
 - Shell/Command 一次性审批门（`ask` / `allow` / `deny`）。
 - 全局运行队列、wall-clock / Agent-call / Token 预算。
